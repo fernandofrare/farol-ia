@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farol IA — Entrar</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0f1117;font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.card{background:#141720;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:44px 40px;width:100%;max-width:400px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c47d0a,#f5a623,#ffd080);}
+.logo{display:flex;align-items:center;gap:11px;margin-bottom:32px;justify-content:center;}
+.logo-mark{width:36px;height:36px;background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.logo-name{font-family:'Nunito',sans-serif;font-size:20px;font-weight:800;color:#fff;}
+.logo-sub{font-size:9px;color:#f5a623;letter-spacing:2px;text-transform:uppercase;}
+h1{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:#fff;margin-bottom:6px;text-align:center;}
+.sub{font-size:13px;color:#475569;text-align:center;margin-bottom:28px;}
+.field{margin-bottom:14px;}
+.field label{font-size:10px;font-weight:600;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:5px;}
+.field input{width:100%;background:#1a1e2a;border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:11px 14px;font-size:13px;color:#e2e8f0;outline:none;font-family:inherit;transition:border-color .18s;}
+.field input:focus{border-color:rgba(245,166,35,.4);}
+.field input::placeholder{color:#475569;}
+.forgot{display:block;text-align:right;font-size:11px;color:#f5a623;opacity:.6;text-decoration:none;margin-top:-8px;margin-bottom:20px;transition:opacity .2s;}
+.forgot:hover{opacity:1;}
+.btn{width:100%;background:linear-gradient(135deg,#c47d0a,#f5a623);color:#000;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;padding:14px;border-radius:10px;border:none;cursor:pointer;transition:all .2s;margin-bottom:16px;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,166,35,.3);}
+.divider{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.divider span{font-size:11px;color:#475569;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.07);}
+.register{text-align:center;font-size:12px;color:#475569;}
+.register a{color:#f5a623;text-decoration:none;font-weight:600;}
+.back{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:20px;font-size:12px;color:#475569;text-decoration:none;transition:color .2s;}
+.back:hover{color:#e2e8f0;}
+.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:10px 13px;font-size:12px;color:#ef4444;margin-bottom:14px;display:none;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 36 46" fill="none" width="18" height="22">
+        <rect x="15" y="20" width="6" height="18" rx="3" fill="#f5a623" opacity=".4"/>
+        <rect x="8" y="13" width="20" height="9" rx="4" fill="#f5a623" opacity=".7"/>
+        <path d="M18 3 Q28 13 8 13 Q18 13 18 3Z" fill="#f5a623"/>
+        <path d="M18 3 Q8 13 28 13 Q18 13 18 3Z" fill="#f5a623" opacity=".7"/>
+        <circle cx="18" cy="8" r="3.5" fill="#f5a623"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-name">Farol IA</div>
+      <div class="logo-sub">Área do cliente</div>
+    </div>
+  </div>
+
+  <h1>Bem-vindo de volta</h1>
+  <p class="sub">Acesse seu painel de automações</p>
+
+  <div class="err" id="errBox">E-mail ou senha incorretos. Tente novamente.</div>
+
+  <div class="field">
+    <label>E-mail</label>
+    <input type="email" id="email" placeholder="seu@email.com.br" onkeydown="if(event.key==='Enter')login()"/>
+  </div>
+  <div class="field">
+    <label>Senha</label>
+    <input type="password" id="pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()"/>
+  </div>
+  <a href="#" class="forgot" onclick="showForgot(event)">Esqueci minha senha</a>
+
+  <button class="btn" onclick="login()" id="loginBtn">Entrar no painel →</button>
+
+  <div class="divider"><span>ou</span></div>
+  <div class="register">Ainda não tem conta? <a href="farol-ia-landing.html">Ativar agora</a></div>
+  <a href="farol-ia-landing.html" class="back">← Voltar para o site</a>
+</div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div id="forgotModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(15,17,23,.92);backdrop-filter:blur(12px);align-items:center;justify-content:center;">
+  <div style="background:#141720;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:40px;width:100%;max-width:380px;margin:20px;position:relative;">
+    <button onclick="closeForgot()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#475569;font-size:20px;cursor:pointer;line-height:1;">×</button>
+
+    <!-- Step 1: Enter email -->
+    <div id="forgotStep1">
+      <div style="font-size:28px;text-align:center;margin-bottom:16px;">🔑</div>
+      <h2 style="font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;color:#fff;text-align:center;margin-bottom:6px;">Recuperar acesso</h2>
+      <p style="font-size:12px;color:#475569;text-align:center;margin-bottom:24px;line-height:1.6;">Digite o e-mail que você usou para criar sua conta. Vamos enviar um link para redefinir sua senha.</p>
+
+      <div style="margin-bottom:14px;">
+        <label style="font-size:10px;font-weight:600;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:5px;">E-mail da conta</label>
+        <input id="forgotEmail" type="email" placeholder="seu@email.com.br"
+          style="width:100%;background:#1a1e2a;border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:11px 14px;font-size:13px;color:#e2e8f0;outline:none;font-family:inherit;transition:border-color .18s;"
+          onfocus="this.style.borderColor='rgba(245,166,35,.4)'"
+          onblur="this.style.borderColor='rgba(255,255,255,.07)'"
+          onkeydown="if(event.key==='Enter')sendReset()"/>
+      </div>
+
+      <div id="forgotErr" style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:9px 12px;font-size:12px;color:#ef4444;margin-bottom:12px;display:none;"></div>
+
+      <button id="forgotBtn" onclick="sendReset()" style="width:100%;background:linear-gradient(135deg,#c47d0a,#f5a623);color:#000;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;padding:13px;border-radius:10px;border:none;cursor:pointer;transition:all .2s;margin-bottom:10px;">
+        Enviar link de recuperação →
+      </button>
+      <button onclick="closeForgot()" style="width:100%;background:none;border:1px solid rgba(255,255,255,.07);color:#475569;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;padding:10px;border-radius:10px;cursor:pointer;">
+        Cancelar
+      </button>
+    </div>
+
+    <!-- Step 2: Email sent confirmation -->
+    <div id="forgotStep2" style="display:none;text-align:center;">
+      <div style="font-size:48px;margin-bottom:16px;">📧</div>
+      <h2 style="font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:10px;">Link enviado!</h2>
+      <p style="font-size:13px;color:#94a3b8;line-height:1.7;margin-bottom:6px;">Enviamos um link de recuperação para</p>
+      <p id="forgotEmailConfirm" style="font-size:13px;font-weight:700;color:#f5a623;margin-bottom:20px;"></p>
+      <p style="font-size:12px;color:#475569;line-height:1.7;margin-bottom:24px;">Verifique sua caixa de entrada e spam. O link expira em <strong style="color:#e2e8f0;">1 hora.</strong></p>
+
+      <div style="background:#1a1e2a;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px;margin-bottom:20px;text-align:left;">
+        <div style="font-size:10px;font-weight:600;color:#475569;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Não chegou o e-mail?</div>
+        <div style="font-size:12px;color:#94a3b8;line-height:1.8;">
+          • Verifique a pasta de spam<br>
+          • Confirme se digitou o e-mail certo<br>
+          • Aguarde até 2 minutos
+        </div>
+      </div>
+
+      <button onclick="resetForgot()" style="width:100%;background:none;border:1px solid rgba(255,255,255,.07);color:#94a3b8;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;padding:10px;border-radius:10px;cursor:pointer;margin-bottom:8px;">
+        Tentar outro e-mail
+      </button>
+      <button onclick="closeForgot()" style="width:100%;background:none;border:none;color:#475569;font-family:'Nunito',sans-serif;font-size:12px;cursor:pointer;padding:8px;">
+        Fechar
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+function login() {
+  const email = document.getElementById('email').value.trim();
+  const pass  = document.getElementById('pass').value;
+  const btn   = document.getElementById('loginBtn');
+  const err   = document.getElementById('errBox');
+  err.style.display = 'none';
+  if(!email || !pass) { err.textContent='Preencha e-mail e senha.'; err.style.display='block'; return; }
+  btn.textContent = 'Entrando...';
+  btn.disabled = true;
+  setTimeout(() => { window.location.href = 'farol-dashboard.html'; }, 900);
+}
+
+function showForgot(e) {
+  e.preventDefault();
+  document.getElementById('forgotModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('forgotEmail').focus(), 100);
+}
+
+function closeForgot() {
+  document.getElementById('forgotModal').style.display = 'none';
+  document.body.style.overflow = '';
+  resetForgot();
+}
+
+function resetForgot() {
+  document.getElementById('forgotStep1').style.display = 'block';
+  document.getElementById('forgotStep2').style.display = 'none';
+  document.getElementById('forgotEmail').value = '';
+  document.getElementById('forgotErr').style.display = 'none';
+  document.getElementById('forgotBtn').textContent = 'Enviar link de recuperação →';
+  document.getElementById('forgotBtn').disabled = false;
+}
+
+function sendReset() {
+  const email = document.getElementById('forgotEmail').value.trim();
+  const err   = document.getElementById('forgotErr');
+  const btn   = document.getElementById('forgotBtn');
+  err.style.display = 'none';
+
+  if(!email) {
+    err.textContent = 'Digite seu e-mail para continuar.';
+    err.style.display = 'block';
+    return;
+  }
+  if(!email.includes('@') || !email.includes('.')) {
+    err.textContent = 'Digite um e-mail válido.';
+    err.style.display = 'block';
+    return;
+  }
+
+  btn.textContent = 'Enviando...';
+  btn.disabled = true;
+
+  // Em produção: chamar Supabase Auth resetPasswordForEmail(email)
+  // await supabase.auth.resetPasswordForEmail(email, {
+  //   redirectTo: 'https://app.farolia.store/redefinir-senha'
+  // })
+
+  setTimeout(() => {
+    document.getElementById('forgotEmailConfirm').textContent = email;
+    document.getElementById('forgotStep1').style.display = 'none';
+    document.getElementById('forgotStep2').style.display = 'block';
+  }, 1200);
+}
+
+// Fechar modal clicando fora
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('forgotModal').addEventListener('click', function(e) {
+    if(e.target === this) closeForgot();
+  });
+});
+
+// ESC fecha o modal
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') closeForgot();
+});
+</script>
+</body>
+</html>

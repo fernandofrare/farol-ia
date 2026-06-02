@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farol IA — Automação de Atendimento para o Seu Negócio</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1a3a5c;--navy-lt:#2a5080;--navy-dk:#0f2338;
+  --amber:#f5a623;--amber-lt:#ffd080;--amber-dk:#c47d0a;
+  --white:#ffffff;--off:#f0f7ff;--off2:#e8f0fb;
+  --border:#d0e0f0;--muted:#7a9ab8;--text:#1a3a5c;
+  --green:#22c55e;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--white);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:16px 56px;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);box-shadow:0 1px 12px rgba(26,58,92,.06);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.nav-logo-icon{width:36px;height:36px;background:var(--off);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.nav-logo-name{font-family:'Nunito',sans-serif;font-size:19px;font-weight:800;color:var(--navy);}
+.nav-logo-sub{font-size:9px;letter-spacing:3px;color:var(--amber);text-transform:uppercase;font-weight:600;}
+.nav-links{display:flex;align-items:center;gap:32px;}
+.nav-links a{font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s;}
+.nav-links a:hover{color:var(--navy);}
+.nav-cta{background:var(--navy);color:var(--white);font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;padding:11px 26px;border-radius:100px;text-decoration:none;transition:all .2s;border:none;cursor:pointer;}
+.nav-cta:hover{background:var(--navy-lt);transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,58,92,.25);}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:130px 48px 80px;background:linear-gradient(180deg,#fff 0%,var(--off) 100%);position:relative;overflow:hidden;}
+.hero-blob1{position:absolute;top:-80px;right:-80px;width:480px;height:480px;background:radial-gradient(circle,rgba(245,166,35,.07),transparent 70%);pointer-events:none;}
+.hero-blob2{position:absolute;bottom:-80px;left:-80px;width:380px;height:380px;background:radial-gradient(circle,rgba(26,58,92,.05),transparent 70%);pointer-events:none;}
+
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);border-radius:100px;padding:6px 18px;font-size:11px;letter-spacing:2px;color:#16a34a;text-transform:uppercase;font-weight:700;margin-bottom:24px;position:relative;z-index:1;}
+.badge-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.4)}}
+
+.hero-icon{position:relative;z-index:1;margin:0 auto 24px;animation:float 5s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+.hero h1{font-family:'Nunito',sans-serif;font-size:clamp(34px,5.5vw,62px);font-weight:900;line-height:1.08;max-width:760px;margin:0 auto 18px;color:var(--navy);position:relative;z-index:1;}
+.hero h1 em{font-style:normal;color:var(--amber);}
+.hero-sub{font-size:clamp(15px,2vw,18px);color:var(--muted);max-width:520px;margin:0 auto 40px;line-height:1.75;position:relative;z-index:1;font-weight:500;}
+
+/* PRICE BOX */
+.price-box{background:var(--white);border:2px solid var(--border);border-radius:20px;padding:36px 44px;max-width:440px;margin:0 auto 32px;position:relative;overflow:hidden;z-index:1;box-shadow:0 8px 32px rgba(26,58,92,.08);}
+.price-box::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--amber-dk),var(--amber-lt),var(--amber-dk));}
+.price-fair-label{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;color:#16a34a;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.price-main{display:flex;align-items:flex-end;justify-content:center;gap:8px;margin-bottom:4px;}
+.price-val{font-family:'Nunito',sans-serif;font-size:64px;font-weight:900;color:var(--navy);line-height:1;}
+.price-val sup{font-size:22px;vertical-align:top;margin-top:12px;display:inline-block;}
+.price-period{font-size:13px;color:var(--muted);margin-bottom:20px;font-weight:500;}
+.btn-cta{display:block;width:100%;background:var(--amber);color:var(--white);font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;padding:18px;border-radius:12px;text-decoration:none;border:none;cursor:pointer;transition:all .25s;box-shadow:0 6px 20px rgba(245,166,35,.3);margin-bottom:12px;}
+.btn-cta:hover{background:var(--amber-dk);transform:translateY(-2px);box-shadow:0 10px 28px rgba(245,166,35,.4);}
+.price-note{font-size:11px;color:var(--muted);text-align:center;line-height:1.7;font-weight:500;}
+
+/* PROOF */
+.proof-strip{display:flex;align-items:center;justify-content:center;gap:32px;flex-wrap:wrap;position:relative;z-index:1;}
+.proof-item{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);font-weight:600;}
+
+/* SECTIONS */
+section{padding:88px 56px;}
+.section-label{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--amber);font-weight:700;margin-bottom:12px;display:block;}
+.section-title{font-family:'Nunito',sans-serif;font-size:clamp(26px,4vw,42px);font-weight:900;line-height:1.15;margin-bottom:16px;color:var(--navy);}
+.section-title em{font-style:normal;color:var(--amber);}
+.section-sub{font-size:16px;color:var(--muted);max-width:540px;line-height:1.75;font-weight:500;}
+.center{text-align:center;margin-left:auto;margin-right:auto;}
+
+/* DOR */
+.dor-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;max-width:960px;margin:48px auto 0;}
+.dor-card{background:var(--white);border:2px solid var(--border);border-radius:16px;padding:24px;transition:border-color .2s;}
+.dor-card:hover{border-color:var(--amber);}
+.dor-icon{font-size:28px;margin-bottom:12px;}
+.dor-card h3{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;margin-bottom:7px;color:var(--navy);}
+.dor-card p{font-size:13px;color:var(--muted);line-height:1.7;font-weight:500;}
+
+/* INCLUDES */
+.inc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;max-width:960px;margin:48px auto 0;}
+.inc-card{background:var(--off);border:1px solid var(--border);border-radius:16px;padding:22px;display:flex;gap:14px;align-items:flex-start;}
+.inc-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+.inc-body h3{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;margin-bottom:4px;color:var(--navy);}
+.inc-body p{font-size:12px;color:var(--muted);line-height:1.65;font-weight:500;}
+
+/* HOW */
+.steps{max-width:680px;margin:52px auto 0;display:flex;flex-direction:column;}
+.step{display:flex;gap:22px;align-items:flex-start;padding-bottom:36px;position:relative;}
+.step:not(:last-child)::after{content:'';position:absolute;left:17px;top:38px;bottom:0;width:2px;background:linear-gradient(180deg,var(--border),transparent);border-radius:2px;}
+.step-num{width:36px;height:36px;background:var(--amber);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;color:var(--white);flex-shrink:0;}
+.step-content h3{font-family:'Nunito',sans-serif;font-size:17px;font-weight:800;margin-bottom:5px;color:var(--navy);}
+.step-content p{font-size:14px;color:var(--muted);line-height:1.7;font-weight:500;}
+.step-tag{display:inline-block;margin-top:8px;background:var(--off);border:1px solid var(--border);color:var(--navy);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border-radius:100px;font-weight:700;}
+
+/* FOUNDER */
+.founder-wrap{max-width:860px;margin:56px auto 0;background:var(--off);border:2px solid var(--border);border-radius:20px;padding:48px;position:relative;overflow:hidden;}
+.founder-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--amber-dk),var(--amber-lt),var(--amber-dk));}
+.founder-layout{display:grid;grid-template-columns:160px 1fr;gap:44px;align-items:start;}
+.founder-av{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.founder-photo{width:140px;height:140px;border-radius:50%;background:var(--white);border:3px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.founder-name{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;text-align:center;color:var(--navy);}
+.founder-role{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);font-weight:700;text-align:center;}
+.founder-text p{font-size:16px;color:var(--navy);line-height:1.85;margin-bottom:16px;font-weight:500;}
+.founder-text p:last-child{margin-bottom:0;}
+.founder-text strong{color:var(--navy-dk);font-weight:800;}
+.founder-sign{font-size:16px;color:var(--amber-dk);margin-top:24px;display:block;font-weight:700;}
+
+/* COMPARATIVO */
+.comp-wrap{max-width:760px;margin:48px auto 0;}
+.comp-table{width:100%;border-collapse:collapse;background:var(--white);border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(26,58,92,.06);}
+.comp-table th{font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:16px 18px;text-align:center;background:var(--off);color:var(--navy);}
+.comp-table th:first-child{text-align:left;color:var(--muted);}
+.comp-table th.hl{color:var(--amber-dk);}
+.comp-table td{padding:13px 18px;font-size:13px;border-top:1px solid var(--border);text-align:center;font-weight:600;}
+.comp-table td:first-child{text-align:left;color:var(--navy);}
+.comp-col{background:rgba(245,166,35,.04);}
+.chk{color:var(--green);font-size:16px;}
+.crs{color:var(--border);font-size:16px;}
+
+/* PLANO */
+.mode-section{background:var(--off);padding:80px 56px;}
+.mode-wrap{max-width:800px;margin:0 auto;text-align:center;}
+.mode-cards{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:36px;}
+.mode-card{background:var(--white);border:2px solid var(--border);border-radius:20px;padding:32px 28px;width:270px;cursor:pointer;transition:all .25s;text-align:left;position:relative;overflow:hidden;}
+.mode-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--amber-dk),var(--amber-lt));opacity:0;transition:opacity .25s;}
+.mode-card:hover{border-color:var(--amber);transform:translateY(-3px);box-shadow:0 10px 28px rgba(245,166,35,.15);}
+.mode-card:hover::before,.mode-card.selected::before{opacity:1;}
+.mode-card.selected{border-color:var(--amber);background:rgba(245,166,35,.04);}
+.mode-icon{font-size:28px;margin-bottom:12px;}
+.mode-title{font-family:'Nunito',sans-serif;font-size:17px;font-weight:800;margin-bottom:7px;color:var(--navy);}
+.mode-desc{font-size:13px;color:var(--muted);line-height:1.65;font-weight:500;}
+.mode-tag{display:inline-block;margin-top:12px;background:var(--off);border:1px solid var(--border);color:var(--navy);font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;border-radius:100px;font-weight:700;}
+.btn-start{margin-top:32px;background:var(--navy);color:var(--white);font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;padding:15px 44px;border-radius:100px;border:none;cursor:pointer;transition:all .25s;box-shadow:0 8px 24px rgba(26,58,92,.2);}
+.btn-start:hover{background:var(--navy-lt);transform:translateY(-2px);}
+.btn-start:disabled{opacity:.3;cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* QA */
+.ia-q{display:none;max-width:620px;margin:36px auto 0;text-align:left;}
+.ia-q.visible{display:block;}
+.q-prog{display:flex;gap:6px;margin-bottom:22px;}
+.q-pdot{height:4px;border-radius:100px;background:var(--border);flex:1;transition:background .3s;}
+.q-pdot.done{background:var(--amber);}
+.q-lbl{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--amber);font-weight:700;margin-bottom:8px;}
+.q-title{font-family:'Nunito',sans-serif;font-size:21px;font-weight:900;margin-bottom:18px;line-height:1.25;color:var(--navy);}
+.q-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;}
+.q-opt{background:var(--white);border:2px solid var(--border);border-radius:12px;padding:13px 18px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:600;color:var(--navy);}
+.q-opt:hover{border-color:var(--amber);}
+.q-opt.selected{background:rgba(245,166,35,.07);border-color:var(--amber);}
+.q-nav{display:flex;gap:10px;}
+.btn-qnext{background:var(--navy);color:var(--white);font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;padding:13px 30px;border-radius:100px;border:none;cursor:pointer;transition:all .2s;}
+.btn-qnext:disabled{opacity:.35;cursor:not-allowed;}
+.btn-qprev{background:none;border:2px solid var(--border);color:var(--muted);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:13px 22px;border-radius:100px;cursor:pointer;transition:all .2s;}
+.btn-qprev:hover{border-color:var(--navy);color:var(--navy);}
+
+/* PLANO SECTION */
+.plano-section{display:none;padding-top:0;}
+.plano-section.visible{display:block;}
+.cat-tabs{display:flex;gap:8px;flex-wrap:wrap;max-width:1000px;margin:0 auto 22px;}
+.cat-tab{display:flex;align-items:center;gap:7px;padding:9px 18px;border-radius:100px;border:2px solid var(--border);background:var(--white);cursor:pointer;font-size:13px;color:var(--muted);transition:all .2s;white-space:nowrap;font-weight:700;}
+.cat-tab:hover{border-color:var(--navy);color:var(--navy);}
+.cat-tab.active{background:var(--navy);border-color:var(--navy);color:var(--white);}
+.cat-count{background:var(--amber);color:var(--white);font-family:'Nunito',sans-serif;font-size:10px;font-weight:900;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
+.cat-tab.has-sel .cat-count{opacity:1;}
+.plan-layout{display:grid;grid-template-columns:1fr 320px;gap:24px;max-width:1000px;margin:0 auto;align-items:start;}
+.plan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+.pmod{background:var(--white);border:2px solid var(--border);border-radius:16px;padding:20px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;user-select:none;}
+.pmod::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber-dk),var(--amber-lt));opacity:0;transition:opacity .22s;}
+.pmod:hover{border-color:var(--amber);transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,166,35,.15);}
+.pmod.sel{background:rgba(245,166,35,.05);border-color:var(--amber);}
+.pmod.sel::before{opacity:1;}
+.pmod-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.pmod-icon{width:36px;height:36px;border-radius:10px;background:var(--off);display:flex;align-items:center;justify-content:center;font-size:18px;}
+.pmod.sel .pmod-icon{background:rgba(245,166,35,.15);}
+.pmod-check{width:20px;height:20px;border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;}
+.pmod.sel .pmod-check{background:var(--amber);border-color:var(--amber);}
+.pmod-name{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;margin-bottom:4px;line-height:1.2;color:var(--navy);}
+.pmod-desc{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px;font-weight:500;}
+.pmod-foot{display:flex;align-items:center;justify-content:space-between;}
+.pmod-price{font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;color:var(--navy);}
+.pmod-price span{font-size:10px;color:var(--muted);font-weight:600;}
+.pmod-soon{background:var(--off);border:2px dashed var(--border);border-radius:16px;padding:20px;position:relative;overflow:hidden;opacity:.6;}
+.pmod-soon-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:120px;gap:10px;}
+.pmod-soon-icon{font-size:26px;opacity:.3;}
+.pmod-soon-label{font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.pmod-soon-badge{position:absolute;top:10px;right:10px;background:rgba(26,58,92,.08);color:var(--navy);font-size:8px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:100px;}
+
+/* CART */
+.cart{background:var(--white);border:2px solid var(--border);border-radius:20px;padding:22px;position:sticky;top:88px;box-shadow:0 4px 24px rgba(26,58,92,.08);}
+.cart-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.cart-title{font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;color:var(--navy);}
+.cart-count{width:26px;height:26px;background:var(--navy);color:var(--white);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;}
+.prog-w{margin-bottom:12px;display:none;}
+.prog-w.show{display:block;}
+.prog-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:5px;font-weight:600;}
+.prog-meta strong{color:var(--amber-dk);}
+.prog-track{height:6px;background:var(--off);border-radius:100px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--amber-dk),var(--amber-lt));border-radius:100px;transition:width .4s ease;}
+.cart-items{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;min-height:40px;}
+.cart-empty{text-align:center;padding:20px 0;color:var(--muted);font-size:13px;display:flex;flex-direction:column;align-items:center;gap:7px;font-weight:600;}
+.cart-empty-icon{font-size:24px;opacity:.35;}
+.ci{display:flex;align-items:center;gap:7px;animation:sIn .2s ease;}
+@keyframes sIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}
+.ci-name{font-size:12px;color:var(--navy);flex:1;line-height:1.3;font-weight:700;}
+.ci-price{font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;color:var(--amber-dk);flex-shrink:0;}
+.ci-rm{width:16px;height:16px;border:none;background:none;color:var(--border);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;border-radius:50%;padding:0;transition:all .2s;flex-shrink:0;}
+.ci-rm:hover{color:#ef4444;background:rgba(239,68,68,.1);}
+.disc-badge{background:rgba(245,166,35,.08);border:1.5px solid rgba(245,166,35,.25);border-radius:10px;padding:9px 12px;margin-bottom:10px;display:none;}
+.disc-badge.show{display:block;}
+.disc-badge-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--amber-dk);font-weight:800;margin-bottom:2px;}
+.disc-badge-val{font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;color:var(--amber-dk);}
+.cart-tots{border-top:1px solid var(--border);padding-top:10px;margin-bottom:12px;display:none;flex-direction:column;gap:6px;}
+.cart-tots.show{display:flex;}
+.tot-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;}
+.tot-row.sub{color:var(--muted);font-weight:600;}
+.tot-row.disc{color:#16a34a;font-weight:700;}
+.tot-row.final{padding-top:8px;border-top:1px solid var(--border);margin-top:2px;}
+.tot-lbl{font-family:'Nunito',sans-serif;font-size:11px;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:var(--navy);}
+.tot-val{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:var(--navy);line-height:1;}
+.btn-assinar{width:100%;background:var(--amber);color:var(--white);border:none;border-radius:12px;padding:14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;transition:all .25s;margin-bottom:8px;box-shadow:0 4px 16px rgba(245,166,35,.3);}
+.btn-assinar:hover{background:var(--amber-dk);transform:translateY(-2px);}
+.btn-assinar:disabled{opacity:.3;cursor:not-allowed;transform:none;box-shadow:none;}
+.cart-note{text-align:center;font-size:10px;color:var(--muted);line-height:1.8;font-weight:600;}
+
+/* DEP */
+.dep-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;max-width:960px;margin:48px auto 0;}
+.dep-card{background:var(--off);border:1px solid var(--border);border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:12px;}
+.dep-stars{color:var(--amber);font-size:15px;letter-spacing:2px;}
+.dep-text{font-size:15px;color:var(--navy);line-height:1.7;flex:1;font-weight:500;}
+.dep-author{display:flex;align-items:center;gap:10px;}
+.dep-av{width:40px;height:40px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;color:var(--white);}
+.dep-name{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--navy);}
+.dep-role{font-size:12px;color:var(--muted);}
+
+/* FAQ */
+.faq-list{max-width:680px;margin:48px auto 0;display:flex;flex-direction:column;gap:9px;}
+.faq-item{background:var(--white);border:2px solid var(--border);border-radius:14px;overflow:hidden;}
+.faq-q{width:100%;background:none;border:none;padding:15px 20px;text-align:left;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--navy);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;transition:background .2s;}
+.faq-q:hover{background:var(--off);}
+.faq-arrow{color:var(--amber);font-size:14px;transition:transform .3s;flex-shrink:0;}
+.faq-item.open .faq-arrow{transform:rotate(180deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;padding:0 20px;font-size:14px;color:var(--muted);line-height:1.75;font-weight:500;}
+.faq-item.open .faq-a{max-height:200px;padding:0 20px 16px;}
+
+/* CTA FINAL */
+.cta-final{background:var(--navy);text-align:center;padding:100px 56px;position:relative;overflow:hidden;}
+.cta-final::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:500px;height:400px;background:radial-gradient(ellipse,rgba(245,166,35,.14),transparent 70%);pointer-events:none;}
+.cta-final h2{font-family:'Nunito',sans-serif;font-size:clamp(26px,4vw,48px);font-weight:900;max-width:580px;margin:0 auto 12px;line-height:1.15;color:var(--white);position:relative;z-index:1;}
+.cta-final h2 em{font-style:normal;color:var(--amber);}
+.cta-final p{font-size:15px;color:rgba(255,255,255,.45);margin-bottom:32px;position:relative;z-index:1;font-weight:500;}
+.btn-white{background:var(--white);color:var(--navy);font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;padding:17px 48px;border-radius:100px;text-decoration:none;transition:all .25s;display:inline-block;box-shadow:0 8px 24px rgba(0,0,0,.15);position:relative;z-index:1;border:none;cursor:pointer;}
+.btn-white:hover{background:var(--off);transform:translateY(-2px);}
+
+/* FOOTER */
+footer{background:var(--off);border-top:1px solid var(--border);padding:28px 56px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.footer-logo{display:flex;align-items:center;gap:10px;}
+.footer-logo-icon{width:30px;height:30px;background:var(--white);border-radius:9px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);}
+.footer-name{font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;color:var(--navy);}
+footer p{font-size:12px;color:var(--muted);font-weight:500;}
+
+@media(max-width:768px){
+  nav{padding:13px 20px;}
+  .nav-links{display:none;}
+  section{padding:64px 22px;}
+  .hero{padding:110px 22px 60px;}
+  .plan-layout{grid-template-columns:1fr;}
+  .cart{position:static;}
+  footer{padding:22px;flex-direction:column;text-align:center;}
+  .cta-final,.mode-section{padding:64px 22px;}
+  .founder-layout{grid-template-columns:1fr;}
+  .founder-av{flex-direction:row;}
+  .price-box{padding:28px 24px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 36 46" fill="none" width="20" height="26">
+        <rect x="10" y="38" width="16" height="6" rx="3" fill="#1a3a5c" opacity=".2"/>
+        <rect x="15" y="20" width="6" height="18" rx="3" fill="#1a3a5c" opacity=".5"/>
+        <rect x="8" y="13" width="20" height="9" rx="4" fill="#1a3a5c" opacity=".8"/>
+        <path d="M18 3 Q28 13 8 13 Q18 13 18 3Z" fill="#1a3a5c"/>
+        <path d="M18 3 Q8 13 28 13 Q18 13 18 3Z" fill="#1a3a5c" opacity=".7"/>
+        <circle cx="18" cy="8" r="4" fill="#f5a623"/>
+        <circle cx="18" cy="8" r="7" fill="#f5a623" opacity=".2"/>
+        <path d="M18 8 Q10 4 3 6" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+        <path d="M18 8 Q26 4 33 6" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+      </svg>
+    </div>
+    <div>
+      <div class="nav-logo-name">Farol IA</div>
+      <div class="nav-logo-sub">Automações inteligentes</div>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="#como">Como funciona</a>
+    <a href="#quem-somos">Quem somos</a>
+    <a href="#plano">Monte seu Plano</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <a href="farol-login.html" style="font-size:12px;color:#7a9ab8;text-decoration:none;font-weight:500;margin-right:8px;">Já sou cliente →</a><button class="nav-cta" onclick="openCheckout()">Ativar agora</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-blob1"></div>
+  <div class="hero-blob2"></div>
+
+  <div class="hero-badge"><div class="badge-dot"></div>A mesma IA das grandes · Sem a complexidade · Sem o preço absurdo</div>
+
+  <div class="hero-icon">
+    <svg width="88" height="106" viewBox="0 0 36 46" fill="none">
+      <rect x="10" y="38" width="16" height="6" rx="3" fill="#1a3a5c" opacity=".15"/>
+      <rect x="15" y="20" width="6" height="18" rx="3" fill="#1a3a5c" opacity=".4"/>
+      <rect x="8" y="13" width="20" height="9" rx="4" fill="#1a3a5c" opacity=".7"/>
+      <path d="M18 3 Q28 13 8 13 Q18 13 18 3Z" fill="#1a3a5c"/>
+      <path d="M18 3 Q8 13 28 13 Q18 13 18 3Z" fill="#1a3a5c" opacity=".7"/>
+      <circle cx="18" cy="8" r="4.5" fill="#f5a623"/>
+      <circle cx="18" cy="8" r="8" fill="#f5a623" opacity=".18"/>
+      <circle cx="18" cy="8" r="12" fill="#f5a623" opacity=".07"/>
+      <path d="M18 8 Q9 3 2 5" stroke="#f5a623" stroke-width="1.8" stroke-linecap="round" opacity=".6"/>
+      <path d="M18 8 Q27 3 34 5" stroke="#f5a623" stroke-width="1.8" stroke-linecap="round" opacity=".6"/>
+    </svg>
+  </div>
+
+  <h1>Seu negócio com a tecnologia<br>que ele <em>sempre mereceu ter.</em></h1>
+  <p class="hero-sub">As grandes empresas têm IA respondendo, qualificando e agendando 24 horas por dia. Agora você também. Sem precisar entender de tecnologia. Sem complicação. Pronto em menos de 24 horas.</p>
+
+  <!-- PRICE BOX -->
+  <div class="price-box" id="comecar">
+    <div class="price-fair-label">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#16a34a" stroke-width="1.8"><polyline points="2,8 6,12 14,4"/></svg>
+      ✓ Atendimento automático · WhatsApp 24h
+    </div>
+    <div class="price-main">
+      <div class="price-val"><sup>R$</sup>147</div>
+    </div>
+    <p class="price-period">por mês · sem contrato · cancele quando quiser</p>
+    <button class="btn-cta" onclick="openCheckout()">Ativar agora →</button>
+    <p class="price-note">Sem taxa de setup · Ativo em até 24h · Seu número continua o mesmo</p>
+  </div>
+
+  <!-- PROOF -->
+  <div class="proof-strip">
+    <div class="proof-item">⚡ Ativo em até 24 horas</div>
+    <div class="proof-item">🔒 Sem contrato de fidelidade</div>
+    <div class="proof-item">📱 Seu número, sem mudanças</div>
+    <div class="proof-item">🤖 Melhores IAs do mercado</div>
+  </div>
+</section>
+
+<!-- DOR -->
+<section style="background:var(--off);">
+  <div style="max-width:960px;margin:0 auto;text-align:center;">
+    <span class="section-label">A realidade de quem empreende no Brasil</span>
+    <h2 class="section-title">Tecnologia de ponta sempre<br>pareceu coisa de <em>empresa grande.</em></h2>
+    <p class="section-sub center">Atendimento automatizado, dados em tempo real, IA treinada no seu negócio — você via isso e pensava: "isso não é para mim". Era caro. Era complicado. Era para outro tipo de empresa. Acabou.</p>
+  </div>
+  <div class="dor-grid">
+    <div class="dor-card"><div class="dor-icon">📵</div><h3>Tecnologia que parecia inacessível</h3><p>IA, automação, atendimento inteligente — você ouvia falar, mas era caro, complicado, feito para empresa grande. Não para a sua realidade.</p></div>
+    <div class="dor-card"><div class="dor-icon">🌙</div><h3>Cliente sem resposta de madrugada</h3><p>Mensagem às 22h. Você vê de manhã. Ele já fechou com quem respondeu primeiro. Isso acontece toda noite — e você nem sabe quantas vezes.</p></div>
+    <div class="dor-card"><div class="dor-icon">🔁</div><h3>As mesmas perguntas todo dia</h3><p>"Qual o horário?" "Tem entrega?" "Aceita cartão?" — dezenas de vezes por dia, no celular, enquanto deveria estar cuidando do negócio.</p></div>
+    <div class="dor-card"><div class="dor-icon">😤</div><h3>Sem visibilidade do que acontece</h3><p>Quantos clientes você perdeu essa semana? Quais perguntas mais aparecem? Quem são seus melhores leads? Sem ferramenta, você não sabe.</p></div>
+  </div>
+</section>
+
+<!-- O QUE INCLUI -->
+<section id="como">
+  <div style="max-width:960px;margin:0 auto;text-align:center;">
+    <span class="section-label">O que muda no seu negócio</span>
+    <h2 class="section-title">Presença, atendimento e dados<br><em>de empresa de elite.</em> No seu controle.</h2>
+  </div>
+  <div class="inc-grid">
+    <div class="inc-card"><div class="inc-icon">🧠</div><div class="inc-body"><h3>IA treinada com a linguagem do seu negócio</h3><p>Você responde um questionário simples sobre seu negócio — horários, serviços, preços, tom de voz. A IA aprende tudo e passa a responder como se fosse você. Sem código, sem técnico.</p></div></div>
+    <div class="inc-card"><div class="inc-icon">⏰</div><div class="inc-body"><h3>Atendimento automático 24 horas</h3><p>Enquanto você dorme, a IA trabalha. Quando o horário de atendimento fecha, ela avisa o cliente e retoma automaticamente quando abre. Nenhuma mensagem perdida.</p></div></div>
+    <div class="inc-card"><div class="inc-icon">🎯</div><div class="inc-body"><h3>Identifica e separa os leads quentes</h3><p>A IA reconhece quem está pronto para comprar, coleta os dados e te avisa. Você entra só na hora de fechar — o trabalho braçal ela resolve.</p></div></div>
+    <div class="inc-card"><div class="inc-icon">📊</div><div class="inc-body"><h3>Painel completo nas suas mãos</h3><p>Veja cada conversa em tempo real, acompanhe métricas do seu atendimento, saiba quantos leads chegaram e o que aconteceu com cada um. Dados de empresa grande, simples de entender.</p></div></div>
+    <div class="inc-card"><div class="inc-icon">🎛️</div><div class="inc-body"><h3>Controle total sem complicação</h3><p>Liga e desliga a IA quando quiser. Ajusta uma resposta específica sem refazer nada. Assume o atendimento manualmente quando precisar. Você manda — a IA obedece.</p></div></div>
+    <div class="inc-card"><div class="inc-icon">📱</div><div class="inc-body"><h3>Seu número atual, sem mudar nada</h3><p>Conectamos no seu número existente pelo QR Code. Seus clientes não percebem nenhuma mudança. Funciona no celular que você já usa.</p></div></div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section style="background:var(--off);">
+  <div style="max-width:680px;margin:0 auto;text-align:center;">
+    <span class="section-label">Como começa — do zero ao funcionando</span>
+    <h2 class="section-title">Sem conhecimento técnico.<br>Sem complicação. <em>Pronto hoje.</em></h2>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-content"><h3>Você ativa e acessa o painel</h3><p>Pagamento seguro, sem contrato. Em segundos você já está dentro do painel — limpo, direto, sem nada difícil de entender.</p><span class="step-tag">⚡ 2 minutos</span></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><h3>Responde o questionário do seu negócio</h3><p>Horários, serviços, preços, tom de voz — perguntas simples, como uma conversa. Você faz uma vez, a IA aprende e nunca esquece.</p><span class="step-tag">📝 15 minutos</span></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><h3>Conecta seu WhatsApp com um QR Code</h3><p>Abre o celular, escaneia o código. Pronto. Seu número continua o mesmo, seus clientes não percebem nada — e a IA já começa a receber mensagens.</p><span class="step-tag">📱 5 minutos</span></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-content"><h3>A IA atende, você acompanha e controla</h3><p>Cada conversa aparece no seu painel. Você vê tudo em tempo real, ajusta o que quiser, e assume o atendimento quando precisar falar diretamente. O controle é sempre seu.</p><span class="step-tag">✅ Ativo hoje</span></div></div>
+  </div>
+</section>
+
+<!-- QUEM SOMOS -->
+<section id="quem-somos">
+  <div style="max-width:960px;margin:0 auto;text-align:center;margin-bottom:0;">
+    <span class="section-label">Quem está por trás disso</span>
+    <h2 class="section-title">Feito por quem conhece<br><em>de perto</em> a sua realidade</h2>
+  </div>
+  <div class="founder-wrap">
+    <div class="founder-layout">
+      <div class="founder-av">
+        <div class="founder-photo">
+          <svg viewBox="0 0 36 46" fill="none" width="52" height="62">
+            <rect x="15" y="20" width="6" height="18" rx="3" fill="#1a3a5c" opacity=".4"/>
+            <rect x="8" y="13" width="20" height="9" rx="4" fill="#1a3a5c" opacity=".7"/>
+            <path d="M18 3 Q28 13 8 13 Q18 13 18 3Z" fill="#1a3a5c"/>
+            <path d="M18 3 Q8 13 28 13 Q18 13 18 3Z" fill="#1a3a5c" opacity=".7"/>
+            <circle cx="18" cy="8" r="4" fill="#f5a623"/>
+          </svg>
+        </div>
+        <div class="founder-name">Fernando Frare</div>
+        <div class="founder-role">Fundador · Farol IA</div>
+      </div>
+      <div class="founder-text">
+        <p><strong>Cresci vendo minha família construir no braço.</strong></p>
+        <p>Interior dos anos 90. Indústria, suor, tijolo por tijolo. Sem tecnologia, sem atalho — só trabalho e vontade de prosperar.</p>
+        <p>Comecei a trabalhar em fábrica aos 12 anos. Aprendi desde cedo que o empresário brasileiro de verdade não tem medo de trabalhar. O que ele não tem é tempo, ferramenta e acesso.</p>
+        <p>Passei pelo banco. Virei Trader. Empreendi. Hoje sou graduando em Gestão de Inteligência Artificial para Empresas. E em cada etapa percebi a mesma coisa: a tecnologia que as grandes empresas usam para crescer estava fora do alcance de quem mais precisa dela.</p>
+        <p>As pequenas e médias empresas geram mais de 70% dos empregos formais do Brasil. São o motor real da economia — e historicamente os menos assistidos quando o assunto é inovação. Eu conheço esse empresário. Cresci ao lado dele.</p>
+        <p><strong>A Farol IA nasceu disso.</strong> De um compromisso pessoal: colocar nas mãos de quem trabalha de verdade a mesma tecnologia que as grandes já usam há anos — de forma simples, acessível e com resultado real em menos de 24 horas.</p>
+        <p><strong>Seja bem-vindo. Vamos construir juntos.</strong></p>
+        <span class="founder-sign">— Fernando Frare, Fundador da Farol IA</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARATIVO -->
+<section style="background:var(--off);">
+  <div style="max-width:760px;margin:0 auto;text-align:center;">
+    <span class="section-label">Por que a Farol IA</span>
+    <h2 class="section-title">Compare e veja o que<br><em>faz sentido para você</em></h2>
+  </div>
+  <div class="comp-wrap">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Funcionário</th>
+          <th>Apps genéricos</th>
+          <th class="hl comp-col">Farol IA</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Atendimento 24h</td><td><span class="crs">✗</span></td><td><span class="chk">✓</span></td><td class="comp-col"><span class="chk">✓</span></td></tr>
+        <tr><td>IA treinada no seu negócio</td><td><span class="crs">✗</span></td><td><span class="crs">✗</span></td><td class="comp-col"><span class="chk">✓</span></td></tr>
+        <tr><td>Setup incluído</td><td><span class="crs">✗</span></td><td><span class="crs">✗</span></td><td class="comp-col"><span class="chk">✓</span></td></tr>
+        <tr><td>Sem conhecimento técnico</td><td><span class="chk">✓</span></td><td><span class="crs">✗</span></td><td class="comp-col"><span class="chk">✓</span></td></tr>
+        <tr><td>Cancele quando quiser</td><td><span class="crs">✗</span></td><td><span class="chk">✓</span></td><td class="comp-col"><span class="chk">✓</span></td></tr>
+        <tr><td>Custo mensal</td>
+          <td style="color:var(--muted);">R$2k–4k</td>
+          <td style="color:var(--muted);">R$197–500</td>
+          <td class="comp-col" style="font-family:'Nunito',sans-serif;font-weight:900;color:var(--amber-dk);">R$147/mês</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- PLANO -->
+<section class="mode-section" id="plano">
+  <div class="mode-wrap">
+    <span class="section-label" style="display:block;text-align:center;">Monte seu Plano</span>
+    <h2 class="section-title" style="text-align:center;">Comece com o WhatsApp.<br><em>Cresça no seu ritmo.</em></h2>
+    <p class="section-sub center">Ative o atendimento automático agora. Novas automações chegam em breve — você adiciona conforme seu negócio cresce.</p>
+    <div class="mode-cards">
+      <div class="mode-card" id="modeDelivery" onclick="selectMode('delivery')">
+        <div class="mode-icon">⚡</div>
+        <div class="mode-title">Delivery</div>
+        <div class="mode-desc">Sei o que quero. Vou montar meu plano direto.</div>
+        <div class="mode-tag">Autônomo · Rápido</div>
+      </div>
+      <div class="mode-card" id="modeIA" onclick="selectMode('ia')">
+        <div class="mode-icon">🤖</div>
+        <div class="mode-title">IA Recomenda</div>
+        <div class="mode-desc">Respondo perguntas e a IA monta o plano ideal pro meu negócio.</div>
+        <div class="mode-tag">Guiado · Personalizado</div>
+      </div>
+    </div>
+    <button class="btn-start" id="btnStart" disabled onclick="startJourney()">Continuar →</button>
+  </div>
+
+  <div class="ia-q" id="iaQ">
+    <div class="q-prog" id="qProg"></div>
+    <p class="q-lbl" id="qLbl">Pergunta 1 de 4</p>
+    <h2 class="q-title" id="qTitle"></h2>
+    <div class="q-opts" id="qOpts"></div>
+    <div class="q-nav">
+      <button class="btn-qprev" id="btnQPrev" onclick="qPrev()" style="display:none;">← Voltar</button>
+      <button class="btn-qnext" id="btnQNext" onclick="qNext()" disabled>Próxima →</button>
+    </div>
+  </div>
+
+  <div class="plano-section" id="planoSection">
+    <div style="max-width:1000px;margin:0 auto;">
+      <div class="cat-tabs" id="catTabs"></div>
+      <div style="font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;max-width:1000px;font-weight:700;" id="catLabel">💬 Atendimento</div>
+      <div class="plan-layout">
+        <div class="plan-grid" id="planGrid"></div>
+        <div class="cart">
+          <div class="cart-hdr">
+            <span class="cart-title">Meu Plano</span>
+            <div class="cart-count" id="cartCount">0</div>
+          </div>
+          <div class="prog-w" id="progW">
+            <div class="prog-meta"><span id="progLbl">Adicione módulos para ganhar desconto</span><strong id="progPct">0%</strong></div>
+            <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+          </div>
+          <div class="cart-items" id="cartItems">
+            <div class="cart-empty" id="cartEmpty">
+              <span class="cart-empty-icon">🛍</span>
+              <span>Selecione automações ao lado!</span>
+            </div>
+          </div>
+          <div class="disc-badge" id="discBadge">
+            <div class="disc-badge-lbl">Desconto aplicado</div>
+            <div class="disc-badge-val" id="discBadgeVal"></div>
+          </div>
+          <div class="cart-tots" id="cartTots">
+            <div class="tot-row sub"><span>Subtotal</span><span id="totSub">R$ 0</span></div>
+            <div class="tot-row disc" id="discRow" style="display:none;"><span id="discLbl"></span><span id="discAmt"></span></div>
+            <div class="tot-row final"><span class="tot-lbl">Total / mês</span><span class="tot-val" id="totFinal">R$ 0</span></div>
+          </div>
+          <button class="btn-assinar" id="btnAssinar" disabled onclick="openCheckout()">Ativar agora →</button>
+          <p class="cart-note">Sem fidelidade · Cancele quando quiser<br>Ativo em até 24 horas</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section style="background:var(--white);">
+  <div style="max-width:960px;margin:0 auto;text-align:center;">
+    <span class="section-label">Quem já usa</span>
+    <h2 class="section-title">Negócios que pararam de perder<br>cliente <em>toda noite</em></h2>
+  </div>
+  <div class="dep-grid">
+    <div class="dep-card"><div class="dep-stars">★★★★★</div><p class="dep-text">"Antes eu perdia clientes toda noite. Hoje o WhatsApp responde sozinho e de manhã já tenho agendamentos feitos enquanto eu dormia."</p><div class="dep-author"><div class="dep-av">R</div><div><div class="dep-name">Ricardo M.</div><div class="dep-role">Clínica de Estética · SP</div></div></div></div>
+    <div class="dep-card"><div class="dep-stars">★★★★★</div><p class="dep-text">"O legal da Farol é que você começa pequeno e vai adicionando conforme precisa. Não paguei por coisa que não ia usar."</p><div class="dep-author"><div class="dep-av">A</div><div><div class="dep-name">Ana Paula S.</div><div class="dep-role">Pet Shop · MG</div></div></div></div>
+    <div class="dep-card"><div class="dep-stars">★★★★★</div><p class="dep-text">"Configurei em uma tarde. No mesmo dia estava funcionando. Minha funcionária que ficava só no WhatsApp foi realocada para outras tarefas."</p><div class="dep-author"><div class="dep-av">M</div><div><div class="dep-name">Marcos T.</div><div class="dep-role">Oficina Mecânica · RS</div></div></div></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section style="background:var(--off);" id="faq">
+  <div style="max-width:680px;margin:0 auto;text-align:center;">
+    <span class="section-label">Dúvidas</span>
+    <h2 class="section-title">Perguntas frequentes</h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Preciso entender de tecnologia para usar?<span class="faq-arrow">▾</span></button><div class="faq-a">Não. O processo inteiro foi desenhado para quem nunca mexeu com IA. Você responde um questionário simples sobre seu negócio, escaneia um QR Code com o celular e está pronto. Se você sabe usar WhatsApp, você consegue usar a Farol IA.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Meu número do WhatsApp vai mudar?<span class="faq-arrow">▾</span></button><div class="faq-a">Não. Conectamos ao seu número atual pelo QR Code. Seus clientes continuam te encontrando normalmente — sem perceber nenhuma mudança.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Como eu acompanho o que a IA está fazendo?<span class="faq-arrow">▾</span></button><div class="faq-a">Tudo aparece no seu painel em tempo real. Você vê cada conversa, cada lead, cada métrica. Pode assumir o atendimento manualmente quando quiser, ajustar qualquer resposta da IA, ou simplesmente observar o sistema trabalhando por você.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">E se a IA não souber responder algo?<span class="faq-arrow">▾</span></button><div class="faq-a">Quando a IA não sabe responder, ela informa o cliente com educação e transfere o atendimento para você. Você recebe um alerta no painel e assume a conversa diretamente — sem o cliente perceber a transição.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Posso cancelar quando quiser?<span class="faq-arrow">▾</span></button><div class="faq-a">Sim. Sem contrato, sem multa, sem burocracia. Cancela pelo painel em menos de 2 minutos.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Em quanto tempo começa a funcionar?<span class="faq-arrow">▾</span></button><div class="faq-a">A maioria dos clientes ativa em menos de 1 hora. O prazo máximo é 24 horas após o questionário e a conexão do WhatsApp.</div></div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <h2>Seu negócio com a tecnologia<br>que ele <em>sempre mereceu ter.</em></h2>
+  <p>Atendimento 24h · Painel completo · Pronto em menos de 24 horas</p>
+  <button class="btn-white" onclick="openCheckout()">Ativar agora →</button>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <div class="footer-logo-icon">
+      <svg viewBox="0 0 36 46" fill="none" width="16" height="20">
+        <rect x="15" y="20" width="6" height="18" rx="3" fill="#1a3a5c" opacity=".5"/>
+        <rect x="8" y="13" width="20" height="9" rx="4" fill="#1a3a5c" opacity=".8"/>
+        <path d="M18 3 Q28 13 8 13 Q18 13 18 3Z" fill="#1a3a5c"/>
+        <circle cx="18" cy="8" r="3.5" fill="#f5a623"/>
+      </svg>
+    </div>
+    <span class="footer-name">Farol IA</span>
+  </div>
+  <p>© 2025 Farol IA · Automações Inteligentes · farolia.store</p>
+  <p>Feito para quem trabalha de verdade.</p>
+</footer>
+
+<!-- CHECKOUT MODAL -->
+<div id="checkoutModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(26,58,92,.88);backdrop-filter:blur(12px);align-items:center;justify-content:center;">
+  <div style="background:#fff;border:2px solid var(--border);border-radius:20px;padding:36px 40px;width:100%;max-width:440px;position:relative;margin:20px;max-height:90vh;overflow-y:auto;">
+    <button onclick="closeCheckout()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1;">×</button>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+      <div style="width:32px;height:32px;background:var(--off);border-radius:9px;display:flex;align-items:center;justify-content:center;">
+        <svg viewBox="0 0 36 46" fill="none" width="16" height="20"><rect x="15" y="20" width="6" height="18" rx="3" fill="#1a3a5c" opacity=".5"/><rect x="8" y="13" width="20" height="9" rx="4" fill="#1a3a5c" opacity=".8"/><path d="M18 3 Q28 13 8 13 Q18 13 18 3Z" fill="#1a3a5c"/><circle cx="18" cy="8" r="3.5" fill="#f5a623"/></svg>
+      </div>
+      <div>
+        <div style="font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;color:var(--navy);">Farol IA — Ativação</div>
+        <div style="font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;">Plano WhatsApp · R$147/mês</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:0;margin-bottom:22px;border-bottom:1px solid var(--border);">
+      <div id="s1tab" style="flex:1;padding:8px;text-align:center;font-size:11px;font-weight:700;color:var(--amber-dk);border-bottom:2px solid var(--amber);">1 · Validação</div>
+      <div id="s2tab" style="flex:1;padding:8px;text-align:center;font-size:11px;font-weight:600;color:var(--muted);border-bottom:2px solid var(--border);">2 · Dados</div>
+      <div id="s3tab" style="flex:1;padding:8px;text-align:center;font-size:11px;font-weight:600;color:var(--muted);border-bottom:2px solid var(--border);">3 · Pagamento</div>
+    </div>
+    <!-- Step 1 -->
+    <div id="cs1">
+      <h2 style="font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;color:var(--navy);margin-bottom:6px;">Validar elegibilidade</h2>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.6;">Informe seu CPF ou CNPJ para confirmar o cadastro.</p>
+      <label style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">CPF ou CNPJ</label>
+      <input id="docInput" type="text" placeholder="000.000.000-00" maxlength="18" style="width:100%;background:var(--off);border:2px solid var(--border);border-radius:8px;padding:11px 14px;font-size:13px;color:var(--navy);outline:none;font-family:inherit;margin-bottom:6px;" oninput="fmtDoc(this)"/>
+      <div id="docErr" style="font-size:11px;color:#ef4444;margin-bottom:8px;display:none;"></div>
+      <div id="promoRes" style="display:none;border-radius:8px;padding:11px 13px;margin-bottom:14px;"></div>
+      <button id="checkBtn" onclick="checkDoc()" style="width:100%;background:var(--amber);color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;padding:13px;border-radius:10px;border:none;cursor:pointer;margin-bottom:10px;">Verificar →</button>
+      <p style="font-size:10px;color:var(--muted);text-align:center;">Seus dados são protegidos e usados apenas para cadastro.</p>
+    </div>
+    <!-- Step 2 -->
+    <div id="cs2" style="display:none;">
+      <h2 style="font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;color:var(--navy);margin-bottom:18px;">Seus dados</h2>
+      <div style="display:flex;flex-direction:column;gap:11px;margin-bottom:16px;">
+        <div><label style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:4px;">Nome completo</label><input id="nameIn" type="text" style="width:100%;background:var(--off);border:2px solid var(--border);border-radius:8px;padding:10px 13px;font-size:13px;color:var(--navy);outline:none;font-family:inherit;"/></div>
+        <div><label style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:4px;">E-mail</label><input id="emailIn" type="email" style="width:100%;background:var(--off);border:2px solid var(--border);border-radius:8px;padding:10px 13px;font-size:13px;color:var(--navy);outline:none;font-family:inherit;"/></div>
+        <div><label style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:4px;">WhatsApp do negócio</label><input id="phoneIn" type="tel" style="width:100%;background:var(--off);border:2px solid var(--border);border-radius:8px;padding:10px 13px;font-size:13px;color:var(--navy);outline:none;font-family:inherit;" oninput="fmtPhone(this)"/></div>
+        <div><label style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:4px;">Senha de acesso</label><input id="passIn" type="password" placeholder="Mínimo 8 caracteres" style="width:100%;background:var(--off);border:2px solid var(--border);border-radius:8px;padding:10px 13px;font-size:13px;color:var(--navy);outline:none;font-family:inherit;"/></div>
+      </div>
+      <div id="s2err" style="font-size:11px;color:#ef4444;margin-bottom:8px;display:none;"></div>
+      <button onclick="goS3()" style="width:100%;background:var(--amber);color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;padding:13px;border-radius:10px;border:none;cursor:pointer;margin-bottom:8px;">Continuar →</button>
+      <button onclick="goS1()" style="width:100%;background:none;border:2px solid var(--border);color:var(--muted);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;padding:10px;border-radius:10px;cursor:pointer;">← Voltar</button>
+    </div>
+    <!-- Step 3 -->
+    <div id="cs3" style="display:none;">
+      <h2 style="font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;color:var(--navy);margin-bottom:14px;">Pagamento</h2>
+      <div id="orderSum" style="background:var(--off);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px;"></div>
+      <div style="display:flex;flex-direction:column;gap:11px;margin-bottom:14px;">
+        <div><label style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:4px;">Número do cartão</label><input type="text" placeholder="0000 0000 0000 0000" maxlength="19" style="width:100%;background:var(--off);border:2px solid var(--border);border-radius:8px;padding:10px 13px;font-size:13px;color:var(--navy);outline:none;font-family:inherit;" oninput="fmtCard(this)"/></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div><label style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:4px;">Validade</label><input type="text" placeholder="MM/AA" maxlength="5" style="width:100%;background:var(--off);border:2px solid var(--border);border-radius:8px;padding:10px 13px;font-size:13px;color:var(--navy);outline:none;font-family:inherit;" oninput="fmtExp(this)"/></div>
+          <div><label style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:4px;">CVV</label><input type="text" placeholder="000" maxlength="4" style="width:100%;background:var(--off);border:2px solid var(--border);border-radius:8px;padding:10px 13px;font-size:13px;color:var(--navy);outline:none;font-family:inherit;"/></div>
+        </div>
+        <div><label style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:4px;">Nome no cartão</label><input type="text" placeholder="NOME COMO NO CARTÃO" style="width:100%;background:var(--off);border:2px solid var(--border);border-radius:8px;padding:10px 13px;font-size:13px;color:var(--navy);outline:none;font-family:inherit;" oninput="this.value=this.value.toUpperCase()"/></div>
+      </div>
+      <button id="finalBtn" onclick="finalize()" style="width:100%;background:linear-gradient(135deg,var(--amber-dk),var(--amber));color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;padding:15px;border-radius:10px;border:none;cursor:pointer;margin-bottom:10px;box-shadow:0 6px 20px rgba(245,166,35,.3);">Ativar por R$147/mês →</button>
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:10px;color:var(--muted);font-weight:600;">🔒 Pagamento seguro · Cancele quando quiser</div>
+      <button onclick="goS2()" style="width:100%;background:none;border:none;color:var(--muted);font-size:11px;font-weight:600;padding:10px;cursor:pointer;margin-top:4px;">← Voltar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const CATS=[
+  {id:"atendimento",label:"💬 Atendimento",modules:[
+    {id:"whatsapp",icon:"💬",name:"Atendimento WhatsApp",desc:"Atendente virtual 24h treinada com a linguagem do seu negócio.",price:147,active:true,tag:"Disponível"},
+    {id:"instagram",active:false},{id:"telegram",active:false},{id:"chatbot",active:false},
+    {id:"followup",active:false},{id:"nps",active:false},{id:"carrinho",active:false},
+  ]},
+  {id:"marketing",label:"📣 Marketing",modules:[
+    {id:"conteudo",active:false},{id:"email",active:false},{id:"newsletter",active:false},
+    {id:"seo",active:false},{id:"anuncios",active:false},{id:"avaliacoes",active:false},
+  ]},
+  {id:"gestao",label:"📋 Gestão",modules:[
+    {id:"agenda",active:false},{id:"crm",active:false},{id:"orcamentos",active:false},
+    {id:"cobrancas",active:false},{id:"site",active:false},
+  ]},
+  {id:"nichos",label:"🏥 Nichos",modules:[
+    {id:"anamnese",active:false},{id:"consulta",active:false},{id:"cardapio",active:false},
+    {id:"portfolio",active:false},{id:"locacao",active:false},
+  ]},
+];
+
+const QUESTIONS=[
+  {id:"seg",title:"Qual é o segmento do seu negócio?",opts:[
+    {icon:"🏥",label:"Saúde / Estética / Bem-estar",val:"saude"},
+    {icon:"🍽️",label:"Restaurante / Food",val:"restaurante"},
+    {icon:"🛍️",label:"Varejo / E-commerce",val:"varejo"},
+    {icon:"🔧",label:"Serviços em geral",val:"servicos"},
+    {icon:"🎨",label:"Criativo / Freelancer",val:"criativo"},
+    {icon:"🏠",label:"Imóveis / Locação",val:"imoveis"},
+  ]},
+  {id:"dor",title:"Qual é sua maior dor hoje?",opts:[
+    {icon:"💬",label:"Perco clientes por demora no atendimento",val:"at"},
+    {icon:"📉",label:"Quero mais visibilidade e presença online",val:"mkt"},
+    {icon:"📋",label:"Processos manuais tomando meu tempo",val:"gest"},
+    {icon:"💰",label:"Quero converter e vender mais",val:"vnd"},
+  ]},
+  {id:"porte",title:"Como você opera hoje?",opts:[
+    {icon:"🙋",label:"Trabalho sozinho / autônomo",val:"solo"},
+    {icon:"👥",label:"Tenho até 5 pessoas no time",val:"micro"},
+    {icon:"🏢",label:"Tenho uma equipe maior",val:"empresa"},
+  ]},
+  {id:"obj",title:"O que você quer resolver primeiro?",opts:[
+    {icon:"⚡",label:"Começar rápido com o essencial",val:"ess"},
+    {icon:"🚀",label:"Automatizar o máximo possível",val:"comp"},
+    {icon:"🎯",label:"Resolver um problema específico",val:"esp"},
+  ]},
+];
+
+let mode=null,currentCat="atendimento",qIdx=0,qAnswers={};
+const selected=new Set();
+
+// ── MODE ──────────────────────────────────────────────────────────────────────
+function selectMode(m){
+  mode=m;
+  document.getElementById("modeDelivery").classList.toggle("selected",m==="delivery");
+  document.getElementById("modeIA").classList.toggle("selected",m==="ia");
+  document.getElementById("btnStart").disabled=false;
+  document.getElementById("btnStart").textContent=m==="ia"?"Responder perguntas →":"Montar meu plano →";
+}
+function startJourney(){
+  document.getElementById("modeDelivery").style.display="none";
+  document.getElementById("modeIA").style.display="none";
+  document.getElementById("btnStart").style.display="none";
+  if(mode==="ia"){document.getElementById("iaQ").classList.add("visible");renderQ();}
+  else showPlano();
+}
+
+// ── Q ─────────────────────────────────────────────────────────────────────────
+function renderQ(){
+  const q=QUESTIONS[qIdx];
+  document.getElementById("qProg").innerHTML=QUESTIONS.map((_,i)=>`<div class="q-pdot ${i<=qIdx?"done":""}"></div>`).join("");
+  document.getElementById("qLbl").textContent=`Pergunta ${qIdx+1} de ${QUESTIONS.length}`;
+  document.getElementById("qTitle").textContent=q.title;
+  document.getElementById("qOpts").innerHTML=q.opts.map(o=>`
+    <div class="q-opt ${qAnswers[q.id]===o.val?"selected":""}" onclick="selOpt('${q.id}','${o.val}',this)">
+      <span style="font-size:18px">${o.icon}</span><span>${o.label}</span>
+    </div>`).join("");
+  document.getElementById("btnQPrev").style.display=qIdx>0?"inline-flex":"none";
+  document.getElementById("btnQNext").disabled=!qAnswers[q.id];
+  document.getElementById("btnQNext").textContent=qIdx===QUESTIONS.length-1?"Ver meu plano →":"Próxima →";
+}
+function selOpt(qid,val,el){
+  qAnswers[qid]=val;
+  document.querySelectorAll(".q-opt").forEach(e=>e.classList.remove("selected"));
+  el.classList.add("selected");
+  document.getElementById("btnQNext").disabled=false;
+}
+function qNext(){if(qIdx<QUESTIONS.length-1){qIdx++;renderQ();}else{document.getElementById("iaQ").classList.remove("visible");showPlano();}}
+function qPrev(){if(qIdx>0){qIdx--;renderQ();}}
+
+// ── PLANO ─────────────────────────────────────────────────────────────────────
+function showPlano(){
+  document.getElementById("planoSection").classList.add("visible");
+  renderCatTabs();renderGrid();renderCart();
+}
+function findMod(id){for(const c of CATS){const m=c.modules.find(x=>x.id===id);if(m)return m;}return null;}
+function renderCatTabs(){
+  document.getElementById("catTabs").innerHTML=CATS.map(c=>{
+    const count=c.modules.filter(m=>m.active&&selected.has(m.id)).length;
+    return `<div class="cat-tab ${c.id===currentCat?"active":""} ${count>0?"has-sel":""}" onclick="switchCat('${c.id}')">
+      ${c.label}<span class="cat-count">${count||""}</span></div>`;
+  }).join("");
+}
+function switchCat(id){
+  currentCat=id;renderCatTabs();renderGrid();
+  const c=CATS.find(x=>x.id===id);
+  document.getElementById("catLabel").textContent=c?c.label:"";
+}
+function renderGrid(){
+  const cat=CATS.find(c=>c.id===currentCat);if(!cat)return;
+  document.getElementById("planGrid").innerHTML=cat.modules.map(m=>{
+    if(m.active){
+      const sel=selected.has(m.id);
+      return `<div class="pmod ${sel?"sel":""}" onclick="toggleMod('${m.id}')">
+        <div class="pmod-head">
+          <div class="pmod-icon">${m.icon}</div>
+          <div class="pmod-check">${sel?'<svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg>':""}</div>
+        </div>
+        <div class="pmod-name">${m.name}</div>
+        <div class="pmod-desc">${m.desc}</div>
+        <div class="pmod-foot">
+          <div class="pmod-price">R$ ${m.price.toLocaleString("pt-BR")}<span>/mês</span></div>
+          <span style="font-size:9px;font-weight:800;padding:3px 8px;border-radius:4px;background:rgba(34,197,94,.12);color:#16a34a;">${m.tag}</span>
+        </div>
+      </div>`;
+    }
+    return `<div class="pmod-soon">
+      <div class="pmod-soon-badge">Em breve</div>
+      <div class="pmod-soon-inner">
+        <span class="pmod-soon-icon">⚙️</span>
+        <span class="pmod-soon-label">Em produção</span>
+      </div>
+    </div>`;
+  }).join("");
+}
+function toggleMod(id){
+  const m=findMod(id);if(!m||!m.active)return;
+  selected.has(id)?selected.delete(id):selected.add(id);
+  renderGrid();renderCatTabs();renderCart();
+}
+function getDisc(n){return n>=2?Math.min((n-1)*0.01,0.30):0;}
+function fmt(v){return "R$ "+v.toLocaleString("pt-BR");}
+function renderCart(){
+  const n=selected.size;
+  const disc=getDisc(n);
+  const items=[];CATS.forEach(c=>c.modules.forEach(m=>{if(m.active&&selected.has(m.id))items.push(m);}));
+  const sub=items.reduce((s,m)=>s+m.price,0);
+  const da=Math.round(sub*disc);
+  const tot=sub-da;
+  document.getElementById("cartCount").textContent=n;
+  const btn=document.getElementById("btnAssinar");
+  btn.disabled=n===0;btn.style.opacity=n===0?".3":"1";
+  document.getElementById("cartEmpty").style.display=n===0?"flex":"none";
+  document.getElementById("cartTots").classList.toggle("show",n>0);
+  document.getElementById("progW").classList.toggle("show",n>0);
+  document.getElementById("discBadge").classList.toggle("show",disc>0);
+  document.querySelectorAll(".ci").forEach(e=>e.remove());
+  items.forEach(m=>{
+    const div=document.createElement("div");div.className="ci";
+    div.innerHTML=`<span class="ci-name">${m.icon} ${m.name}</span><span class="ci-price">${fmt(m.price)}</span><button class="ci-rm" onclick="toggleMod('${m.id}');event.stopPropagation()">×</button>`;
+    document.getElementById("cartItems").appendChild(div);
+  });
+  document.getElementById("totSub").textContent=fmt(sub);
+  document.getElementById("totFinal").textContent=fmt(tot);
+  const dr=document.getElementById("discRow");
+  if(disc>0){
+    dr.style.display="flex";
+    document.getElementById("discLbl").textContent=`${Math.round(disc*100)}% de desconto`;
+    document.getElementById("discAmt").textContent=`— ${fmt(da)}`;
+    document.getElementById("discBadgeVal").textContent=`${Math.round(disc*100)}% off · economize ${fmt(da)}/mês`;
+  }else{dr.style.display="none";}
+  if(n>0){
+    const pct=Math.min((n/30)*100,100);
+    document.getElementById("progFill").style.width=pct+"%";
+    document.getElementById("progPct").textContent=Math.round(disc*100)+"%";
+    document.getElementById("progLbl").textContent=n<30?`Mais automações = mais desconto (até 30%)`:"🎉 Desconto máximo!";
+  }
+}
+
+// ── CHECKOUT ──────────────────────────────────────────────────────────────────
+let cState={doc:"",docType:"",name:"",email:"",phone:""};
+function openCheckout(){document.getElementById("checkoutModal").style.display="flex";document.body.style.overflow="hidden";}
+function closeCheckout(){document.getElementById("checkoutModal").style.display="none";document.body.style.overflow="";}
+window.addEventListener("keydown",e=>{if(e.key==="Escape")closeCheckout();});
+
+function fmtDoc(input){
+  let v=input.value.replace(/\D/g,"");
+  if(v.length<=11){v=v.replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})\.(\d{3})(\d)/,"$1.$2.$3").replace(/\.(\d{3})(\d)/,".$1-$2");}
+  else{v=v.replace(/(\d{2})(\d)/,"$1.$2").replace(/(\d{2})\.(\d{3})(\d)/,"$1.$2.$3").replace(/\.(\d{3})\.(\d{3})(\d)/,".$1.$2/$3").replace(/(\d{4})(\d)/,"$1-$2");}
+  input.value=v.slice(0,18);
+}
+function fmtPhone(input){let v=input.value.replace(/\D/g,"").slice(0,11);if(v.length>=7)v=v.replace(/(\d{2})(\d{5})(\d)/,"($1) $2-$3");else if(v.length>=3)v=v.replace(/(\d{2})(\d)/,"($1) $2");input.value=v;}
+function fmtCard(input){let v=input.value.replace(/\D/g,"").slice(0,16);v=v.replace(/(\d{4})(?=\d)/g,"$1 ");input.value=v;}
+function fmtExp(input){let v=input.value.replace(/\D/g,"").slice(0,4);if(v.length>=3)v=v.replace(/(\d{2})(\d)/,"$1/$2");input.value=v;}
+
+function cleanDoc(d){return d.replace(/\D/g,"");}
+function valCPF(c){if(c.length!==11||/^(\d)\1{10}$/.test(c))return false;let s=0;for(let i=0;i<9;i++)s+=parseInt(c[i])*(10-i);let r=(s*10)%11;if(r===10||r===11)r=0;if(r!==parseInt(c[9]))return false;s=0;for(let i=0;i<10;i++)s+=parseInt(c[i])*(11-i);r=(s*10)%11;if(r===10||r===11)r=0;return r===parseInt(c[10]);}
+function valCNPJ(c){if(c.length!==14||/^(\d)\1{13}$/.test(c))return false;const calc=(cn,w)=>{let s=0;for(let i=0;i<w.length;i++)s+=parseInt(cn[i])*w[i];const r=s%11;return r<2?0:11-r;};return calc(c,[5,4,3,2,9,8,7,6,5,4,3,2])===parseInt(c[12])&&calc(c,[6,5,4,3,2,9,8,7,6,5,4,3,2])===parseInt(c[13]);}
+function valDoc(d){const c=cleanDoc(d);if(c.length===11)return{valid:valCPF(c),type:"CPF"};if(c.length===14)return{valid:valCNPJ(c),type:"CNPJ"};return{valid:false,type:null};}
+
+async function checkDoc(){
+  const errEl=document.getElementById("docErr");
+  const resEl=document.getElementById("promoRes");
+  const btn=document.getElementById("checkBtn");
+  const val=valDoc(document.getElementById("docInput").value);
+  errEl.style.display="none";resEl.style.display="none";
+  if(!val.valid){errEl.textContent=`${val.type||"Documento"} inválido. Verifique e tente novamente.`;errEl.style.display="block";return;}
+  btn.textContent="Verificando...";btn.disabled=true;
+  await new Promise(r=>setTimeout(r,1000));
+  cState.doc=document.getElementById("docInput").value;
+  cState.docType=val.type;
+  resEl.style.display="block";
+  resEl.style.background="rgba(34,197,94,.08)";
+  resEl.style.border="1px solid rgba(34,197,94,.2)";
+  resEl.style.borderRadius="8px";
+  resEl.style.padding="10px 12px";
+  resEl.innerHTML=`<div style="font-size:12px;font-weight:700;color:#16a34a;margin-bottom:2px;">✅ ${val.type} validado!</div><div style="font-size:11px;color:var(--muted);">Plano WhatsApp · R$147/mês · Sem contrato</div>`;
+  btn.textContent="Continuar →";
+  btn.onclick=goS2;
+  btn.disabled=false;
+}
+
+function setStep(n){
+  ["cs1","cs2","cs3"].forEach((id,i)=>document.getElementById(id).style.display=i===n-1?"block":"none");
+  ["s1tab","s2tab","s3tab"].forEach((id,i)=>{
+    const t=document.getElementById(id);
+    const a=i===n-1;
+    t.style.color=a?"var(--amber-dk)":"var(--muted)";
+    t.style.borderBottom=a?"2px solid var(--amber)":"2px solid var(--border)";
+    t.style.fontWeight=a?"700":"600";
+  });
+}
+function goS1(){setStep(1);}
+function goS2(){setStep(2);}
+function goS3(){
+  const name=document.getElementById("nameIn").value.trim();
+  const email=document.getElementById("emailIn").value.trim();
+  const phone=document.getElementById("phoneIn").value.trim();
+  const pass=document.getElementById("passIn").value;
+  const errEl=document.getElementById("s2err");
+  errEl.style.display="none";
+  if(!name){errEl.textContent="Informe seu nome.";errEl.style.display="block";return;}
+  if(!email||!email.includes("@")){errEl.textContent="Informe um e-mail válido.";errEl.style.display="block";return;}
+  if(phone.replace(/\D/g,"").length<10){errEl.textContent="Informe um WhatsApp válido.";errEl.style.display="block";return;}
+  if(pass.length<8){errEl.textContent="Senha com mínimo 8 caracteres.";errEl.style.display="block";return;}
+  cState.name=name;cState.email=email;cState.phone=phone;
+  document.getElementById("orderSum").innerHTML=`
+    <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Resumo</div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span style="color:var(--muted);">Plano WhatsApp Farol IA</span><span style="font-family:'Nunito',sans-serif;font-weight:900;color:var(--navy);">R$147</span></div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Mensalidade · Sem contrato · Cancele quando quiser</div>
+    <div style="border-top:1px solid var(--border);padding-top:8px;display:flex;justify-content:space-between;">
+      <span style="font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--navy);">Total hoje</span>
+      <span style="font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:var(--amber-dk);">R$147</span>
+    </div>`;
+  setStep(3);
+}
+async function finalize(){
+  const btn=document.getElementById("finalBtn");
+  btn.textContent="Processando...";btn.disabled=true;
+  await new Promise(r=>setTimeout(r,1800));
+  closeCheckout();
+  alert(`✅ Bem-vindo à Farol IA, ${cState.name}!\n\nSua IA está sendo configurada.\nVocê receberá os dados de acesso em ${cState.email} em instantes.`);
+}
+
+// ── FAQ ───────────────────────────────────────────────────────────────────────
+function toggleFaq(btn){
+  const item=btn.closest(".faq-item");
+  const open=item.classList.contains("open");
+  document.querySelectorAll(".faq-item.open").forEach(i=>i.classList.remove("open"));
+  if(!open)item.classList.add("open");
+}
+</script>
+</body>
+</html>
