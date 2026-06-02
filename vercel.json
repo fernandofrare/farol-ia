@@ -1,0 +1,10 @@
+{
+    "rewrites": [
+          { "source": "/", "destination": "/farol-ia-landing.html" },
+          { "source": "/login", "destination": "/farol-login.html" },
+          { "source": "/redefinir-senha", "destination": "/farol-redefinir-senha.html" },
+          { "source": "/dashboard", "destination": "/farol-dashboard.html" },
+          { "source": "/minha-ia", "destination": "/farol-minha-ia.html" },
+          { "source": "/crm", "destination": "/farol-crm-dashboard.html" }
+    ]
+}
