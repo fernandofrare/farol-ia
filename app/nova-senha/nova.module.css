@@ -1,0 +1,76 @@
+.page{
+  background:var(--bg);color:var(--text);min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;position:relative;
+}
+.page::before{
+  content:"";position:fixed;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(232,89,12,.12),transparent 60%);
+  pointer-events:none;
+}
+.box{
+  background:var(--card);border:1px solid var(--line);border-radius:22px;
+  padding:44px;width:100%;max-width:440px;position:relative;z-index:1;
+}
+.boxLogo{text-align:center;margin-bottom:32px}
+.boxHeader{text-align:center;margin-bottom:32px}
+.boxHeader .icon{
+  width:56px;height:56px;border-radius:16px;background:rgba(255,138,61,.12);
+  border:1px solid rgba(255,138,61,.25);display:flex;align-items:center;
+  justify-content:center;font-size:24px;margin:0 auto 16px;
+}
+.boxHeader h1{font-size:22px;font-weight:800;margin-bottom:8px;letter-spacing:-.02em}
+.boxHeader p{color:var(--muted);font-size:14px;line-height:1.55;max-width:32ch;margin:0 auto}
+
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:20px}
+.field label{font-size:13px;font-weight:600;color:var(--muted)}
+.inputWrap{position:relative}
+.inputWrap .ico{
+  position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  font-size:17px;color:var(--muted2);pointer-events:none;
+}
+.input{
+  background:#1c1c24;border:1px solid var(--line);border-radius:10px;
+  padding:12px 14px 12px 40px;color:var(--text);font-size:15px;width:100%;
+  outline:none;transition:border-color .2s,box-shadow .2s;font-family:'Inter',sans-serif;
+}
+.input:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,138,61,.12)}
+.input::placeholder{color:var(--muted2)}
+
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-family:'Montserrat',sans-serif;font-weight:700;border:none;cursor:pointer;
+  border-radius:999px;transition:transform .15s,box-shadow .2s;font-size:15px;width:100%;padding:14px;
+}
+.btnPrimary{
+  background:linear-gradient(135deg,var(--amber),var(--amber-deep));color:#1a0e04;
+  box-shadow:0 8px 28px rgba(232,89,12,.28);
+}
+.btnPrimary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 34px rgba(232,89,12,.42)}
+.btn:disabled{opacity:.7;cursor:not-allowed}
+.btnSecondary{
+  background:transparent;border:1px solid var(--line);color:var(--muted);
+  margin-top:12px;font-size:14px;padding:12px;
+}
+.btnSecondary:hover{border-color:var(--amber);color:var(--amber)}
+
+.alert{padding:12px 16px;border-radius:10px;font-size:14px;margin-bottom:20px}
+.alertErr{background:rgba(240,68,56,.1);border:1px solid rgba(240,68,56,.25);color:#f87171}
+
+.successState{text-align:center}
+.successState .check{
+  width:64px;height:64px;border-radius:50%;background:rgba(58,210,159,.12);
+  border:2px solid rgba(58,210,159,.3);display:flex;align-items:center;
+  justify-content:center;font-size:28px;margin:0 auto 20px;
+}
+.successState h2{font-size:20px;font-weight:800;margin-bottom:10px}
+.successState p{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:24px}
+
+.spinner{
+  width:18px;height:18px;border:2px solid rgba(26,14,4,.3);border-top-color:#1a0e04;
+  border-radius:50%;animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.foot{margin-top:24px;font-size:12px;color:var(--muted2);text-align:center;position:relative;z-index:1}
+.foot a{color:inherit}

@@ -1,0 +1,73 @@
+/* ============================================
+   PAINEL — layout e sidebar compartilhados
+   ============================================ */
+.shell{
+  background:var(--bg);color:var(--text);min-height:100vh;
+  display:grid;grid-template-columns:220px 1fr;
+}
+
+/* SIDEBAR */
+.sidebar{
+  background:var(--bg-soft);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;height:100vh;position:sticky;top:0;overflow-y:auto;
+}
+.sidebarLogo{padding:22px 18px 18px;border-bottom:1px solid var(--line)}
+.sidebarNav{flex:1;padding:12px 10px}
+.navSection{
+  font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted2);
+  font-weight:600;padding:14px 10px 6px;
+}
+.navItem{
+  display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;
+  color:var(--muted);font-size:14px;font-weight:500;cursor:pointer;
+  transition:background .15s,color .15s;margin-bottom:2px;text-decoration:none;
+}
+.navItem:hover{background:#1c1c24;color:var(--text)}
+.navItemActive{
+  background:rgba(255,138,61,.1);color:var(--amber);
+  border:1px solid rgba(255,138,61,.18);
+}
+.navIco{font-size:18px;width:22px;text-align:center;flex-shrink:0}
+.sidebarFooter{padding:16px 12px;border-top:1px solid var(--line)}
+.userRow{
+  display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;
+  cursor:pointer;transition:background .15s;background:none;border:none;width:100%;text-align:left;
+}
+.userRow:hover{background:#1c1c24}
+.avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--amber),var(--amber-deep));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Montserrat',sans-serif;font-weight:800;font-size:14px;color:#1a0e04;flex-shrink:0;
+}
+.userInfo{flex:1;min-width:0}
+.userName{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.userPlan{font-size:11px;color:var(--muted)}
+
+/* MAIN */
+.main{display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
+.topbar{
+  padding:18px 28px;border-bottom:1px solid var(--line);display:flex;
+  align-items:center;justify-content:space-between;background:var(--bg-soft);
+  position:sticky;top:0;z-index:10;
+}
+.topbar h1{font-size:20px;font-weight:800;letter-spacing:-.01em}
+.topbarRight{display:flex;align-items:center;gap:12px}
+.content{padding:28px;flex:1}
+
+/* BOTÕES painel */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  font-family:'Montserrat',sans-serif;font-weight:700;border:none;cursor:pointer;
+  border-radius:999px;font-size:13px;padding:9px 18px;
+  transition:transform .15s,box-shadow .15s,opacity .15s;
+}
+.btnPrimary{background:linear-gradient(135deg,var(--amber),var(--amber-deep));color:#1a0e04}
+.btnPrimary:hover{transform:translateY(-1px)}
+.btnGhost{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.btnGhost:hover{border-color:var(--amber);color:var(--amber)}
+
+@media(max-width:768px){
+  .shell{grid-template-columns:1fr}
+  .sidebar{display:none}
+}

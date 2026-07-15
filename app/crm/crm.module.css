@@ -1,0 +1,78 @@
+.searchWrap{position:relative}
+.searchIco{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted2);font-size:16px;pointer-events:none}
+.search{
+  background:#1c1c24;border:1px solid var(--line);border-radius:999px;
+  padding:9px 14px 9px 36px;color:var(--text);font-size:14px;width:220px;outline:none;
+  font-family:'Inter',sans-serif;transition:border-color .2s,width .3s;
+}
+.search:focus{border-color:var(--amber);width:280px}
+.search::placeholder{color:var(--muted2)}
+
+.filters{padding:14px 28px;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.filterChip{
+  padding:6px 14px;border-radius:999px;font-size:13px;font-weight:500;cursor:pointer;
+  transition:all .15s;border:1px solid var(--line);color:var(--muted);background:transparent;
+}
+.filterChip:hover{border-color:var(--amber);color:var(--amber)}
+.filterActive{background:rgba(255,138,61,.1);border-color:var(--amber);color:var(--amber);font-weight:600}
+
+.crmStats{display:flex;gap:0;border-bottom:1px solid var(--line)}
+.crmStat{flex:1;padding:14px 20px;border-right:1px solid var(--line);text-align:center}
+.crmStat:last-child{border-right:none}
+.crmStatVal{font-family:'Montserrat',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em}
+.crmStatLbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+
+.tableWrap{flex:1;overflow:auto}
+.table{width:100%;border-collapse:collapse}
+.table thead th{
+  padding:11px 16px;text-align:left;font-size:11px;text-transform:uppercase;
+  letter-spacing:.07em;color:var(--muted2);font-weight:600;border-bottom:1px solid var(--line);
+  white-space:nowrap;background:var(--bg-soft);position:sticky;top:0;
+}
+.table tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:background .12s;cursor:pointer}
+.table tbody tr:hover{background:#1c1c24}
+.table tbody td{padding:13px 16px;font-size:14px;vertical-align:middle}
+.contactCell{display:flex;align-items:center;gap:11px}
+.contactAv{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;flex-shrink:0}
+.contactName{font-weight:600;font-size:14px}
+.contactPhone{font-size:12px;color:var(--muted);margin-top:1px}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px}
+.bLead{background:rgba(245,185,65,.1);color:var(--gold);border:1px solid rgba(245,185,65,.25)}
+.bCliente{background:rgba(58,210,159,.1);color:var(--good);border:1px solid rgba(58,210,159,.25)}
+.bFrio{background:rgba(154,154,166,.08);color:var(--muted);border:1px solid var(--line)}
+.bNovo{background:rgba(255,138,61,.1);color:var(--amber);border:1px solid rgba(255,138,61,.25)}
+.lastMsg{max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);font-size:13px}
+.tdMuted{color:var(--muted);font-size:13px}
+.tdTime{color:var(--muted2);font-size:12px;white-space:nowrap}
+.tdAction{display:flex;gap:6px}
+.iconBtn{width:30px;height:30px;border-radius:8px;background:#1c1c24;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:border-color .15s}
+.iconBtn:hover{border-color:var(--amber)}
+
+.emptyTable{padding:60px 20px;text-align:center;color:var(--muted);font-size:14px}
+
+.contactPanel{
+  width:320px;border-left:1px solid var(--line);background:var(--bg-soft);
+  display:flex;flex-direction:column;position:fixed;right:0;top:0;bottom:0;
+  transform:translateX(100%);transition:transform .25s;z-index:20;overflow-y:auto;
+}
+.panelOpen{transform:translateX(0)}
+.cpHead{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.cpHead h3{font-size:16px;font-weight:700}
+.closeBtn{width:28px;height:28px;border-radius:8px;background:#1c1c24;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px}
+.cpBody{padding:20px;flex:1}
+.cpAv{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-weight:800;font-size:22px;margin:0 auto 14px}
+.cpName{font-family:'Montserrat',sans-serif;font-weight:800;font-size:18px;text-align:center;margin-bottom:4px}
+.cpPhone{font-size:13px;color:var(--muted);text-align:center;margin-bottom:16px}
+.cpBadges{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.cpSection{margin-bottom:20px}
+.cpSection h4{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted2);font-weight:600;margin-bottom:10px}
+.cpRow{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--line)}
+.cpRow:last-child{border-bottom:none}
+.cpRow .lbl{color:var(--muted)}
+.cpFoot{padding:16px 20px;border-top:1px solid var(--line);display:flex;gap:8px}
+.cpFoot .btn{flex:1;font-size:13px;padding:10px}
+
+.btnGhostSm{background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;padding:8px 16px;border-radius:999px;font-family:'Montserrat',sans-serif;font-weight:700;cursor:pointer}
+.btnGhostSm:hover{border-color:var(--amber);color:var(--amber)}
+
+@media(max-width:768px){.contactPanel{width:100%}}
