@@ -122,3 +122,9 @@
 @media(prefers-reduced-motion:reduce){
 .landing-root * {animation:none!important;transition:none!important}
 }
+
+/* Logo maior apenas no desktop (mobile permanece 150x43 do componente) */
+@media(min-width:901px){
+.landing-root header.nav svg[aria-label="Farol IA"]{width:200px;height:57px}
+.landing-root footer svg[aria-label="Farol IA"]{width:210px;height:60px}
+}

@@ -43,7 +43,7 @@ export default function LandingPage() {
           <p className="lead">Uma IA treinada no seu negócio responde, qualifica e agenda 24 horas por dia. No seu número de sempre. Sem você precisar entender de tecnologia.</p>
           <p className="sub">Pronto em menos de 24 horas. Sem contrato. Cancele quando quiser.</p>
           <div className="price-row">
-            <span className="eyebrow" style={{ marginBottom: 0 }}>★ Programa Fundador · vagas limitadas para o beta</span>
+            <span className="eyebrow" style={{ marginBottom: 0 }}>★ Programa Fundador · apenas 5 vagas para o beta</span>
           </div>
           <div className="hero-cta">
             <a href={wa("Oi! Quero testar a Farol IA")} className="btn btn-wa">💬 Conversar com a IA agora</a>
@@ -159,10 +159,10 @@ export default function LandingPage() {
       <section id="ativar">
         <div className="wrap">
           <div className="fp">
-            <span className="badge">★ Programa Fundador · Vagas limitadas</span>
-            <h2>Seja um dos <span className="gold">10 primeiros</span> a usar a Farol IA</h2>
-            <p>A Farol IA está abrindo as primeiras vagas do beta. Os fundadores entram com acesso antecipado e ajudam a moldar o produto — em troca, recebem suporte direto comigo durante todo o período de testes.</p>
-            <p className="slots">🔥 Acesso antecipado ao beta · Condição especial de fundador · Suporte direto com o fundador</p>
+            <span className="badge">★ Programa Fundador · Apenas 5 vagas</span>
+            <h2>Seja um dos <span className="gold">5 primeiros</span> a usar a Farol IA</h2>
+            <p>A Farol IA está abrindo apenas 5 vagas para o beta. O programa dura 1 mês, com acesso antecipado e suporte direto comigo. Ao fim do beta, você ganha mais 1 mês gratuito na versão aberta da Farol IA.</p>
+            <p className="slots">🔥 Apenas 5 vagas · Beta de 1 mês · + 1 mês grátis na versão aberta</p>
             <a href={wa("Quero ser fundador da Farol IA")} className="btn btn-primary" style={{ fontSize: 17, padding: "15px 32px" }}>Quero minha vaga de fundador →</a>
             <p style={{ fontSize: 13, color: "var(--muted)", marginTop: 18 }}>Sem fidelidade · Ativo em até 24h · Cancele quando quiser</p>
           </div>
@@ -225,7 +225,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="foot-bottom">
-            <span>© 2026 Farol IA · Automações Inteligentes · <span style={{ color: "var(--gold)" }}>[CNPJ a inserir]</span></span>
+            <span>© 2026 Farol IA · Automações Inteligentes</span>
             <span>Feito para quem trabalha de verdade.</span>
           </div>
         </div>
