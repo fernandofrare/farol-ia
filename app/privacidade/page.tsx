@@ -178,13 +178,9 @@ export default function PrivacidadePage() {
         <section className="legal-sec">
           <h2>10. Encarregado pelo tratamento de dados (DPO)</h2>
           <p>
-            O contato do encarregado pelo tratamento de dados pessoais é{" "}
-            <span className="legal-note">
-              [inserir e-mail de contato do encarregado, ex.:
-              privacidade@farolia.store]
-            </span>
-            . Por esse canal você pode encaminhar dúvidas e solicitações
-            relativas a esta Política.
+            O contato do encarregado pelo tratamento de dados pessoais é o
+            e-mail <strong>contato@farolia.store</strong>. Por esse canal você
+            pode encaminhar dúvidas e solicitações relativas a esta Política.
           </p>
         </section>
 
@@ -210,3 +206,4 @@ export default function PrivacidadePage() {
     </main>
   );
 }
+                                                                                                                           

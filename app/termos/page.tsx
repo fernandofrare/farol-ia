@@ -35,14 +35,11 @@ export default function TermosPage() {
         <section className="legal-sec">
           <h2>1. Quem somos</h2>
           <p>
-            A Farol IA é um serviço operado por Fernando Frare, sediado em
-            Guaporé, Rio Grande do Sul, Brasil{" "}
-            <span className="legal-note">
-              [inserir CNPJ ou, em caso de pessoa física, CPF e indicação de
-              atuação como empresário individual]
-            </span>
-            . Para qualquer comunicação relativa a estes Termos, utilize os
-            canais oficiais informados no site farolia.store.
+            A Farol IA é um serviço operado por Fernando Frare, pessoa física
+            atuando como empresário individual, inscrito no CPF sob o nº
+            016.725.660-29, sediado em Guaporé, Rio Grande do Sul, Brasil. Para
+            qualquer comunicação relativa a estes Termos, utilize os canais
+            oficiais informados no site farolia.store.
           </p>
         </section>
 
@@ -249,3 +246,4 @@ export default function TermosPage() {
     </main>
   );
 }
+                                                                                               
