@@ -8,8 +8,8 @@ export const metadata = {
     "Uma IA treinada no seu negócio responde, qualifica e agenda 24h por dia, no seu número de sempre. Sem você precisar entender de tecnologia.",
 };
 
-// Número de atendimento (pessoal, fase beta). Trocar pelo número dedicado
-// quando o motor de IA entrar no ar. Apenas dígitos, com DDI 55.
+// ⚠️ AJUSTAR ANTES DO LANÇAMENTO:
+// Trocar pelo número real de WhatsApp dedicado (apenas dígitos, com DDI 55).
 const WHATS = "5554991873855";
 const wa = (texto: string) =>
   `https://wa.me/${WHATS}?text=${encodeURIComponent(texto)}`;
@@ -229,4 +229,7 @@ export default function LandingPage() {
             <span>Feito para quem trabalha de verdade.</span>
           </div>
         </div>
-      </fo
+      </footer>
+    </div>
+  );
+}
