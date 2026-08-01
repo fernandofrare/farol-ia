@@ -20,11 +20,25 @@ export default function NovaSenhaPage() {
   const [linkValido, setLinkValido] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // O Supabase emite PASSWORD_RECOVERY ao abrir o link do e-mail.
+    // Fluxo oficial @supabase/ssr (PKCE): o link do e-mail traz token_hash+type.
+    // Trocamos por uma sessão de recuperação com verifyOtp — sem depender de
+    // code_verifier no navegador (que não existe em reset iniciado por e-mail).
+    const params = new URLSearchParams(window.location.search);
+    const token_hash = params.get("token_hash");
+    const type = params.get("type");
+
+    if (token_hash && type === "recovery") {
+      supabase.auth
+        .verifyOtp({ type: "recovery", token_hash })
+        .then(({ error }) => setLinkValido(!error));
+      return;
+    }
+
+    // Fallback para o fluxo implícito (hash #access_token): o Supabase emite
+    // PASSWORD_RECOVERY ao abrir o link. Mantido por segurança.
     const { data: sub } = supabase.auth.onAuthStateChange((evento) => {
       if (evento === "PASSWORD_RECOVERY") setLinkValido(true);
     });
-    // Também checa se já há sessão (caso o evento tenha ocorrido antes do mount).
     supabase.auth.getSession().then(({ data }) => {
       setLinkValido((v) => v ?? Boolean(data.session));
     });
@@ -45,7 +59,8 @@ export default function NovaSenhaPage() {
     }
 
     setCarregando(true);
-    // O link do e-mail estabelece a sessão de recuperação; updateUser aplica a nova senha.
+    // A sessão de recuperação já foi estabelecida no useEffect (verifyOtp);
+    // updateUser aplica a nova senha.
     const { error } = await supabase.auth.updateUser({ password: senha });
 
     if (error) {
