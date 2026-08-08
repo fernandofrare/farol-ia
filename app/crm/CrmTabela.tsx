@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { createClient } from "@/lib/supabase-browser";
 import painel from "@/components/painel.module.css";
 import styles from "./crm.module.css";
 
@@ -16,7 +17,15 @@ export type Contato = {
   primeiro_contato: string;
 };
 
-const STATUS_MAP: Record<
+type Mensagem = {
+  id: string;
+  content: string;
+  is_ai: boolean | null;
+  role: string | null;
+  created_at: string | null;
+};
+
+const STATUS_MAP: Record
   Contato["status"],
   { label: string; cls: string; cor: string }
 > = {
@@ -31,11 +40,46 @@ function iniciais(nome: string) {
   return ((p[0]?.[0] ?? "") + (p[1]?.[0] ?? "")).toUpperCase() || "?";
 }
 
+function horaCurta(iso: string | null) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export function CrmTabela({ contatos }: { contatos: Contato[] }) {
   const [filtro, setFiltro] = useState<string>("todos");
   const [busca, setBusca] = useState("");
   const [aberto, setAberto] = useState<Contato | null>(null);
   const [takeoverLoading, setTakeoverLoading] = useState(false);
+  const [mensagens, setMensagens] = useState<Mensagem[]>([]);
+  const [carregandoMsgs, setCarregandoMsgs] = useState(false);
+
+  // Abre o contato e carrega o histórico de mensagens da conversa.
+  async function abrirContato(contato: Contato) {
+    setAberto(contato);
+    setMensagens([]);
+    setCarregandoMsgs(true);
+    try {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("messages")
+        .select("id, content, is_ai, role, created_at")
+        .eq("conversation_id", contato.id)
+        .order("created_at", { ascending: true });
+      setMensagens(data ?? []);
+    } catch {
+      setMensagens([]);
+    } finally {
+      setCarregandoMsgs(false);
+    }
+  }
+
+  function fecharContato() {
+    setAberto(null);
+    setMensagens([]);
+  }
 
   async function alternarTakeover(contato: Contato) {
     setTakeoverLoading(true);
@@ -50,7 +94,6 @@ export function CrmTabela({ contatos }: { contatos: Contato[] }) {
         }),
       });
       if (resp.ok) {
-        // Atualiza o contato aberto no painel.
         setAberto((a) =>
           a && a.id === contato.id ? { ...a, controleHumano: novoHumano } : a
         );
@@ -176,7 +219,7 @@ export function CrmTabela({ contatos }: { contatos: Contato[] }) {
               {filtrados.map((c) => {
                 const s = STATUS_MAP[c.status];
                 return (
-                  <tr key={c.id} onClick={() => setAberto(c)}>
+                  <tr key={c.id} onClick={() => abrirContato(c)}>
                     <td>
                       <div className={styles.contactCell}>
                         <div
@@ -201,10 +244,24 @@ export function CrmTabela({ contatos }: { contatos: Contato[] }) {
                     <td className={styles.tdTime}>{c.primeiro_contato}</td>
                     <td>
                       <div className={styles.tdAction}>
-                        <div className={styles.iconBtn} title="Abrir chat">
+                        <div
+                          className={styles.iconBtn}
+                          title="Abrir chat"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            abrirContato(c);
+                          }}
+                        >
                           💬
                         </div>
-                        <div className={styles.iconBtn} title="Ver histórico">
+                        <div
+                          className={styles.iconBtn}
+                          title="Ver histórico"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            abrirContato(c);
+                          }}
+                        >
                           📋
                         </div>
                       </div>
@@ -223,7 +280,7 @@ export function CrmTabela({ contatos }: { contatos: Contato[] }) {
       >
         <div className={styles.cpHead}>
           <h3>Detalhes do contato</h3>
-          <button className={styles.closeBtn} onClick={() => setAberto(null)}>
+          <button className={styles.closeBtn} onClick={fecharContato}>
             ✕
           </button>
         </div>
@@ -265,24 +322,23 @@ export function CrmTabela({ contatos }: { contatos: Contato[] }) {
                   <span>{aberto.ultima_em}</span>
                 </div>
               </div>
-            </div>
-            <div className={styles.cpFoot}>
-              <button
-                className={`${painel.btn} ${painel.btnGhost}`}
-                onClick={() => alternarTakeover(aberto)}
-                disabled={takeoverLoading}
-              >
-                {aberto.controleHumano
-                  ? "🤖 Devolver p/ IA"
-                  : "🙋 Assumir conversa"}
-              </button>
-              <button className={`${painel.btn} ${painel.btnPrimary}`}>
-                💬 Abrir chat
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-    </>
-  );
-}
+
+              {/* HISTÓRICO DE MENSAGENS */}
+              <div className={styles.cpSection}>
+                <h4>Conversa</h4>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 8,
+                    maxHeight: 360,
+                    overflowY: "auto",
+                    padding: "4px 2px",
+                  }}
+                >
+                  {carregandoMsgs ? (
+                    <span style={{ opacity: 0.6, fontSize: 13 }}>
+                      Carregando mensagens…
+                    </span>
+                  ) : mensagens.length === 0 ? (
+                    <span style={{ opacity: 0.6, fontSize: 13 }}>
