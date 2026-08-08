@@ -25,7 +25,7 @@ type Mensagem = {
   created_at: string | null;
 };
 
-const STATUS_MAP: Record
+const STATUS_MAP: Record<
   Contato["status"],
   { label: string; cls: string; cor: string }
 > = {
