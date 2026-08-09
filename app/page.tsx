@@ -5,12 +5,11 @@ import "./landing.css";
 export const metadata = {
   title: "Farol IA — Pare de perder cliente no WhatsApp enquanto você dorme",
   description:
-    "Uma IA treinada no seu negócio responde, qualifica e agenda 24h por dia, no seu número de sempre. Sem você precisar entender de tecnologia.",
+    "Uma IA treinada no seu negócio responde, qualifica e agenda 24h por dia. Sem você precisar entender de tecnologia.",
 };
 
-// ⚠️ AJUSTAR ANTES DO LANÇAMENTO:
-// Trocar pelo número real de WhatsApp dedicado (apenas dígitos, com DDI 55).
-const WHATS = "5554991873855";
+// Número dedicado da Farol IA (apenas dígitos, com DDI 55). Uso: contato/atendimento.
+const WHATS = "5554994009947";
 const wa = (texto: string) =>
   `https://wa.me/${WHATS}?text=${encodeURIComponent(texto)}`;
 
@@ -30,8 +29,7 @@ export default function LandingPage() {
             <a href="#faq">Dúvidas</a>
           </nav>
           <div className="nav-cta">
-            <Link href="/login" className="btn btn-ghost">Já sou cliente</Link>
-            <a href="#ativar" className="btn btn-primary">Quero participar</a>
+            <Link href="/login" className="btn btn-primary">Já sou cliente</Link>
           </div>
         </div>
       </header>
@@ -40,22 +38,19 @@ export default function LandingPage() {
         <div className="wrap">
           <span className="eyebrow">A mesma IA das grandes · sem a complexidade · sem o preço absurdo</span>
           <h1>Pare de perder cliente no WhatsApp <em>enquanto você dorme.</em></h1>
-          <p className="lead">Uma IA treinada no seu negócio responde, qualifica e agenda 24 horas por dia. No seu número de sempre. Sem você precisar entender de tecnologia.</p>
-          <p className="sub">Pronto em menos de 24 horas. Sem contrato. Cancele quando quiser.</p>
-          <div className="price-row">
-            <span className="eyebrow" style={{ marginBottom: 0 }}>★ Programa Fundador · apenas 5 vagas para o beta</span>
-          </div>
+          <p className="lead">Uma IA treinada no seu negócio responde, qualifica e agenda 24 horas por dia. Sem você precisar entender de tecnologia.</p>
+          <p className="sub">Pronto em menos de 24 horas. Cancele quando quiser.</p>
           <div className="hero-cta">
-            <a href={wa("Oi! Quero testar a Farol IA")} className="btn btn-wa">💬 Conversar com a IA agora</a>
-            <a href="#ativar" className="btn btn-primary">Quero ser fundador →</a>
+            <Link href="/login" className="btn btn-primary">Quero testar 1 semana grátis →</Link>
           </div>
-          <p className="guarantee"><b>Ativo em até 24h</b> · Seu número continua o mesmo · Sem fidelidade</p>
+          <p className="sub" style={{ marginTop: 10, fontSize: 13 }}>Cancele dentro da primeira semana e não pague nada.</p>
+          <p className="guarantee"><b>Ativo em até 24h</b> · Sem taxa de instalação · Sem fidelidade</p>
         </div>
         <div className="trust">
           <div className="wrap trust-inner">
             <span>⚡ Ativo em até 24 horas</span>
             <span>🔒 Sem contrato de fidelidade</span>
-            <span>📱 Seu número, sem mudanças</span>
+            <span>🧾 Sem taxa e burocracia de instalação</span>
             <span>🤖 IA de ponta do mercado</span>
           </div>
         </div>
@@ -85,7 +80,7 @@ export default function LandingPage() {
             <div className="card"><span className="ico">🎯</span><h3>Identifica e separa os leads quentes</h3><p>A IA reconhece quem está pronto para comprar, coleta os dados e te avisa. Você entra só na hora de fechar.</p></div>
             <div className="card"><span className="ico">📊</span><h3>Painel completo nas suas mãos</h3><p>Veja cada conversa em tempo real, acompanhe métricas e saiba o que aconteceu com cada lead. Dados de empresa grande, simples de entender.</p></div>
             <div className="card"><span className="ico">🎛️</span><h3>Controle total sem complicação</h3><p>Liga e desliga a IA quando quiser. Ajusta uma resposta sem refazer nada. Assume o atendimento manualmente quando precisar.</p></div>
-            <div className="card"><span className="ico">📱</span><h3>Seu número atual, sem mudar nada</h3><p>Conectamos no seu número existente por QR Code. Seus clientes não percebem nenhuma mudança. Funciona no celular que você já usa.</p></div>
+            <div className="card"><span className="ico">📲</span><h3>Número dedicado, longe do pessoal</h3><p>A IA trabalha em um número novo e exclusivo do seu atendimento. Seu número pessoal fica protegido e o profissional fica organizado — do seu jeito.</p></div>
           </div>
         </div>
       </section>
@@ -95,21 +90,10 @@ export default function LandingPage() {
           <p className="sec-eyebrow">Do zero ao funcionando</p>
           <h2 className="sec-title">Sem conhecimento técnico. Sem complicação. <em>Pronto hoje.</em></h2>
           <div className="steps" style={{ marginTop: 40 }}>
-            <div className="step"><div className="num">01</div><h3>Você entra no programa e acessa o painel</h3><p>Cadastro simples, sem contrato. Em segundos você já está dentro do painel — limpo e direto.</p><span className="time">⚡ 2 minutos</span></div>
+            <div className="step"><div className="num">01</div><h3>Você entra e acessa o painel</h3><p>Cadastro simples, sem contrato. Em segundos você já está dentro do painel — limpo e direto.</p><span className="time">⚡ 2 minutos</span></div>
             <div className="step"><div className="num">02</div><h3>Responde o questionário do seu negócio</h3><p>Horários, serviços, preços, tom de voz. Perguntas simples, como uma conversa. Você faz uma vez, a IA nunca esquece.</p><span className="time">📝 15 minutos</span></div>
-            <div className="step"><div className="num">03</div><h3>Conecta seu WhatsApp com um QR Code</h3><p>Abre o celular, escaneia o código. Seu número continua o mesmo e a IA já começa a receber mensagens.</p><span className="time">📱 5 minutos</span></div>
+            <div className="step"><div className="num">03</div><h3>Conecta um número dedicado por QR Code</h3><p>Um número novo e exclusivo do seu atendimento. Abre o celular, escaneia o código e a IA já começa a receber mensagens.</p><span className="time">📱 5 minutos</span></div>
             <div className="step"><div className="num">04</div><h3>A IA atende, você acompanha</h3><p>Cada conversa aparece no painel em tempo real. Você ajusta o que quiser e assume quando precisar. O controle é sempre seu.</p><span className="time">✅ Ativo hoje</span></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="demo">
-        <div className="wrap">
-          <div className="demo">
-            <h2>Não acredite na gente. <span className="amber">Converse com a IA.</span></h2>
-            <p>Manda uma mensagem agora e veja a Farol IA respondendo como ela responderia no seu negócio. Leva 30 segundos.</p>
-            <a href={wa("Oi! Quero testar a Farol IA")} className="btn btn-wa">💬 Testar a IA no WhatsApp</a>
-            <p className="tag">✓ Sem cadastro · Sem compromisso · É só conversar</p>
           </div>
         </div>
       </section>
@@ -139,32 +123,18 @@ export default function LandingPage() {
       <section>
         <div className="wrap">
           <p className="sec-eyebrow">Por que a Farol IA</p>
-          <h2 className="sec-title">Compare e veja o que <em>faz sentido para você</em></h2>
+          <h2 className="sec-title">Compare com as opções <em>do mercado atual</em></h2>
           <div className="cmp" style={{ marginTop: 40 }}>
             <table>
-              <thead><tr><th></th><th>Funcionário</th><th>Apps genéricos</th><th className="col-us">Farol IA</th></tr></thead>
+              <thead><tr><th></th><th>Outras soluções do mercado</th><th className="col-us">Farol IA</th></tr></thead>
               <tbody>
-                <tr><td>Atendimento 24h</td><td className="no">✗</td><td className="yes">✓</td><td className="col-us yes">✓</td></tr>
-                <tr><td>IA treinada no seu negócio</td><td className="no">✗</td><td className="no">✗</td><td className="col-us yes">✓</td></tr>
-                <tr><td>Setup incluído</td><td className="no">✗</td><td className="no">✗</td><td className="col-us yes">✓</td></tr>
-                <tr><td>Sem conhecimento técnico</td><td className="yes">✓</td><td className="no">✗</td><td className="col-us yes">✓</td></tr>
-                <tr><td>Cancele quando quiser</td><td className="no">✗</td><td className="yes">✓</td><td className="col-us yes">✓</td></tr>
-                <tr><td>Atendimento que entende seu negócio</td><td className="no">✗</td><td className="no">✗</td><td className="col-us yes">✓</td></tr>
+                <tr><td>Taxa de instalação</td><td className="no">R$800 a R$1.500</td><td className="col-us yes">Zero</td></tr>
+                <tr><td>Tempo de instalação</td><td className="no">7 a 15 dias</td><td className="col-us yes">Menos de 24h</td></tr>
+                <tr><td>Mensalidade</td><td className="no">Acima de R$400</td><td className="col-us yes">R$147 fixo</td></tr>
+                <tr><td>Personalização</td><td className="no">Complexa, depende de técnico</td><td className="col-us yes">Simples, sem código</td></tr>
+                <tr><td>Atualização constante</td><td className="no">Rara ou paga à parte</td><td className="col-us yes">Sempre incluída</td></tr>
               </tbody>
             </table>
-          </div>
-        </div>
-      </section>
-
-      <section id="ativar">
-        <div className="wrap">
-          <div className="fp">
-            <span className="badge">★ Programa Fundador · Apenas 5 vagas</span>
-            <h2>Seja um dos <span className="gold">5 primeiros</span> a usar a Farol IA</h2>
-            <p>A Farol IA está abrindo apenas 5 vagas para o beta. O programa dura 1 mês, com acesso antecipado e suporte direto comigo. Ao fim do beta, você ganha mais 1 mês gratuito na versão aberta da Farol IA.</p>
-            <p className="slots">🔥 Apenas 5 vagas · Beta de 1 mês · + 1 mês grátis na versão aberta</p>
-            <a href={wa("Quero ser fundador da Farol IA")} className="btn btn-primary" style={{ fontSize: 17, padding: "15px 32px" }}>Quero minha vaga de fundador →</a>
-            <p style={{ fontSize: 13, color: "var(--muted)", marginTop: 18 }}>Sem fidelidade · Ativo em até 24h · Cancele quando quiser</p>
           </div>
         </div>
       </section>
@@ -175,12 +145,12 @@ export default function LandingPage() {
           <h2 className="sec-title">Perguntas frequentes</h2>
           <div className="faq" style={{ marginTop: 40 }}>
             <details><summary>Preciso entender de tecnologia para usar?</summary><div className="ans">Não. O processo inteiro foi desenhado para quem nunca mexeu com IA. Você responde um questionário simples, escaneia um QR Code com o celular e está pronto. Se você sabe usar WhatsApp, você consegue usar a Farol IA.</div></details>
-            <details><summary>Meu número do WhatsApp vai mudar?</summary><div className="ans">Não. Conectamos ao seu número atual pelo QR Code. Seus clientes continuam te encontrando normalmente, sem perceber nenhuma mudança.</div></details>
+            <details><summary>Preciso usar o meu número pessoal do WhatsApp?</summary><div className="ans">Recomendamos usar um número novo e dedicado ao atendimento — com um SIM ou e-SIM novo. Isso separa o profissional do pessoal, protege a sua conta pessoal e deixa a IA trabalhando em um número exclusivo do seu negócio. É rápido e barato ativar um número novo, e a gente te orienta no passo a passo.</div></details>
             <details><summary>Quantas conversas estão incluídas?</summary><div className="ans">O plano inclui até 2.000 conversas por mês — mais do que suficiente para a grande maioria dos negócios. Se o seu volume crescer além disso, a gente conversa sobre um plano sob medida. Sem surpresa na fatura.</div></details>
             <details><summary>Como eu acompanho o que a IA está fazendo?</summary><div className="ans">Tudo aparece no seu painel em tempo real. Você vê cada conversa, cada lead, cada métrica. Pode assumir o atendimento manualmente, ajustar qualquer resposta da IA, ou só observar o sistema trabalhando por você.</div></details>
             <details><summary>E se a IA não souber responder algo?</summary><div className="ans">Quando a IA não sabe responder, ela informa o cliente com educação e transfere o atendimento para você. Você recebe um alerta no painel e assume a conversa diretamente, sem o cliente perceber a transição.</div></details>
             <details><summary>Posso cancelar quando quiser?</summary><div className="ans">Sim. Sem contrato, sem multa, sem burocracia. Cancela pelo painel em menos de 2 minutos.</div></details>
-            <details><summary>Em quanto tempo começa a funcionar?</summary><div className="ans">A maioria dos clientes ativa em menos de 1 hora. O prazo máximo é 24 horas após o questionário e a conexão do WhatsApp.</div></details>
+            <details><summary>Em quanto tempo começa a funcionar?</summary><div className="ans">A maioria dos clientes ativa em menos de 1 hora. O prazo máximo é 24 horas após o questionário e a conexão do número.</div></details>
           </div>
         </div>
       </section>
@@ -190,9 +160,9 @@ export default function LandingPage() {
           <h2>Seu negócio com a tecnologia <em>que ele sempre mereceu ter.</em></h2>
           <p>Atendimento 24h · Painel completo · Pronto em menos de 24 horas</p>
           <div className="hero-cta" style={{ justifyContent: "center" }}>
-            <a href={wa("Oi! Quero testar a Farol IA")} className="btn btn-wa">💬 Conversar com a IA</a>
-            <a href="#ativar" className="btn btn-primary">Quero minha vaga de fundador →</a>
+            <Link href="/login" className="btn btn-primary">Quero testar 1 semana grátis →</Link>
           </div>
+          <p className="sub" style={{ marginTop: 10, fontSize: 13 }}>Cancele dentro da primeira semana e não pague nada.</p>
         </div>
       </section>
 
@@ -208,7 +178,6 @@ export default function LandingPage() {
                 <h4>Produto</h4>
                 <a href="#solucao">A solução</a>
                 <a href="#como">Como funciona</a>
-                <a href="#ativar">Programa Fundador</a>
                 <a href="#faq">Dúvidas</a>
               </div>
               <div className="foot-col">
