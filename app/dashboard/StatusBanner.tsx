@@ -14,20 +14,33 @@ export function StatusBanner({
   const supabase = createClient();
   const [ativa, setAtiva] = useState(ativaInicial);
   const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
 
   async function toggle() {
     const novo = !ativa;
     setAtiva(novo); // otimista
     setSalvando(true);
-    // Persiste o estado liga/desliga na configuração da IA.
+    setErro(null);
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
+
+    let ok = false;
     if (user) {
-      await supabase
+      // .select() devolve as linhas afetadas: se vier vazio, o update nao
+      // persistiu (ex.: RLS bloqueou) e precisamos reverter a tela.
+      const { data, error } = await supabase
         .from("clients")
         .update({ ia_active: novo })
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
+        .select("id");
+      ok = !error && Array.isArray(data) && data.length > 0;
+    }
+
+    if (!ok) {
+      setAtiva(!novo); // reverte o otimista
+      setErro("Nao foi possivel salvar. Tente novamente.");
     }
     setSalvando(false);
   }
@@ -47,7 +60,9 @@ export function StatusBanner({
             {ativa ? "IA Ativa — Atendendo agora" : "IA Pausada"}
           </div>
           <div className={styles.statusSub}>
-            {ativa
+            {erro
+              ? erro
+              : ativa
               ? numeroWhats
                 ? `Conectada ao WhatsApp · ${numeroWhats}`
                 : "Conecte seu WhatsApp para começar a atender"
