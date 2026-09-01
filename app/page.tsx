@@ -41,7 +41,7 @@ export default function LandingPage() {
           <p className="lead">Uma IA treinada no seu negócio responde, qualifica e agenda 24 horas por dia. Sem você precisar entender de tecnologia.</p>
           <p className="sub">Pronto em menos de 24 horas. Cancele quando quiser.</p>
           <div className="hero-cta">
-            <Link href="/login" className="btn btn-primary">Quero testar 1 semana grátis →</Link>
+            <Link href="/cadastro" className="btn btn-primary">Quero testar 1 semana grátis →</Link>
           </div>
           <p className="sub" style={{ marginTop: 10, fontSize: 13 }}>Cancele dentro da primeira semana e não pague nada.</p>
           <p className="guarantee"><b>Ativo em até 24h</b> · Sem taxa de instalação · Sem fidelidade</p>
@@ -160,7 +160,7 @@ export default function LandingPage() {
           <h2>Seu negócio com a tecnologia <em>que ele sempre mereceu ter.</em></h2>
           <p>Atendimento 24h · Painel completo · Pronto em menos de 24 horas</p>
           <div className="hero-cta" style={{ justifyContent: "center" }}>
-            <Link href="/login" className="btn btn-primary">Quero testar 1 semana grátis →</Link>
+            <Link href="/cadastro" className="btn btn-primary">Quero testar 1 semana grátis →</Link>
           </div>
           <p className="sub" style={{ marginTop: 10, fontSize: 13 }}>Cancele dentro da primeira semana e não pague nada.</p>
         </div>
