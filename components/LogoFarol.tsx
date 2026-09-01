@@ -5,7 +5,7 @@
 export function LogoFarol({
   width = 160,
   height = 46,
-  showTagline = true,
+  showTagline = false,
 }: {
   width?: number;
   height?: number;
