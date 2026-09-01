@@ -70,7 +70,6 @@ export function Sidebar({ usuario }: { usuario: Usuario }) {
             <div className={styles.avatar}>{iniciais(usuario.nome)}</div>
             <div className={styles.userInfo}>
               <div className={styles.userName}>{usuario.nome}</div>
-              <div className={styles.userPlan}>{usuario.plano}</div>
             </div>
           </button>
         </form>
