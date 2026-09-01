@@ -25,7 +25,6 @@ export default function LandingPage() {
             <a href="#problema">O problema</a>
             <a href="#solucao">A solução</a>
             <a href="#como">Como funciona</a>
-            <a href="#fundador">Quem somos</a>
             <a href="#faq">Dúvidas</a>
           </nav>
           <div className="nav-cta">
@@ -36,7 +35,7 @@ export default function LandingPage() {
 
       <section className="hero">
         <div className="wrap">
-          <span className="eyebrow">A mesma IA das grandes · sem a complexidade · sem o preço absurdo</span>
+          <span className="eyebrow" style={{ color: "#39ff14", textShadow: "0 0 10px rgba(57,255,20,.55)", fontWeight: 700, borderColor: "rgba(57,255,20,.4)" }}>A mesma IA das grandes · sem a complexidade · sem o preço absurdo</span>
           <h1>Pare de perder cliente no WhatsApp <em>enquanto você dorme.</em></h1>
           <p className="lead">Uma IA treinada no seu negócio responde, qualifica e agenda 24 horas por dia. Sem você precisar entender de tecnologia.</p>
           <p className="sub">Pronto em menos de 24 horas. Cancele quando quiser.</p>
@@ -94,28 +93,6 @@ export default function LandingPage() {
             <div className="step"><div className="num">02</div><h3>Responde o questionário do seu negócio</h3><p>Horários, serviços, preços, tom de voz. Perguntas simples, como uma conversa. Você faz uma vez, a IA nunca esquece.</p><span className="time">📝 15 minutos</span></div>
             <div className="step"><div className="num">03</div><h3>Conecta um número dedicado por QR Code</h3><p>Um número novo e exclusivo do seu atendimento. Abre o celular, escaneia o código e a IA já começa a receber mensagens.</p><span className="time">📱 5 minutos</span></div>
             <div className="step"><div className="num">04</div><h3>A IA atende, você acompanha</h3><p>Cada conversa aparece no painel em tempo real. Você ajusta o que quiser e assume quando precisar. O controle é sempre seu.</p><span className="time">✅ Ativo hoje</span></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="fundador" className="founder">
-        <div className="wrap">
-          <p className="sec-eyebrow">Quem está por trás disso</p>
-          <h2 className="sec-title" style={{ marginBottom: 48 }}>Feito por quem conhece <em>de perto</em> a sua realidade</h2>
-          <div className="founder-grid">
-            <div className="founder-card">
-              <div className="founder-avatar">FF</div>
-              <b>Fernando Frare</b>
-              <span>Fundador · Farol IA</span>
-            </div>
-            <div className="founder-text">
-              <p><strong>Cresci vendo minha família construir no braço.</strong> Interior dos anos 90. Indústria, suor, tijolo por tijolo. Sem tecnologia, sem atalho — só trabalho e vontade de prosperar.</p>
-              <p>Comecei a trabalhar em fábrica aos 12 anos. Aprendi cedo que o empresário brasileiro de verdade não tem medo de trabalhar. O que ele não tem é tempo, ferramenta e acesso.</p>
-              <p>Passei pelo banco. Virei trader. Empreendi. Hoje sou graduando em Gestão de Inteligência Artificial para Empresas. E em cada etapa percebi a mesma coisa: a tecnologia que as grandes usam para crescer estava fora do alcance de quem mais precisa dela.</p>
-              <p>As pequenas e médias empresas geram mais de 70% dos empregos formais do Brasil. São o motor real da economia — e os menos assistidos quando o assunto é inovação. Eu conheço esse empresário. Cresci ao lado dele.</p>
-              <p><strong>A Farol IA nasceu disso.</strong> De um compromisso pessoal: colocar nas mãos de quem trabalha de verdade a mesma tecnologia que as grandes já usam há anos — de forma simples, acessível e com resultado real.</p>
-              <p className="sign">— Fernando Frare, Fundador da Farol IA</p>
-            </div>
           </div>
         </div>
       </section>
@@ -182,7 +159,6 @@ export default function LandingPage() {
               </div>
               <div className="foot-col">
                 <h4>Empresa</h4>
-                <a href="#fundador">Quem somos</a>
                 <a href={wa("Olá! Gostaria de falar com a Farol IA")}>Falar conosco</a>
                 <Link href="/login">Área do cliente</Link>
               </div>
