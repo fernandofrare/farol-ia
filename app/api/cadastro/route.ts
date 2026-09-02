@@ -43,6 +43,15 @@ export async function POST(request: Request) {
 
   const supabase = createClient();
 
+  // Trial é 1 por CPF/CNPJ: bloqueia se o documento já tem cadastro.
+  const { data: jaCadastrado } = await supabase.rpc("documento_ja_cadastrado", { p_doc: cpfCnpj });
+  if (jaCadastrado) {
+    return NextResponse.json(
+      { erro: "Este CPF/CNPJ já possui cadastro na Farol IA. Faça login para acessar sua conta." },
+      { status: 400 }
+    );
+  }
+
   // 1. Cria o usuário no Auth (com "Confirm email" desligado, já vem confirmado + sessão nos cookies).
   const { data: signUp, error: authErr } = await supabase.auth.signUp({
     email: b.email,
@@ -76,7 +85,11 @@ export async function POST(request: Request) {
   });
   if (cliErr) {
     console.error("[cadastro] insert clients:", cliErr.message);
-    return NextResponse.json({ erro: "Erro ao salvar cadastro." }, { status: 500 });
+    const dup = cliErr.code === "23505" || /duplicate|cpf_cnpj/i.test(cliErr.message || "");
+    return NextResponse.json(
+      { erro: dup ? "Este CPF/CNPJ já possui cadastro na Farol IA. Faça login." : "Erro ao salvar cadastro." },
+      { status: dup ? 400 : 500 }
+    );
   }
 
   // 3. Asaas (opcional até a chave estar setada no Vercel). Cria customer + assinatura trial.
