@@ -26,6 +26,7 @@ export default function LandingPage() {
             <a href="#solucao">A solução</a>
             <a href="#como">Como funciona</a>
             <a href="#faq">Dúvidas</a>
+            <a href="#parceiro">Parceiros</a>
           </nav>
           <div className="nav-cta">
             <Link href="/login" className="btn btn-primary">Já sou cliente</Link>
@@ -128,6 +129,19 @@ export default function LandingPage() {
             <details><summary>E se a IA não souber responder algo?</summary><div className="ans">Quando a IA não sabe responder, ela informa o cliente com educação e transfere o atendimento para você. Você recebe um alerta no painel e assume a conversa diretamente, sem o cliente perceber a transição.</div></details>
             <details><summary>Posso cancelar quando quiser?</summary><div className="ans">Sim. Sem contrato, sem multa, sem burocracia. Cancela pelo painel em menos de 2 minutos.</div></details>
             <details><summary>Em quanto tempo começa a funcionar?</summary><div className="ans">A maioria dos clientes ativa em menos de 1 hora. O prazo máximo é 24 horas após o questionário e a conexão do número.</div></details>
+          </div>
+        </div>
+      </section>
+
+      <section id="parceiro" style={{ background: "var(--bg-soft)", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)" }}>
+        <div className="wrap">
+          <p className="sec-eyebrow" style={{ color: "#39ff14", textShadow: "0 0 10px rgba(57,255,20,.55)" }}>Programa Parceiro</p>
+          <h2 className="sec-title">Indique e ganhe <em>mensalidades grátis.</em></h2>
+          <p className="sec-sub">Cada negócio que entra pelo seu convite e paga a primeira mensalidade vale <b>1 mês grátis</b> pra você. Indicou 3 que assinaram? 3 meses sem pagar. Vire parceiro da Farol IA.</p>
+          <div className="grid grid-3" style={{ marginTop: 40 }}>
+            <div className="card"><span className="ico">🔗</span><h3>Seu link exclusivo</h3><p>No painel você gera um link só seu e manda para donos de negócio que conhece. Quanto mais gente atendendo bem, melhor para todos.</p></div>
+            <div className="card"><span className="ico">✅</span><h3>Ele assina, você ganha</h3><p>Quando o indicado entra pelo seu link e paga a primeira mensalidade, o desconto cai automaticamente na sua próxima fatura.</p></div>
+            <div className="card"><span className="ico">🎁</span><h3>1 indicação = 1 mês grátis</h3><p>Cada cliente que você trouxer e que assinar zera uma mensalidade sua. Sem limite: indicou vários, ficou vários meses sem pagar.</p></div>
           </div>
         </div>
       </section>
