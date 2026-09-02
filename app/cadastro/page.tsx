@@ -115,6 +115,22 @@ export default function CadastroPage() {
           </div>
         )}
 
+        <div
+          style={{
+            border: "1px solid rgba(57,255,20,.4)",
+            background: "rgba(57,255,20,.08)",
+            borderRadius: 12,
+            padding: "12px 14px",
+            marginBottom: 20,
+            fontSize: 13.5,
+            lineHeight: 1.4,
+          }}
+        >
+          🎁 <b>Programa Parceiro:</b> depois de assinar, cada negócio que você
+          indicar e que assinar a Farol IA vale <b>1 mensalidade grátis</b> pra
+          você. Sem limite.
+        </div>
+
         <form onSubmit={enviar}>
           <label style={label}>Nome completo</label>
           <input style={input} value={f.nome} onChange={(e) => set("nome", e.target.value)} placeholder="Seu nome" />
