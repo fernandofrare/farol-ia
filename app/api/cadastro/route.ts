@@ -21,6 +21,7 @@ type Body = {
   cnpj?: string;
   cpf?: string;
   segmento?: string;
+  ref?: string;
 };
 
 const soDigitos = (s?: string) => (s || "").replace(/\D/g, "");
@@ -71,6 +72,7 @@ export async function POST(request: Request) {
     status: "trial",
     trial_ate: trialAte.toISOString(),
     ia_active: false,
+    indicado_por_ref: b.ref || null,
   });
   if (cliErr) {
     console.error("[cadastro] insert clients:", cliErr.message);
