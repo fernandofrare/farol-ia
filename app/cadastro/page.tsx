@@ -55,7 +55,7 @@ export default function CadastroPage() {
       const resp = await fetch("/api/cadastro", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...f, tipo }),
+        body: JSON.stringify({ ...f, tipo, ref: new URLSearchParams(window.location.search).get("ref") || undefined }),
       });
       const data = await resp.json();
       if (!resp.ok) throw new Error(data?.erro || "Erro ao cadastrar.");
