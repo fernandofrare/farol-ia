@@ -66,7 +66,7 @@ export default async function IndicarPage() {
             <h2 style={{ fontSize: 18, marginBottom: 6 }}>Seu link de convite</h2>
             <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 16 }}>
               Compartilhe com quem você conhece. Quando alguém assina pelo seu
-              link e paga a primeira mensalidade, você ganha desconto na sua
+              link e paga a primeira mensalidade, você ganha 1 mês grátis na sua
               próxima fatura.
             </p>
             {link ? (
@@ -115,7 +115,7 @@ export default async function IndicarPage() {
           </div>
 
           <p style={{ color: "var(--muted)", fontSize: 12.5, marginTop: 20 }}>
-            O desconto é aplicado automaticamente assim que a Farol IA confirma o
+            Cada indicado que assina vale 1 mensalidade grátis, aplicada automaticamente assim que a Farol IA confirma o
             pagamento da primeira mensalidade de quem você indicou.
           </p>
         </div>
