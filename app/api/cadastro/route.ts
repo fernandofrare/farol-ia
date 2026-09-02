@@ -94,13 +94,15 @@ export async function POST(request: Request) {
 
   // 3. Asaas (opcional até a chave estar setada no Vercel). Cria customer + assinatura trial.
   const ASAAS_KEY = process.env.ASAAS_API_KEY;
+  // Trial SEM cartão: por padrão NÃO cobramos no cadastro. Cartão só na conversão (fim do trial).
+  const chargeAtSignup = process.env.ASAAS_CHARGE_AT_SIGNUP === "true";
   const ASAAS_BASE =
     process.env.ASAAS_ENV === "production"
       ? "https://api.asaas.com/v3"
       : "https://api-sandbox.asaas.com/v3";
 
-  if (!ASAAS_KEY) {
-    // Sem gateway ainda: segue pro painel. (Fase de validação do cadastro.)
+  if (!ASAAS_KEY || !chargeAtSignup) {
+    // Trial sem cartão: cria a conta e vai direto pro painel. Cartão só na conversão.
     return NextResponse.json({ ok: true, checkoutUrl: null });
   }
 
