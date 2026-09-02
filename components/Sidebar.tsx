@@ -21,6 +21,7 @@ const PRINCIPAL = [
   { href: "/dashboard", ico: "📊", label: "Dashboard" },
   { href: "/minha-ia", ico: "🤖", label: "Minha IA" },
   { href: "/crm", ico: "👥", label: "Contatos & CRM" },
+  { href: "/indicar", ico: "🎁", label: "Indique e ganhe" },
 ];
 
 const CONFIG = [
