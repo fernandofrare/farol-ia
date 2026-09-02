@@ -27,6 +27,7 @@ export default function LandingPage() {
             <a href="#como">Como funciona</a>
             <a href="#faq">Dúvidas</a>
             <a href="#parceiro">Parceiros</a>
+            <a href="#fundador">Quem somos</a>
           </nav>
           <div className="nav-cta">
             <Link href="/login" className="btn btn-primary">Já sou cliente</Link>
@@ -43,12 +44,13 @@ export default function LandingPage() {
           <div className="hero-cta">
             <Link href="/cadastro" className="btn btn-primary">Quero testar 1 semana grátis →</Link>
           </div>
-          <p className="sub" style={{ marginTop: 10, fontSize: 13 }}>Cancele dentro da primeira semana e não pague nada.</p>
+          <p className="sub" style={{ marginTop: 10, fontSize: 13 }}>7 dias grátis, sem precisar cadastrar cartão de crédito. Cancele quando quiser.</p>
           <p className="guarantee"><b>Ativo em até 24h</b> · Sem taxa de instalação · Sem fidelidade</p>
         </div>
         <div className="trust">
           <div className="wrap trust-inner">
             <span>⚡ Ativo em até 24 horas</span>
+            <span>🆓 7 dias grátis, sem cartão</span>
             <span>🔒 Sem contrato de fidelidade</span>
             <span>🧾 Sem taxa e burocracia de instalação</span>
             <span>🤖 IA de ponta do mercado</span>
@@ -106,6 +108,7 @@ export default function LandingPage() {
             <table>
               <thead><tr><th></th><th>Outras soluções do mercado</th><th className="col-us">Farol IA</th></tr></thead>
               <tbody>
+                <tr><td>Teste grátis</td><td className="no">Raro — e quase sempre exige cartão</td><td className="col-us yes">7 dias, sem cartão</td></tr>
                 <tr><td>Taxa de instalação</td><td className="no">R$800 a R$1.500</td><td className="col-us yes">Zero</td></tr>
                 <tr><td>Tempo de instalação</td><td className="no">7 a 15 dias</td><td className="col-us yes">Menos de 24h</td></tr>
                 <tr><td>Mensalidade</td><td className="no">Acima de R$400</td><td className="col-us yes">R$147 fixo</td></tr>
@@ -129,6 +132,28 @@ export default function LandingPage() {
             <details><summary>E se a IA não souber responder algo?</summary><div className="ans">Quando a IA não sabe responder, ela informa o cliente com educação e transfere o atendimento para você. Você recebe um alerta no painel e assume a conversa diretamente, sem o cliente perceber a transição.</div></details>
             <details><summary>Posso cancelar quando quiser?</summary><div className="ans">Sim. Sem contrato, sem multa, sem burocracia. Cancela pelo painel em menos de 2 minutos.</div></details>
             <details><summary>Em quanto tempo começa a funcionar?</summary><div className="ans">A maioria dos clientes ativa em menos de 1 hora. O prazo máximo é 24 horas após o questionário e a conexão do número.</div></details>
+          </div>
+        </div>
+      </section>
+
+<section id="fundador" className="founder">
+        <div className="wrap">
+          <p className="sec-eyebrow">Quem está por trás disso</p>
+          <h2 className="sec-title" style={{ marginBottom: 48 }}>Feito por quem conhece <em>de perto</em> a sua realidade</h2>
+          <div className="founder-grid">
+            <div className="founder-card">
+              <div className="founder-avatar">FF</div>
+              <b>Fernando Frare</b>
+              <span>Fundador · Farol IA</span>
+            </div>
+            <div className="founder-text">
+              <p><strong>Cresci vendo minha família construir no braço.</strong> Interior dos anos 90. Indústria, suor, tijolo por tijolo. Sem tecnologia, sem atalho — só trabalho e vontade de prosperar.</p>
+              <p>Comecei a trabalhar em fábrica aos 12 anos. Aprendi cedo que o empresário brasileiro de verdade não tem medo de trabalhar. O que ele não tem é tempo, ferramenta e acesso.</p>
+              <p>Passei pelo banco. Virei trader. Empreendi. Hoje sou graduando em Gestão de Inteligência Artificial para Empresas. E em cada etapa percebi a mesma coisa: a tecnologia que as grandes usam para crescer estava fora do alcance de quem mais precisa dela.</p>
+              <p>As pequenas e médias empresas geram mais de 70% dos empregos formais do Brasil. São o motor real da economia — e os menos assistidos quando o assunto é inovação. Eu conheço esse empresário. Cresci ao lado dele.</p>
+              <p><strong>A Farol IA nasceu disso.</strong> De um compromisso pessoal: colocar nas mãos de quem trabalha de verdade a mesma tecnologia que as grandes já usam há anos — de forma simples, acessível e com resultado real.</p>
+              <p className="sign">— Fernando Frare, Fundador da Farol IA</p>
+            </div>
           </div>
         </div>
       </section>
@@ -173,6 +198,7 @@ export default function LandingPage() {
               </div>
               <div className="foot-col">
                 <h4>Empresa</h4>
+                <a href="#fundador">Quem somos</a>
                 <a href={wa("Olá! Gostaria de falar com a Farol IA")}>Falar conosco</a>
                 <Link href="/login">Área do cliente</Link>
               </div>
