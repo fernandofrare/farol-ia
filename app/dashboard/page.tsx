@@ -265,12 +265,12 @@ export default async function DashboardPage() {
                   </div>
                   <span className={styles.actionArr}>→</span>
                 </Link>
-                <Link href="/minha-ia" className={styles.actionBtn}>
+                <Link href="/comecar" className={styles.actionBtn}>
                   <span className={styles.actionIco}>📱</span>
                   <div className={styles.actionInfo}>
                     <div className={styles.actionTitle}>Conectar WhatsApp</div>
                     <div className={styles.actionSub}>
-                      Escanear o QR Code da Evolution
+                      Escaneie o QR e ative em minutos
                     </div>
                   </div>
                   <span className={styles.actionArr}>→</span>
