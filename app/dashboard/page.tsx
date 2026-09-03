@@ -27,11 +27,17 @@ export default async function DashboardPage() {
   // Client do usuário (nome do negócio, instância, IA ativa).
   const { data: cliente } = await supabase
     .from("clients")
-    .select("id, nome, ia_active, evolution_instance")
+    .select("id, nome, ia_active, evolution_instance, status, trial_ate")
     .eq("user_id", user?.id)
     .maybeSingle();
 
   const clientId = cliente?.id;
+
+  let diasTrial: number | null = null;
+  if (cliente?.status === "trial" && cliente?.trial_ate) {
+    const ms = new Date(cliente.trial_ate).getTime() - Date.now();
+    diasTrial = Math.max(0, Math.ceil(ms / 86400000));
+  }
 
   // Conversas recentes para o painel (últimas 5) — via client_id.
   const { data: conversas } = clientId
@@ -105,6 +111,25 @@ export default async function DashboardPage() {
             ativaInicial={config?.ativa ?? false}
             numeroWhats={config?.numero_whatsapp ?? null}
           />
+
+          {diasTrial !== null && (
+            <Link
+              href="/assinatura"
+              style={{
+                display: "block",
+                border: "1px solid rgba(245,185,65,.4)",
+                background: "rgba(245,185,65,.1)",
+                borderRadius: 12,
+                padding: "12px 16px",
+                margin: "0 0 20px",
+                fontSize: 14,
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              ⏳ <b>Período de teste:</b> faltam {diasTrial} dia{diasTrial === 1 ? "" : "s"} grátis. Ver assinatura →
+            </Link>
+          )}
 
           {/* MÉTRICAS */}
           <div className={styles.metrics}>
@@ -255,7 +280,7 @@ export default async function DashboardPage() {
                   <div className={styles.actionInfo}>
                     <div className={styles.actionTitle}>Minha assinatura</div>
                     <div className={styles.actionSub}>
-                      Beta Fundador · gratuito
+                      Plano, teste e indicações
                     </div>
                   </div>
                   <span className={styles.actionArr}>→</span>
