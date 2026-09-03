@@ -60,7 +60,7 @@ export default function CadastroPage() {
       const data = await resp.json();
       if (!resp.ok) throw new Error(data?.erro || "Erro ao cadastrar.");
       // Vai pro checkout do Asaas (cartão) ou pro painel se ainda não configurado.
-      window.location.href = data.checkoutUrl || "/dashboard";
+      window.location.href = data.checkoutUrl || "/comecar";
     } catch (err) {
       setErro(err instanceof Error ? err.message : "Erro ao cadastrar.");
       setEnviando(false);
