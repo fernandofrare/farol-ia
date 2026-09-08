@@ -43,7 +43,7 @@ export function LogoFarol({
       <rect x="18" y="74" width="40" height="5" rx="2.5" fill="url(#lg1)" />
       <text
         x="68"
-        y="45"
+        y="55"
         fontFamily="Montserrat,sans-serif"
         fontWeight="800"
         fontSize="28"
