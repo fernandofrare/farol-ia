@@ -260,7 +260,7 @@ export default function ComecarPage() {
           <div style={card}>
             <h1 style={{ fontSize: 22, marginBottom: 4 }}>Conecte seu WhatsApp</h1>
             <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 18 }}>
-              Use um número <b>novo e dedicado</b> ao atendimento. No celular desse número:
+              No celular do número de atendimento:
               WhatsApp → Aparelhos conectados → Conectar aparelho → escaneie o código.
             </p>
 
