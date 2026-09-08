@@ -44,7 +44,7 @@ export default function LandingPage() {
           <div className="hero-cta">
             <Link href="/cadastro" className="btn btn-primary">Quero testar 1 semana grátis →</Link>
           </div>
-          <p className="sub" style={{ marginTop: 10, fontSize: 13 }}>7 dias grátis, sem precisar cadastrar cartão de crédito. Cancele quando quiser.</p>
+          <p className="sub" style={{ marginTop: 10, fontSize: 13 }}>7 dias grátis, sem cartão. R$147/mês é preço promocional de 2026 — quem assina agora trava esse valor durante todo o 2027.</p>
           <p className="guarantee"><b>Ativo em até 24h</b> · Sem taxa de instalação · Sem fidelidade</p>
         </div>
         <div className="trust">
@@ -111,7 +111,7 @@ export default function LandingPage() {
                 <tr><td>Teste grátis</td><td className="no">Raro — e quase sempre exige cartão</td><td className="col-us yes">7 dias, sem cartão</td></tr>
                 <tr><td>Taxa de instalação</td><td className="no">R$800 a R$1.500</td><td className="col-us yes">Zero</td></tr>
                 <tr><td>Tempo de instalação</td><td className="no">7 a 15 dias</td><td className="col-us yes">Menos de 24h</td></tr>
-                <tr><td>Mensalidade</td><td className="no">Acima de R$400</td><td className="col-us yes">R$147 fixo</td></tr>
+                <tr><td>Mensalidade</td><td className="no">Acima de R$400</td><td className="col-us yes">R$147/mês · promocional 2026</td></tr>
                 <tr><td>Personalização</td><td className="no">Complexa, depende de técnico</td><td className="col-us yes">Simples, sem código</td></tr>
                 <tr><td>Atualização constante</td><td className="no">Rara ou paga à parte</td><td className="col-us yes">Sempre incluída</td></tr>
               </tbody>
