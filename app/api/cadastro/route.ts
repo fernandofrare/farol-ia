@@ -93,6 +93,34 @@ export async function POST(request: Request) {
   }
 
   // 3. Asaas (opcional até a chave estar setada no Vercel). Cria customer + assinatura trial.
+  // E-mail de boas-vindas (nao bloqueia o cadastro se falhar).
+  const RESEND_KEY = process.env.RESEND_API_KEY;
+  if (RESEND_KEY) {
+    try {
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${RESEND_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: "Farol IA <onboarding@farolia.store>",
+          to: [b.email],
+          subject: "Bem-vindo a Farol IA - seus 7 dias gratis comecaram",
+          html:
+            '<div style="font-family:sans-serif;line-height:1.6;color:#111">' +
+            '<h2>Bem-vindo a Farol IA</h2>' +
+            '<p>Sua conta esta criada e seus <b>7 dias gratis</b> comecaram, sem cartao e sem compromisso.</p>' +
+            '<p>Proximo passo: configure sua IA e conecte o WhatsApp pelo QR. Leva poucos minutos.</p>' +
+            '<p><a href="https://farolia.store/comecar" style="background:#ff8a3d;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none">Configurar minha IA</a></p>' +
+            '<p style="color:#666;font-size:13px">Dica: use um numero de WhatsApp novo e dedicado, e mantenha o celular ligado.</p></div>',
+        }),
+      });
+    } catch (e) {
+      console.error("[cadastro] resend:", e instanceof Error ? e.message : e);
+    }
+  }
+
   const ASAAS_KEY = process.env.ASAAS_API_KEY;
   // Trial SEM cartão: por padrão NÃO cobramos no cadastro. Cartão só na conversão (fim do trial).
   const chargeAtSignup = process.env.ASAAS_CHARGE_AT_SIGNUP === "true";
