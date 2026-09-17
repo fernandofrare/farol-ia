@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import painel from "@/components/painel.module.css";
 import styles from "./crm.module.css";
+import { ChatDrawer } from "./ChatDrawer";
 
 export type Contato = {
   id: string;
@@ -35,6 +36,7 @@ export function CrmTabela({ contatos }: { contatos: Contato[] }) {
   const [filtro, setFiltro] = useState<string>("todos");
   const [busca, setBusca] = useState("");
   const [aberto, setAberto] = useState<Contato | null>(null);
+  const [chat, setChat] = useState<Contato | null>(null);
   const [takeoverLoading, setTakeoverLoading] = useState(false);
 
   async function alternarTakeover(contato: Contato) {
@@ -60,6 +62,12 @@ export function CrmTabela({ contatos }: { contatos: Contato[] }) {
     } finally {
       setTakeoverLoading(false);
     }
+  }
+
+  // Reflete a mudança de takeover feita dentro do chat nos estados locais.
+  function aoAlternarNoChat(id: string, humano: boolean) {
+    setChat((c) => (c && c.id === id ? { ...c, controleHumano: humano } : c));
+    setAberto((a) => (a && a.id === id ? { ...a, controleHumano: humano } : a));
   }
 
   const stats = useMemo(() => {
@@ -201,10 +209,24 @@ export function CrmTabela({ contatos }: { contatos: Contato[] }) {
                     <td className={styles.tdTime}>{c.primeiro_contato}</td>
                     <td>
                       <div className={styles.tdAction}>
-                        <div className={styles.iconBtn} title="Abrir chat">
+                        <div
+                          className={styles.iconBtn}
+                          title="Abrir chat"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setChat(c);
+                          }}
+                        >
                           💬
                         </div>
-                        <div className={styles.iconBtn} title="Ver histórico">
+                        <div
+                          className={styles.iconBtn}
+                          title="Ver detalhes"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setAberto(c);
+                          }}
+                        >
                           📋
                         </div>
                       </div>
@@ -276,13 +298,28 @@ export function CrmTabela({ contatos }: { contatos: Contato[] }) {
                   ? "🤖 Devolver p/ IA"
                   : "🙋 Assumir conversa"}
               </button>
-              <button className={`${painel.btn} ${painel.btnPrimary}`}>
+              <button
+                className={`${painel.btn} ${painel.btnPrimary}`}
+                onClick={() => setChat(aberto)}
+              >
                 💬 Abrir chat
               </button>
             </div>
           </>
         )}
       </div>
+
+      {/* CHAT */}
+      {chat && (
+        <ChatDrawer
+          conversationId={chat.id}
+          nome={chat.nome}
+          telefone={chat.telefone}
+          controleHumano={!!chat.controleHumano}
+          onClose={() => setChat(null)}
+          onTakeover={(humano) => aoAlternarNoChat(chat.id, humano)}
+        />
+      )}
     </>
   );
 }
