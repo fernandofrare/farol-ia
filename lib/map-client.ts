@@ -26,6 +26,7 @@ export type ClientRow = {
   data_fields?: string[] | null;
   off_hours_message?: string | null;
   welcome_message?: string | null;
+  contexto_extra?: string | null;
   evolution_instance?: string | null;
   updated_at?: string | null;
 };
@@ -65,6 +66,7 @@ export function clientParaConfig(row: ClientRow | null): ConfigIA {
       ? row.payment
       : CONFIG_PADRAO.formas_pagamento,
     horarios,
+    contexto_extra: row.contexto_extra ?? "",
     msg_saudacao: row.welcome_message ?? CONFIG_PADRAO.msg_saudacao,
     msg_fora_horario: row.off_hours_message ?? CONFIG_PADRAO.msg_fora_horario,
     perguntar_nome: row.collect_data ?? false,
@@ -88,6 +90,7 @@ export function configParaClient(cfg: ConfigIA): ClientRow {
     collect_data: cfg.perguntar_nome,
     welcome_message: cfg.msg_saudacao,
     off_hours_message: cfg.msg_fora_horario,
+    contexto_extra: cfg.contexto_extra || null,
     ia_active: cfg.ativa,
     updated_at: new Date().toISOString(),
   };
