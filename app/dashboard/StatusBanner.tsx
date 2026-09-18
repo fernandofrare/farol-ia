@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
 import styles from "./dashboard.module.css";
 
@@ -14,60 +15,88 @@ export function StatusBanner({
   const supabase = createClient();
   const [ativa, setAtiva] = useState(ativaInicial);
   const [salvando, setSalvando] = useState(false);
-  const [erro, setErro] = useState<string | null>(null);
+  // Estado REAL da conexão (não basta ter um nome de instância salvo).
+  const [conn, setConn] = useState<string>("verificando");
+
+  // Checa a conexão de verdade na Evolution (via motor), ao montar.
+  useEffect(() => {
+    let vivo = true;
+    (async () => {
+      try {
+        const r = await fetch("/api/whatsapp/status");
+        const d = await r.json();
+        if (vivo) setConn(d.state || "desconhecido");
+      } catch {
+        if (vivo) setConn("desconhecido");
+      }
+    })();
+    return () => {
+      vivo = false;
+    };
+  }, []);
+
+  const conectado = conn === "open";
 
   async function toggle() {
     const novo = !ativa;
     setAtiva(novo); // otimista
     setSalvando(true);
-    setErro(null);
-
     const {
       data: { user },
     } = await supabase.auth.getUser();
-
-    let ok = false;
     if (user) {
-      // .select() devolve as linhas afetadas: se vier vazio, o update nao
-      // persistiu (ex.: RLS bloqueou) e precisamos reverter a tela.
-      const { data, error } = await supabase
+      await supabase
         .from("clients")
         .update({ ia_active: novo })
-        .eq("user_id", user.id)
-        .select("id");
-      ok = !error && Array.isArray(data) && data.length > 0;
-    }
-
-    if (!ok) {
-      setAtiva(!novo); // reverte o otimista
-      setErro("Nao foi possivel salvar. Tente novamente.");
+        .eq("user_id", user.id);
     }
     setSalvando(false);
   }
 
+  // Sub-texto conforme o estado real da conexão.
+  let sub: React.ReactNode;
+  if (conn === "verificando") {
+    sub = "Verificando a conexão do WhatsApp…";
+  } else if (conectado) {
+    sub = ativa
+      ? `Conectada ao WhatsApp${numeroWhats ? ` · ${numeroWhats}` : ""}`
+      : "As mensagens não estão sendo respondidas automaticamente";
+  } else {
+    // Desconectado (ou nunca conectado): AVISA e oferece reconectar.
+    sub = (
+      <>
+        ⚠️ Nenhum celular conectado — as mensagens não chegam.{" "}
+        <Link href="/conectar" style={{ color: "inherit", textDecoration: "underline" }}>
+          {numeroWhats ? "Reconectar agora" : "Conectar WhatsApp"}
+        </Link>
+      </>
+    );
+  }
+
+  // Se está desconectado, força a aparência de "off" (alerta), mesmo com IA ligada.
+  const aparenciaOn = ativa && conectado;
+
   return (
     <div
       className={`${styles.statusBanner} ${
-        ativa ? styles.statusOn : styles.statusOff
+        aparenciaOn ? styles.statusOn : styles.statusOff
       }`}
     >
       <div className={styles.statusLeft}>
         <div
-          className={`${styles.statusDot} ${ativa ? styles.dotOn : styles.dotOff}`}
+          className={`${styles.statusDot} ${
+            aparenciaOn ? styles.dotOn : styles.dotOff
+          }`}
         />
         <div>
           <div className={styles.statusLabel}>
-            {ativa ? "IA Ativa — Atendendo agora" : "IA Pausada"}
-          </div>
-          <div className={styles.statusSub}>
-            {erro
-              ? erro
+            {!conectado
+              ? "WhatsApp desconectado"
               : ativa
-              ? numeroWhats
-                ? `Conectada ao WhatsApp · ${numeroWhats}`
-                : "Conecte seu WhatsApp para começar a atender"
-              : "As mensagens não estão sendo respondidas automaticamente"}
+              ? "IA Ativa — Atendendo agora"
+              : "IA Pausada"}
           </div>
+          <div className={styles.statusSub}>{sub}</div>
         </div>
       </div>
       <div className={styles.toggleWrap}>
