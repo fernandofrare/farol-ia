@@ -14,6 +14,7 @@ export type ConfigIA = {
   nome_ia: string;
   // O que a IA sabe
   servicos: string[];
+  catalogo: string;
   formas_pagamento: string[];
   entrega: string;
   agendamento: "sim" | "nao" | "link";
@@ -24,7 +25,7 @@ export type ConfigIA = {
     string,
     { aberto: boolean; abre: string; fecha: string }
   >;
-  responder_fora_horario: boolean;
+  responder_fora_horario: oolean;
   informar_reabertura: boolean;
   // Mensagens
   msg_saudacao: string;
@@ -61,6 +62,7 @@ export const CONFIG_PADRAO: ConfigIA = {
   emojis: "moderado",
   nome_ia: "",
   servicos: [],
+  catalogo: "",
   formas_pagamento: ["Pix", "Cartão de crédito", "Dinheiro"],
   entrega: "Não fazemos entrega",
   agendamento: "sim",
