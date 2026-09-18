@@ -304,37 +304,21 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
                   />
                 </div>
 
-                {/* Documentos: tabela de preços / cardápio (em breve) */}
-                <div
-                  style={{
-                    marginTop: 14,
-                    border: "1px dashed var(--line)",
-                    borderRadius: 12,
-                    padding: "14px 16px",
-                    background: "rgba(255,255,255,0.02)",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                    <span style={{ fontSize: 16 }}>📎</span>
-                    <b style={{ fontSize: 14 }}>Documentos (tabela de preços / cardápio)</b>
-                    <span
-                      style={{
-                        fontSize: 11,
-                        padding: "2px 7px",
-                        borderRadius: 20,
-                        background: "rgba(245,185,65,.15)",
-                        color: "#f5b941",
-                        fontWeight: 600,
-                      }}
-                    >
-                      Em breve
-                    </span>
-                  </div>
-                  <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>
-                    Aqui você poderá anexar sua tabela de produtos e preços ou o
-                    cardápio (PDF ou imagem). A IA envia automaticamente para o
-                    cliente que pedir. Estamos finalizando essa parte.
+                {/* Tabela de produtos e preços / cardápio — texto que a IA envia inteiro quando pedirem */}
+                <div style={{ marginTop: 16 }}>
+                  <label>Tabela de produtos e preços / cardápio</label>
+                  <p className={styles.hint}>
+                    Cole aqui sua lista completa de produtos/serviços com preços.
+                    Quando um cliente pedir &quot;a tabela&quot; ou &quot;o cardápio&quot;, a IA
+                    responde tudo de uma vez.
                   </p>
+                  <textarea
+                    className={styles.textarea}
+                    rows={6}
+                    value={cfg.catalogo}
+                    placeholder={"Ex:\nCorte masculino — R$ 40\nCorte + barba — R$ 65\nBarba — R$ 30\nHidratação — R$ 50"}
+                    onChange={(e) => set("catalogo", e.target.value)}
+                  />
                 </div>
               </div>
             </div>
