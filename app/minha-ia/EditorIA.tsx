@@ -33,6 +33,12 @@ const ROTULO_DIA: Record<string, string> = {
   seg: "Seg", ter: "Ter", qua: "Qua", qui: "Qui", sex: "Sex", sab: "Sáb", dom: "Dom",
 };
 
+// Um dia é "24h" quando está aberto e cobre 00:00–23:59.
+// (Guardamos assim para o motor já tratar como aberto o dia todo, sem mudança no motor.)
+function ehH24(h: { aberto: boolean; abre: string; fecha: string }) {
+  return h.aberto && h.abre === "00:00" && h.fecha === "23:59";
+}
+
 export function EditorIA({ inicial }: { inicial: ConfigIA }) {
   const [cfg, setCfg] = useState<ConfigIA>(inicial);
   const [servInput, setServInput] = useState("");
@@ -72,6 +78,15 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
       ...cfg.horarios,
       [dia]: { ...cfg.horarios[dia], ...patch },
     });
+  }
+
+  // Liga/desliga o "24h aberto" de um dia.
+  function toggle24(dia: string, h: ConfigIA["horarios"][string]) {
+    if (ehH24(h)) {
+      setDia(dia, { abre: "09:00", fecha: "18:00" });
+    } else {
+      setDia(dia, { aberto: true, abre: "00:00", fecha: "23:59" });
+    }
   }
 
   async function salvar() {
@@ -288,6 +303,39 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
                     onKeyDown={addServico}
                   />
                 </div>
+
+                {/* Documentos: tabela de preços / cardápio (em breve) */}
+                <div
+                  style={{
+                    marginTop: 14,
+                    border: "1px dashed var(--line)",
+                    borderRadius: 12,
+                    padding: "14px 16px",
+                    background: "rgba(255,255,255,0.02)",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                    <span style={{ fontSize: 16 }}>📎</span>
+                    <b style={{ fontSize: 14 }}>Documentos (tabela de preços / cardápio)</b>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        padding: "2px 7px",
+                        borderRadius: 20,
+                        background: "rgba(245,185,65,.15)",
+                        color: "#f5b941",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Em breve
+                    </span>
+                  </div>
+                  <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>
+                    Aqui você poderá anexar sua tabela de produtos e preços ou o
+                    cardápio (PDF ou imagem). A IA envia automaticamente para o
+                    cliente que pedir. Estamos finalizando essa parte.
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -353,24 +401,29 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
                 </div>
               </div>
             )}
+          </div>
+        </section>
 
-            <div className={styles.field} style={{ marginTop: 16 }}>
-              <label>
-                Algo mais que a IA deve saber?{" "}
-                <span className={styles.optional}>(opcional)</span>
-              </label>
-              <p className={styles.hint}>
-                Detalhes, regras, diferenciais — a IA aprende com o que você
-                escrever aqui
-              </p>
-              <textarea
-                className={styles.textarea}
-                rows={4}
-                value={cfg.contexto_extra}
-                placeholder="Ex: Somos especializados em cabelos cacheados. Não fazemos orçamento por mensagem — o cliente vem pessoalmente."
-                onChange={(e) => set("contexto_extra", e.target.value)}
-              />
+        {/* 2b. ALGO MAIS QUE A IA DEVE SABER — em destaque */}
+        <section
+          className={styles.card}
+          style={{ border: "1px solid #f5b941", boxShadow: "0 0 0 3px rgba(245,185,65,0.12)" }}
+        >
+          <div className={styles.cardHead}>
+            <div className={styles.ico} style={{ background: "rgba(245,185,65,.15)" }}>⭐</div>
+            <div className={styles.cardHeadText}>
+              <h2>Algo mais que a IA deve saber</h2>
+              <p>Detalhes, regras e diferenciais que a IA deve priorizar no atendimento</p>
             </div>
+          </div>
+          <div className={styles.cardBody}>
+            <textarea
+              className={styles.textarea}
+              rows={5}
+              value={cfg.contexto_extra}
+              placeholder="Ex: Somos especializados em cabelos cacheados. Não fazemos orçamento por mensagem — o cliente vem pessoalmente. Estacionamento gratuito na frente."
+              onChange={(e) => set("contexto_extra", e.target.value)}
+            />
           </div>
         </section>
 
@@ -380,13 +433,14 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
             <div className={styles.ico}>🕐</div>
             <div className={styles.cardHeadText}>
               <h2>Horários de funcionamento</h2>
-              <p>Clique no dia para abrir ou fechar</p>
+              <p>Clique no dia para abrir/fechar. Use &quot;24h&quot; para atender sem parar naquele dia.</p>
             </div>
           </div>
           <div className={styles.cardBody}>
             <div className={styles.horarioGrid}>
               {DIAS.map((dia) => {
                 const h = cfg.horarios[dia];
+                const h24 = ehH24(h);
                 return (
                   <div key={dia} className={styles.diaCol}>
                     <div className={styles.diaLabel}>{ROTULO_DIA[dia]}</div>
@@ -398,21 +452,57 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
                     >
                       {h.aberto ? "✓" : ""}
                     </button>
-                    <input
-                      type="time"
-                      className={styles.timeInput}
-                      value={h.abre}
-                      disabled={!h.aberto}
-                      onChange={(e) => setDia(dia, { abre: e.target.value })}
-                    />
-                    <div className={styles.timeSep}>às</div>
-                    <input
-                      type="time"
-                      className={styles.timeInput}
-                      value={h.fecha}
-                      disabled={!h.aberto}
-                      onChange={(e) => setDia(dia, { fecha: e.target.value })}
-                    />
+
+                    {h24 ? (
+                      <div
+                        style={{
+                          fontSize: 12,
+                          color: "#3ad29f",
+                          fontWeight: 700,
+                          textAlign: "center",
+                          padding: "8px 0",
+                        }}
+                      >
+                        24h aberto
+                      </div>
+                    ) : (
+                      <>
+                        <input
+                          type="time"
+                          className={styles.timeInput}
+                          value={h.abre}
+                          disabled={!h.aberto}
+                          onChange={(e) => setDia(dia, { abre: e.target.value })}
+                        />
+                        <div className={styles.timeSep}>às</div>
+                        <input
+                          type="time"
+                          className={styles.timeInput}
+                          value={h.fecha}
+                          disabled={!h.aberto}
+                          onChange={(e) => setDia(dia, { fecha: e.target.value })}
+                        />
+                      </>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => toggle24(dia, h)}
+                      style={{
+                        marginTop: 6,
+                        fontSize: 11,
+                        padding: "4px 8px",
+                        borderRadius: 8,
+                        border: `1px solid ${h24 ? "#3ad29f" : "var(--line)"}`,
+                        background: h24 ? "rgba(58,210,159,.15)" : "transparent",
+                        color: h24 ? "#3ad29f" : "inherit",
+                        cursor: "pointer",
+                        fontWeight: 600,
+                      }}
+                      title="Atender 24 horas neste dia"
+                    >
+                      {h24 ? "✓ 24h" : "24h"}
+                    </button>
                   </div>
                 );
               })}
