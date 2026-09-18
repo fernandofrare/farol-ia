@@ -18,6 +18,7 @@ export type ClientRow = {
   ia_active?: boolean | null;
   assistant_name?: string | null;
   services?: unknown; // jsonb
+  catalogo?: string | null;
   schedule?: unknown; // jsonb
   payment?: string[] | null; // array
   cancelamento?: string | null;
@@ -62,6 +63,7 @@ export function clientParaConfig(row: ClientRow | null): ConfigIA {
     tom: TOM_PARA_UI[(row.tone ?? "").toLowerCase()] ?? "amigavel",
     nome_ia: row.assistant_name ?? "",
     servicos,
+    catalogo: row.catalogo ?? "",
     formas_pagamento: Array.isArray(row.payment)
       ? row.payment
       : CONFIG_PADRAO.formas_pagamento,
@@ -84,6 +86,7 @@ export function configParaClient(cfg: ConfigIA): ClientRow {
     tone: cfg.tom,
     assistant_name: cfg.nome_ia || null,
     services: cfg.servicos, // grava como jsonb (array de strings)
+    catalogo: cfg.catalogo || null,
     schedule: mapScheduleParaBanco(cfg.horarios),
     payment: cfg.formas_pagamento,
     scheduling_info: cfg.link_agendamento || null,
