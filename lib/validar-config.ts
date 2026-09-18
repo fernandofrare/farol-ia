@@ -11,6 +11,7 @@ const LIM = {
   curto: 120, // nomes, cidade, etc.
   medio: 500, // mensagens
   longo: 2000, // contexto_extra
+  catalogo: 8000, // tabela de produtos/preços / cardápio (texto)
   item: 80, // cada serviço/pagamento
   maxItens: 50, // nº de serviços/pagamentos
   maxJsonBytes: 100_000, // teto do payload inteiro (~100 KB)
@@ -90,6 +91,7 @@ export function validarConfig(entrada: unknown): ResultadoValidacao {
     emojis: umDe(e.emojis, EMOJIS, "moderado") as ConfigIA["emojis"],
     nome_ia: str(e.nome_ia, LIM.curto),
     servicos: listaStrings(e.servicos),
+    catalogo: str(e.catalogo, LIM.catalogo),
     formas_pagamento: listaStrings(e.formas_pagamento),
     entrega: str(e.entrega, LIM.curto),
     agendamento: umDe(e.agendamento, AGEND, "sim") as ConfigIA["agendamento"],
@@ -107,7 +109,6 @@ export function validarConfig(entrada: unknown): ResultadoValidacao {
     transferir_humano: bool(e.transferir_humano, true),
     receber_reclamacoes: bool(e.receber_reclamacoes, false),
     ativa: bool(e.ativa, false),
-    // numero_whatsapp: só dígitos, com tamanho de telefone. null se inválido.
     numero_whatsapp:
       typeof e.numero_whatsapp === "string"
         ? (e.numero_whatsapp.replace(/\D/g, "").slice(0, 15) || null)
