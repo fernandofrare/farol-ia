@@ -21,7 +21,7 @@ const PRINCIPAL = [
   { href: "/dashboard", ico: "📊", label: "Dashboard" },
   { href: "/minha-ia", ico: "🤖", label: "Minha IA" },
   { href: "/crm", ico: "👥", label: "Contatos & CRM" },
-  { href: "/indicar", ico: "🎁", label: "Indique e ganhe" },
+  { href: "/conectar", ico: "📱", label: "Conexão WhatsApp" },
 ];
 
 const CONFIG = [
@@ -71,6 +71,7 @@ export function Sidebar({ usuario }: { usuario: Usuario }) {
             <div className={styles.avatar}>{iniciais(usuario.nome)}</div>
             <div className={styles.userInfo}>
               <div className={styles.userName}>{usuario.nome}</div>
+              <div className={styles.userPlan}>{usuario.plano}</div>
             </div>
           </button>
         </form>
