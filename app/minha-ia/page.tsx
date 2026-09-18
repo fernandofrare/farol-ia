@@ -16,7 +16,7 @@ export default async function MinhaIAPage() {
   const { data } = await supabase
     .from("clients")
     .select(
-      "nome, segment, tone, assistant_name, services, schedule, payment, scheduling_info, collect_data, welcome_message, off_hours_message, ia_active, evolution_instance"
+      "nome, segment, tone, assistant_name, services, schedule, payment, scheduling_info, collect_data, welcome_message, off_hours_message, contexto_extra, ia_active, evolution_instance"
     )
     .eq("user_id", user?.id)
     .maybeSingle();
