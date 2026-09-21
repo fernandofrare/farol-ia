@@ -25,7 +25,7 @@ export type ConfigIA = {
     string,
     { aberto: boolean; abre: string; fecha: string }
   >;
-  responder_fora_horario: oolean;
+  responder_fora_horario: boolean;
   informar_reabertura: boolean;
   // Mensagens
   msg_saudacao: string;
