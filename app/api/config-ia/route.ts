@@ -17,9 +17,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from("clients")
-    .select(
-      "nome, segment, tone, assistant_name, services, catalogo, schedule, payment, scheduling_info, collect_data, welcome_message, off_hours_message, contexto_extra, ia_active, evolution_instance"
-    )
+    .select("*")
     .eq("user_id", user.id)
     .maybeSingle();
 
