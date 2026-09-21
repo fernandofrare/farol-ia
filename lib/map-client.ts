@@ -21,14 +21,29 @@ export type ClientRow = {
   catalogo?: string | null;
   schedule?: unknown; // jsonb
   payment?: string[] | null; // array
-  cancelamento?: string | null;
   scheduling_info?: string | null;
   collect_data?: boolean | null;
-  data_fields?: string[] | null;
   off_hours_message?: string | null;
   welcome_message?: string | null;
   contexto_extra?: string | null;
   evolution_instance?: string | null;
+  // Localização
+  uf?: string | null;
+  cidade?: string | null;
+  bairro?: string | null;
+  // Comunicação / atendimento
+  emojis?: string | null;
+  entrega?: string | null;
+  agendamento?: string | null;
+  msg_encerramento?: string | null;
+  // Toggles de horário
+  responder_fora_horario?: boolean | null;
+  informar_reabertura?: boolean | null;
+  // Toggles de comportamento
+  pode_informar_precos?: boolean | null;
+  pode_agendar?: boolean | null;
+  transferir_humano?: boolean | null;
+  receber_reclamacoes?: boolean | null;
   updated_at?: string | null;
 };
 
@@ -40,6 +55,9 @@ const TOM_PARA_UI: Record<string, ConfigIA["tom"]> = {
   direto: "direto",
   sofisticado: "sofisticado",
 };
+
+const EMOJIS_VALIDOS: ConfigIA["emojis"][] = ["moderado", "bastante", "nenhum"];
+const AGEND_VALIDOS: ConfigIA["agendamento"][] = ["sim", "nao", "link"];
 
 // ---- clients (banco) → ConfigIA (UI) ----
 export function clientParaConfig(row: ClientRow | null): ConfigIA {
@@ -56,23 +74,43 @@ export function clientParaConfig(row: ClientRow | null): ConfigIA {
   // schedule (jsonb) — tenta casar com o formato de horários da UI.
   const horarios = mapScheduleParaUI(row.schedule);
 
+  const emojis = EMOJIS_VALIDOS.includes(row.emojis as ConfigIA["emojis"])
+    ? (row.emojis as ConfigIA["emojis"])
+    : CONFIG_PADRAO.emojis;
+  const agendamento = AGEND_VALIDOS.includes(row.agendamento as ConfigIA["agendamento"])
+    ? (row.agendamento as ConfigIA["agendamento"])
+    : CONFIG_PADRAO.agendamento;
+
   return {
     ...CONFIG_PADRAO,
     nome_negocio: row.nome ?? "",
     segmento: row.segment ?? CONFIG_PADRAO.segmento,
+    uf: row.uf ?? CONFIG_PADRAO.uf,
+    cidade: row.cidade ?? "",
+    bairro: row.bairro ?? "",
     tom: TOM_PARA_UI[(row.tone ?? "").toLowerCase()] ?? "amigavel",
+    emojis,
     nome_ia: row.assistant_name ?? "",
     servicos,
     catalogo: row.catalogo ?? "",
     formas_pagamento: Array.isArray(row.payment)
       ? row.payment
       : CONFIG_PADRAO.formas_pagamento,
-    horarios,
+    entrega: row.entrega ?? CONFIG_PADRAO.entrega,
+    agendamento,
+    link_agendamento: row.scheduling_info ?? "",
     contexto_extra: row.contexto_extra ?? "",
+    horarios,
+    responder_fora_horario: row.responder_fora_horario ?? CONFIG_PADRAO.responder_fora_horario,
+    informar_reabertura: row.informar_reabertura ?? CONFIG_PADRAO.informar_reabertura,
     msg_saudacao: row.welcome_message ?? CONFIG_PADRAO.msg_saudacao,
     msg_fora_horario: row.off_hours_message ?? CONFIG_PADRAO.msg_fora_horario,
+    msg_encerramento: row.msg_encerramento ?? CONFIG_PADRAO.msg_encerramento,
+    pode_informar_precos: row.pode_informar_precos ?? CONFIG_PADRAO.pode_informar_precos,
+    pode_agendar: row.pode_agendar ?? CONFIG_PADRAO.pode_agendar,
     perguntar_nome: row.collect_data ?? false,
-    link_agendamento: row.scheduling_info ?? "",
+    transferir_humano: row.transferir_humano ?? CONFIG_PADRAO.transferir_humano,
+    receber_reclamacoes: row.receber_reclamacoes ?? CONFIG_PADRAO.receber_reclamacoes,
     ativa: row.ia_active ?? false,
     numero_whatsapp: row.evolution_instance ?? null,
   };
@@ -83,17 +121,30 @@ export function configParaClient(cfg: ConfigIA): ClientRow {
   return {
     nome: cfg.nome_negocio,
     segment: cfg.segmento,
+    uf: cfg.uf,
+    cidade: cfg.cidade || null,
+    bairro: cfg.bairro || null,
     tone: cfg.tom,
+    emojis: cfg.emojis,
     assistant_name: cfg.nome_ia || null,
     services: cfg.servicos, // grava como jsonb (array de strings)
     catalogo: cfg.catalogo || null,
     schedule: mapScheduleParaBanco(cfg.horarios),
     payment: cfg.formas_pagamento,
+    entrega: cfg.entrega,
+    agendamento: cfg.agendamento,
     scheduling_info: cfg.link_agendamento || null,
-    collect_data: cfg.perguntar_nome,
+    contexto_extra: cfg.contexto_extra || null,
+    responder_fora_horario: cfg.responder_fora_horario,
+    informar_reabertura: cfg.informar_reabertura,
     welcome_message: cfg.msg_saudacao,
     off_hours_message: cfg.msg_fora_horario,
-    contexto_extra: cfg.contexto_extra || null,
+    msg_encerramento: cfg.msg_encerramento,
+    pode_informar_precos: cfg.pode_informar_precos,
+    pode_agendar: cfg.pode_agendar,
+    collect_data: cfg.perguntar_nome,
+    transferir_humano: cfg.transferir_humano,
+    receber_reclamacoes: cfg.receber_reclamacoes,
     ia_active: cfg.ativa,
     updated_at: new Date().toISOString(),
   };
@@ -104,13 +155,11 @@ export function configParaClient(cfg: ConfigIA): ClientRow {
 function mapScheduleParaUI(schedule: unknown): ConfigIA["horarios"] {
   if (schedule && typeof schedule === "object" && !Array.isArray(schedule)) {
     const s = schedule as Record<string, unknown>;
-    // Se já está no formato da UI (tem 'seg'), usa direto.
     if (s.seg || s.dom) return schedule as ConfigIA["horarios"];
   }
   return CONFIG_PADRAO.horarios;
 }
 
 function mapScheduleParaBanco(horarios: ConfigIA["horarios"]): unknown {
-  // Guarda no mesmo formato da UI (jsonb aceita).
   return horarios;
 }
