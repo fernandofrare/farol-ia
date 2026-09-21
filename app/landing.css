@@ -128,3 +128,8 @@
 .landing-root header.nav svg[aria-label="Farol IA"]{width:200px;height:57px}
 .landing-root footer svg[aria-label="Farol IA"]{width:210px;height:60px}
 }
+
+/* Detalhes verdes do WhatsApp (estrategico; laranja segue como marca) */
+.landing-root .wa-word{color:var(--wa);white-space:nowrap}
+.landing-root .wa-ico{display:inline-block;width:.9em;height:.9em;vertical-align:-.14em;margin-right:.4em;fill:var(--wa)}
+.landing-root .wa-chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--wa);background:rgba(37,211,102,.10);border:1px solid rgba(37,211,102,.35);padding:6px 14px;border-radius:999px;margin:0 auto 16px}
