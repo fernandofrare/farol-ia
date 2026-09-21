@@ -176,10 +176,13 @@ export default function ConectarPage() {
           {!carregando && conectado && !modoTroca && (
             <button
               className="btn btn-ghost"
-              onClick={() => {
-                setModoTroca(true);
-                pedirQr();
-              }}
+              onClick={async () => {
+            setModoTroca(true);
+            try {
+              await fetch("/api/whatsapp/logout", { method: "POST" });
+            } catch {}
+            pedirQr();
+          }}
               style={{ width: "100%", padding: 12, borderRadius: 10, cursor: "pointer" }}
             >
               🔄 Trocar de número
@@ -188,8 +191,7 @@ export default function ConectarPage() {
 
           {conectado && modoTroca && (
             <p style={{ color: "var(--muted)", fontSize: 13, marginBottom: 14 }}>
-              Para trocar: no celular atual, abra WhatsApp → Aparelhos conectados →
-              desconecte a Farol. Depois escaneie o QR abaixo com o novo número.
+              Desconectando o número atual e gerando um novo QR. Escaneie abaixo com o novo número para vincular — os dados da empresa continuam salvos.
             </p>
           )}
 
