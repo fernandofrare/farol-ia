@@ -38,7 +38,8 @@ export default function LandingPage() {
       <section className="hero">
         <div className="wrap">
           <span className="eyebrow" style={{ color: "#39ff14", textShadow: "0 0 10px rgba(57,255,20,.55)", fontWeight: 700, borderColor: "rgba(57,255,20,.4)" }}>A mesma IA das grandes · sem a complexidade · sem o preço absurdo</span>
-          <h1>Pare de perder cliente no WhatsApp <em>enquanto você dorme.</em></h1>
+          <div className="wa-chip"><svg className="wa-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6 2 11c0 1.77.62 3.4 1.67 4.74L2.5 21.5l5-1.3A10.7 10.7 0 0 0 12 21c5.5 0 10-4 10-9S17.5 2 12 2z"/></svg>Conecta direto no seu WhatsApp — sem instalar nada novo</div>
+        <h1>Pare de perder cliente no <span className="wa-word">WhatsApp</span> <em>enquanto você dorme.</em></h1>
           <p className="lead">Uma IA treinada no seu negócio responde, qualifica e agenda 24 horas por dia. Sem você precisar entender de tecnologia.</p>
           <p className="sub">Pronto em menos de 24 horas. Cancele quando quiser.</p>
           <div className="hero-cta">
