@@ -27,7 +27,6 @@ export default function LandingPage() {
             <a href="#como">Como funciona</a>
             <a href="#faq">Dúvidas</a>
             <a href="#parceiro">Parceiros</a>
-            <a href="#fundador">Quem somos</a>
           </nav>
           <div className="nav-cta">
             <Link href="/login" className="btn btn-primary">Já sou cliente</Link>
@@ -199,7 +198,6 @@ export default function LandingPage() {
               </div>
               <div className="foot-col">
                 <h4>Empresa</h4>
-                <a href="#fundador">Quem somos</a>
                 <a href={wa("Olá! Gostaria de falar com a Farol IA")}>Falar conosco</a>
                 <Link href="/login">Área do cliente</Link>
               </div>
