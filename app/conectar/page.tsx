@@ -72,6 +72,16 @@ export default function ConectarPage() {
     }
   }
 
+  async function resetar() {
+    if (!confirm("Isto apaga a conexão atual e recria do zero. Seus dados de empresa e da IA continuam salvos. Continuar?")) return;
+    setErro(null);
+    try {
+      await fetch("/api/whatsapp/reset", { method: "POST" });
+      await new Promise((r) => setTimeout(r, 800));
+    } catch {}
+    pedirQr();
+  }
+
   // Enquanto há QR na tela, fica checando o status até conectar.
   useEffect(() => {
     if (!qr && !qrPendente) return;
@@ -240,6 +250,14 @@ export default function ConectarPage() {
                 style={{ width: "100%", padding: 12, borderRadius: 10, cursor: "pointer", marginTop: 4 }}
               >
                 {gerando ? "Gerando…" : "Gerar novo QR"}
+              </button>
+
+              <button
+                onClick={resetar}
+                disabled={gerando}
+                style={{ width: "100%", padding: 10, marginTop: 10, background: "transparent", border: "none", color: "var(--muted)", fontSize: 13, cursor: "pointer", textDecoration: "underline" }}
+              >
+                Problemas para conectar? Resetar conexão
               </button>
             </>
           )}
