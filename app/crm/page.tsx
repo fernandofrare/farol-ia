@@ -21,6 +21,7 @@ type Row = {
   contact_name: string | null;
   contact_phone: string | null;
   status: string | null;
+  grupo: string | null;
   summary: string | null;
   last_message_at: string | null;
 };
@@ -42,7 +43,7 @@ export default async function CrmPage() {
   const { data: rows } = clientId
     ? await supabase
         .from("conversations")
-        .select("id, contact_name, contact_phone, status, summary, last_message_at")
+        .select("id, contact_name, contact_phone, status, grupo, summary, last_message_at")
         .eq("client_id", clientId)
         .order("last_message_at", { ascending: false })
     : { data: [] };
@@ -51,7 +52,10 @@ export default async function CrmPage() {
     id: r.id,
     nome: r.contact_name ?? "Sem nome",
     telefone: r.contact_phone ?? "",
-    ehCliente: r.status === "cliente",
+    grupo: (r.grupo === "cliente" || r.grupo === "alerta" ? r.grupo : "lead") as
+      | "lead"
+      | "cliente"
+      | "alerta",
     controleHumano: r.status === "human",
     ultima_mensagem: r.summary ?? "",
     ultima_iso: r.last_message_at ?? null,
