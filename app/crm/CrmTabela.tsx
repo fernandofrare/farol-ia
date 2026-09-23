@@ -20,9 +20,9 @@ export type Contato = {
 };
 
 const H24 = 24 * 60 * 60 * 1000;
-const PROX: Record<Grupo, Grupo> = { lead: "cliente", cliente: "alerta", alerta: "lead" };
 const COR: Record<Grupo, string> = { lead: "#f5b941", cliente: "#3ad29f", alerta: "#ff5a5a" };
 const NOME_GRUPO: Record<Grupo, string> = { lead: "Lead", cliente: "Cliente", alerta: "Alerta" };
+const GRUPO_OPCOES: Grupo[] = ["lead", "cliente", "alerta"];
 
 function tempoRelativo(iso: string | null) {
   if (!iso) return "";
@@ -102,14 +102,14 @@ export function CrmTabela({
     return () => clearInterval(t);
   }, [recarregar]);
 
-  async function mudarGrupo(c: Contato) {
-    const novo = PROX[c.grupo];
-    setLista((prev) => prev.map((x) => (x.id === c.id ? { ...x, grupo: novo } : x)));
+  async function setGrupoContato(c: Contato, g: Grupo) {
+    if (c.grupo === g) return;
+    setLista((prev) => prev.map((x) => (x.id === c.id ? { ...x, grupo: g } : x)));
     try {
       await fetch("/api/crm/grupo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ conversationId: c.id, grupo: novo }),
+        body: JSON.stringify({ conversationId: c.id, grupo: g }),
       });
     } catch {
       /* silencioso; a proxima sincronizacao corrige */
@@ -206,28 +206,62 @@ export function CrmTabela({
               tabIndex={0}
               onClick={() => setAberto(c)}
             >
-              <span
-                onClick={(e) => {
-                  e.stopPropagation();
-                  mudarGrupo(c);
-                }}
-                title={"Grupo: " + NOME_GRUPO[c.grupo] + " — clique para alternar (Lead / Cliente / Alerta)"}
-                style={{
-                  width: 16,
-                  height: 16,
-                  borderRadius: "50%",
-                  background: COR[c.grupo],
-                  border: "2px solid rgba(255,255,255,.18)",
-                  flexShrink: 0,
-                  cursor: "pointer",
-                }}
-              />
               <div className={styles.convAv}>{iniciais(c.nome)}</div>
               <div className={styles.convMid}>
                 <div className={styles.convName}>{c.nome}</div>
                 <div className={styles.convPreview}>{c.ultima_mensagem || c.telefone}</div>
               </div>
               <div className={styles.convTime}>{c.ultima_em}</div>
+              <div
+                style={{ display: "flex", gap: 2, flexShrink: 0, marginLeft: 6 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {GRUPO_OPCOES.map((g) => {
+                  const ativo = c.grupo === g;
+                  return (
+                    <button
+                      key={g}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setGrupoContato(c, g);
+                      }}
+                      title={"Mover para " + NOME_GRUPO[g]}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: 3,
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        padding: "4px 6px",
+                        borderRadius: 8,
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: 14,
+                          height: 14,
+                          borderRadius: "50%",
+                          border: "2px solid " + (ativo ? COR[g] : "rgba(255,255,255,.18)"),
+                          background: ativo ? COR[g] : "transparent",
+                        }}
+                      />
+                      <span
+                        style={{
+                          fontSize: 9,
+                          fontWeight: 700,
+                          letterSpacing: ".03em",
+                          textTransform: "uppercase",
+                          color: ativo ? COR[g] : "var(--muted2)",
+                        }}
+                      >
+                        {NOME_GRUPO[g]}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           ))
         )}
