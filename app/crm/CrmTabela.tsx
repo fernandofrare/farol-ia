@@ -6,11 +6,13 @@ import painel from "@/components/painel.module.css";
 import styles from "./crm.module.css";
 import { ChatDrawer } from "./ChatDrawer";
 
+export type Grupo = "lead" | "cliente" | "alerta";
+
 export type Contato = {
   id: string;
   nome: string;
   telefone: string;
-  ehCliente: boolean;
+  grupo: Grupo;
   controleHumano: boolean;
   ultima_mensagem: string;
   ultima_iso: string | null;
@@ -18,6 +20,9 @@ export type Contato = {
 };
 
 const H24 = 24 * 60 * 60 * 1000;
+const PROX: Record<Grupo, Grupo> = { lead: "cliente", cliente: "alerta", alerta: "lead" };
+const COR: Record<Grupo, string> = { lead: "#f5b941", cliente: "#3ad29f", alerta: "#ff5a5a" };
+const NOME_GRUPO: Record<Grupo, string> = { lead: "Lead", cliente: "Cliente", alerta: "Alerta" };
 
 function tempoRelativo(iso: string | null) {
   if (!iso) return "";
@@ -46,9 +51,14 @@ type Row = {
   contact_name: string | null;
   contact_phone: string | null;
   status: string | null;
+  grupo: string | null;
   summary: string | null;
   last_message_at: string | null;
 };
+
+function normGrupo(g: string | null): Grupo {
+  return g === "cliente" || g === "alerta" ? g : "lead";
+}
 
 export function CrmTabela({
   contatos,
@@ -59,7 +69,7 @@ export function CrmTabela({
 }) {
   const supabase = createClient();
   const [lista, setLista] = useState<Contato[]>(contatos);
-  const [grupo, setGrupo] = useState<"leads" | "clientes">("leads");
+  const [grupoSel, setGrupoSel] = useState<Grupo>("lead");
   const [sub, setSub] = useState<"ia" | "humano" | "frios">("ia");
   const [busca, setBusca] = useState("");
   const [aberto, setAberto] = useState<Contato | null>(null);
@@ -68,7 +78,7 @@ export function CrmTabela({
     if (!clientId) return;
     const { data } = await supabase
       .from("conversations")
-      .select("id, contact_name, contact_phone, status, summary, last_message_at")
+      .select("id, contact_name, contact_phone, status, grupo, summary, last_message_at")
       .eq("client_id", clientId)
       .order("last_message_at", { ascending: false });
     if (!data) return;
@@ -78,7 +88,7 @@ export function CrmTabela({
         id: r.id,
         nome: r.contact_name ?? "Sem nome",
         telefone: r.contact_phone ?? "",
-        ehCliente: r.status === "cliente",
+        grupo: normGrupo(r.grupo),
         controleHumano: r.status === "human",
         ultima_mensagem: r.summary ?? "",
         ultima_iso: r.last_message_at ?? null,
@@ -92,9 +102,23 @@ export function CrmTabela({
     return () => clearInterval(t);
   }, [recarregar]);
 
+  async function mudarGrupo(c: Contato) {
+    const novo = PROX[c.grupo];
+    setLista((prev) => prev.map((x) => (x.id === c.id ? { ...x, grupo: novo } : x)));
+    try {
+      await fetch("/api/crm/grupo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ conversationId: c.id, grupo: novo }),
+      });
+    } catch {
+      /* silencioso; a proxima sincronizacao corrige */
+    }
+  }
+
   const doGrupo = useMemo(
-    () => lista.filter((c) => (grupo === "clientes" ? c.ehCliente : !c.ehCliente)),
-    [lista, grupo]
+    () => lista.filter((c) => c.grupo === grupoSel),
+    [lista, grupoSel]
   );
 
   const cont = useMemo(() => {
@@ -106,13 +130,20 @@ export function CrmTabela({
   }, [doGrupo]);
 
   const filtrados = useMemo(() => {
-    let l = doGrupo.filter((c) => subDe(c) === sub);
+    let l = doGrupo;
+    if (grupoSel !== "alerta") l = l.filter((c) => subDe(c) === sub);
     if (busca.trim()) {
       const q = busca.toLowerCase();
       l = l.filter((c) => c.nome.toLowerCase().includes(q) || c.telefone.includes(q));
     }
     return l;
-  }, [doGrupo, sub, busca]);
+  }, [doGrupo, grupoSel, sub, busca]);
+
+  const GRUPOS: { id: Grupo; label: string }[] = [
+    { id: "lead", label: "Leads" },
+    { id: "cliente", label: "Clientes" },
+    { id: "alerta", label: "Alerta" },
+  ];
 
   const SUBS: { id: "ia" | "humano" | "frios"; label: string }[] = [
     { id: "ia", label: "🤖 Assistente IA (" + cont.ia + ")" },
@@ -138,45 +169,66 @@ export function CrmTabela({
       </div>
 
       <div className={styles.groupTabs}>
-        <button
-          className={styles.groupTab + (grupo === "leads" ? " " + styles.groupTabActive : "")}
-          onClick={() => setGrupo("leads")}
-        >
-          Leads
-        </button>
-        <button
-          className={styles.groupTab + (grupo === "clientes" ? " " + styles.groupTabActive : "")}
-          onClick={() => setGrupo("clientes")}
-        >
-          Clientes
-        </button>
-      </div>
-
-      <div className={styles.filters}>
-        {SUBS.map((s) => (
+        {GRUPOS.map((g) => (
           <button
-            key={s.id}
-            className={styles.filterChip + (sub === s.id ? " " + styles.filterActive : "")}
-            onClick={() => setSub(s.id)}
+            key={g.id}
+            className={styles.groupTab + (grupoSel === g.id ? " " + styles.groupTabActive : "")}
+            onClick={() => setGrupoSel(g.id)}
           >
-            {s.label}
+            {g.label}
           </button>
         ))}
       </div>
+
+      {grupoSel !== "alerta" && (
+        <div className={styles.filters}>
+          {SUBS.map((s) => (
+            <button
+              key={s.id}
+              className={styles.filterChip + (sub === s.id ? " " + styles.filterActive : "")}
+              onClick={() => setSub(s.id)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className={styles.convList}>
         {filtrados.length === 0 ? (
           <div className={styles.emptyTable}>Nenhuma conversa nesta aba.</div>
         ) : (
           filtrados.map((c) => (
-            <button key={c.id} className={styles.convRow} onClick={() => setAberto(c)}>
+            <div
+              key={c.id}
+              className={styles.convRow}
+              role="button"
+              tabIndex={0}
+              onClick={() => setAberto(c)}
+            >
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  mudarGrupo(c);
+                }}
+                title={"Grupo: " + NOME_GRUPO[c.grupo] + " — clique para alternar (Lead / Cliente / Alerta)"}
+                style={{
+                  width: 16,
+                  height: 16,
+                  borderRadius: "50%",
+                  background: COR[c.grupo],
+                  border: "2px solid rgba(255,255,255,.18)",
+                  flexShrink: 0,
+                  cursor: "pointer",
+                }}
+              />
               <div className={styles.convAv}>{iniciais(c.nome)}</div>
               <div className={styles.convMid}>
                 <div className={styles.convName}>{c.nome}</div>
                 <div className={styles.convPreview}>{c.ultima_mensagem || c.telefone}</div>
               </div>
               <div className={styles.convTime}>{c.ultima_em}</div>
-            </button>
+            </div>
           ))
         )}
       </div>
