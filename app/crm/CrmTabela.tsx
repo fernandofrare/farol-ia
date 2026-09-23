@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import { createClient } from "@/lib/supabase-browser";
 import painel from "@/components/painel.module.css";
 import styles from "./crm.module.css";
 import { ChatDrawer } from "./ChatDrawer";
@@ -9,102 +10,120 @@ export type Contato = {
   id: string;
   nome: string;
   telefone: string;
-  status: "lead" | "cliente" | "frio" | "novo";
-  controleHumano?: boolean;
+  ehCliente: boolean;
+  controleHumano: boolean;
   ultima_mensagem: string;
+  ultima_iso: string | null;
   ultima_em: string;
-  interacoes: number;
-  primeiro_contato: string;
 };
 
-const STATUS_MAP: Record<
-  Contato["status"],
-  { label: string; cls: string; cor: string }
-> = {
-  lead: { label: "Lead", cls: "bLead", cor: "#f5b941" },
-  cliente: { label: "Cliente", cls: "bCliente", cor: "#3ad29f" },
-  frio: { label: "Frio", cls: "bFrio", cor: "#6a6a74" },
-  novo: { label: "Novo", cls: "bNovo", cor: "#ff8a3d" },
-};
+const H24 = 24 * 60 * 60 * 1000;
+
+function tempoRelativo(iso: string | null) {
+  if (!iso) return "";
+  const diff = Date.now() - new Date(iso).getTime();
+  const min = Math.floor(diff / 60000);
+  if (min < 1) return "Agora";
+  if (min < 60) return min + " min";
+  const h = Math.floor(min / 60);
+  if (h < 24) return h + "h";
+  return Math.floor(h / 24) + "d";
+}
 
 function iniciais(nome: string) {
   const p = nome.trim().split(/\s+/);
   return ((p[0]?.[0] ?? "") + (p[1]?.[0] ?? "")).toUpperCase() || "?";
 }
 
-export function CrmTabela({ contatos }: { contatos: Contato[] }) {
-  const [filtro, setFiltro] = useState<string>("todos");
+function subDe(c: Contato): "ia" | "humano" | "frios" {
+  if (c.ultima_iso && Date.now() - new Date(c.ultima_iso).getTime() > H24) return "frios";
+  if (c.controleHumano) return "humano";
+  return "ia";
+}
+
+type Row = {
+  id: string;
+  contact_name: string | null;
+  contact_phone: string | null;
+  status: string | null;
+  summary: string | null;
+  last_message_at: string | null;
+};
+
+export function CrmTabela({
+  contatos,
+  clientId,
+}: {
+  contatos: Contato[];
+  clientId?: string;
+}) {
+  const supabase = createClient();
+  const [lista, setLista] = useState<Contato[]>(contatos);
+  const [grupo, setGrupo] = useState<"leads" | "clientes">("leads");
+  const [sub, setSub] = useState<"ia" | "humano" | "frios">("ia");
   const [busca, setBusca] = useState("");
   const [aberto, setAberto] = useState<Contato | null>(null);
-  const [chat, setChat] = useState<Contato | null>(null);
-  const [takeoverLoading, setTakeoverLoading] = useState(false);
 
-  async function alternarTakeover(contato: Contato) {
-    setTakeoverLoading(true);
-    const novoHumano = !contato.controleHumano;
-    try {
-      const resp = await fetch("/api/takeover", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          conversationId: contato.id,
-          humano: novoHumano,
-        }),
-      });
-      if (resp.ok) {
-        // Atualiza o contato aberto no painel.
-        setAberto((a) =>
-          a && a.id === contato.id ? { ...a, controleHumano: novoHumano } : a
-        );
-      }
-    } catch {
-      // silencioso; o usuário pode tentar de novo
-    } finally {
-      setTakeoverLoading(false);
-    }
-  }
+  const recarregar = useCallback(async () => {
+    if (!clientId) return;
+    const { data } = await supabase
+      .from("conversations")
+      .select("id, contact_name, contact_phone, status, summary, last_message_at")
+      .eq("client_id", clientId)
+      .order("last_message_at", { ascending: false });
+    if (!data) return;
+    const rows = data as Row[];
+    setLista(
+      rows.map((r) => ({
+        id: r.id,
+        nome: r.contact_name ?? "Sem nome",
+        telefone: r.contact_phone ?? "",
+        ehCliente: r.status === "cliente",
+        controleHumano: r.status === "human",
+        ultima_mensagem: r.summary ?? "",
+        ultima_iso: r.last_message_at ?? null,
+        ultima_em: tempoRelativo(r.last_message_at ?? null),
+      }))
+    );
+  }, [clientId, supabase]);
 
-  // Reflete a mudança de takeover feita dentro do chat nos estados locais.
-  function aoAlternarNoChat(id: string, humano: boolean) {
-    setChat((c) => (c && c.id === id ? { ...c, controleHumano: humano } : c));
-    setAberto((a) => (a && a.id === id ? { ...a, controleHumano: humano } : a));
-  }
+  useEffect(() => {
+    const t = setInterval(recarregar, 8000);
+    return () => clearInterval(t);
+  }, [recarregar]);
 
-  const stats = useMemo(() => {
-    return {
-      total: contatos.length,
-      leads: contatos.filter((c) => c.status === "lead").length,
-      clientes: contatos.filter((c) => c.status === "cliente").length,
-      novos: contatos.filter((c) => c.status === "novo").length,
-      frios: contatos.filter((c) => c.status === "frio").length,
-    };
-  }, [contatos]);
+  const doGrupo = useMemo(
+    () => lista.filter((c) => (grupo === "clientes" ? c.ehCliente : !c.ehCliente)),
+    [lista, grupo]
+  );
+
+  const cont = useMemo(() => {
+    const c = { ia: 0, humano: 0, frios: 0 };
+    doGrupo.forEach((x) => {
+      c[subDe(x)]++;
+    });
+    return c;
+  }, [doGrupo]);
 
   const filtrados = useMemo(() => {
-    let lista = contatos;
-    if (filtro !== "todos") lista = lista.filter((c) => c.status === filtro);
+    let l = doGrupo.filter((c) => subDe(c) === sub);
     if (busca.trim()) {
       const q = busca.toLowerCase();
-      lista = lista.filter(
-        (c) =>
-          c.nome.toLowerCase().includes(q) || c.telefone.includes(q)
-      );
+      l = l.filter((c) => c.nome.toLowerCase().includes(q) || c.telefone.includes(q));
     }
-    return lista;
-  }, [contatos, filtro, busca]);
+    return l;
+  }, [doGrupo, sub, busca]);
 
-  const CHIPS = [
-    { id: "todos", label: `Todos (${stats.total})` },
-    { id: "lead", label: `🔥 Leads (${stats.leads})` },
-    { id: "cliente", label: `✅ Clientes (${stats.clientes})` },
-    { id: "novo", label: `🆕 Novos (${stats.novos})` },
-    { id: "frio", label: `❄️ Frios (${stats.frios})` },
+  const SUBS: { id: "ia" | "humano" | "frios"; label: string }[] = [
+    { id: "ia", label: "🤖 Assistente IA (" + cont.ia + ")" },
+    { id: "humano", label: "🙋 Assistente Humano (" + cont.humano + ")" },
+    { id: "frios", label: "❄️ Frios (" + cont.frios + ")" },
   ];
 
   return (
     <>
       <div className={painel.topbar}>
-        <h1>Contatos &amp; CRM</h1>
+        <h1>Atendimento</h1>
         <div className={painel.topbarRight}>
           <div className={styles.searchWrap}>
             <span className={styles.searchIco}>🔍</span>
@@ -115,209 +134,66 @@ export function CrmTabela({ contatos }: { contatos: Contato[] }) {
               onChange={(e) => setBusca(e.target.value)}
             />
           </div>
-          <button className={styles.btnGhostSm}>⬇️ Exportar</button>
         </div>
       </div>
 
-      {/* MÉTRICAS */}
-      <div className={styles.crmStats}>
-        <div className={styles.crmStat}>
-          <div className={styles.crmStatVal}>{stats.total}</div>
-          <div className={styles.crmStatLbl}>Total contatos</div>
-        </div>
-        <div className={styles.crmStat}>
-          <div className={styles.crmStatVal} style={{ color: "var(--amber)" }}>
-            {stats.leads}
-          </div>
-          <div className={styles.crmStatLbl}>Leads quentes</div>
-        </div>
-        <div className={styles.crmStat}>
-          <div className={styles.crmStatVal} style={{ color: "var(--good)" }}>
-            {stats.clientes}
-          </div>
-          <div className={styles.crmStatLbl}>Clientes ativos</div>
-        </div>
-        <div className={styles.crmStat}>
-          <div className={styles.crmStatVal} style={{ color: "var(--gold)" }}>
-            {stats.novos}
-          </div>
-          <div className={styles.crmStatLbl}>Novos</div>
-        </div>
+      <div className={styles.groupTabs}>
+        <button
+          className={styles.groupTab + (grupo === "leads" ? " " + styles.groupTabActive : "")}
+          onClick={() => setGrupo("leads")}
+        >
+          Leads
+        </button>
+        <button
+          className={styles.groupTab + (grupo === "clientes" ? " " + styles.groupTabActive : "")}
+          onClick={() => setGrupo("clientes")}
+        >
+          Clientes
+        </button>
       </div>
 
-      {/* FILTROS */}
       <div className={styles.filters}>
-        {CHIPS.map((chip) => (
+        {SUBS.map((s) => (
           <button
-            key={chip.id}
-            className={`${styles.filterChip} ${
-              filtro === chip.id ? styles.filterActive : ""
-            }`}
-            onClick={() => setFiltro(chip.id)}
+            key={s.id}
+            className={styles.filterChip + (sub === s.id ? " " + styles.filterActive : "")}
+            onClick={() => setSub(s.id)}
           >
-            {chip.label}
+            {s.label}
           </button>
         ))}
       </div>
 
-      {/* TABELA */}
-      <div className={styles.tableWrap}>
+      <div className={styles.convList}>
         {filtrados.length === 0 ? (
-          <div className={styles.emptyTable}>
-            {contatos.length === 0
-              ? "Nenhum contato ainda. Quando sua IA atender alguém no WhatsApp, o contato aparece aqui automaticamente."
-              : "Nenhum contato corresponde a esse filtro."}
-          </div>
+          <div className={styles.emptyTable}>Nenhuma conversa nesta aba.</div>
         ) : (
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Contato</th>
-                <th>Status</th>
-                <th>Última mensagem</th>
-                <th>Interações</th>
-                <th>Primeiro contato</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtrados.map((c) => {
-                const s = STATUS_MAP[c.status];
-                return (
-                  <tr key={c.id} onClick={() => setAberto(c)}>
-                    <td>
-                      <div className={styles.contactCell}>
-                        <div
-                          className={styles.contactAv}
-                          style={{ background: `${s.cor}22`, color: s.cor }}
-                        >
-                          {iniciais(c.nome)}
-                        </div>
-                        <div>
-                          <div className={styles.contactName}>{c.nome}</div>
-                          <div className={styles.contactPhone}>{c.telefone}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className={`${styles.badge} ${styles[s.cls]}`}>
-                        {s.label}
-                      </span>
-                    </td>
-                    <td className={styles.lastMsg}>{c.ultima_mensagem}</td>
-                    <td className={styles.tdMuted}>{c.interacoes} msgs</td>
-                    <td className={styles.tdTime}>{c.primeiro_contato}</td>
-                    <td>
-                      <div className={styles.tdAction}>
-                        <div
-                          className={styles.iconBtn}
-                          title="Abrir chat"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setChat(c);
-                          }}
-                        >
-                          💬
-                        </div>
-                        <div
-                          className={styles.iconBtn}
-                          title="Ver detalhes"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setAberto(c);
-                          }}
-                        >
-                          📋
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          filtrados.map((c) => (
+            <button key={c.id} className={styles.convRow} onClick={() => setAberto(c)}>
+              <div className={styles.convAv}>{iniciais(c.nome)}</div>
+              <div className={styles.convMid}>
+                <div className={styles.convName}>{c.nome}</div>
+                <div className={styles.convPreview}>{c.ultima_mensagem || c.telefone}</div>
+              </div>
+              <div className={styles.convTime}>{c.ultima_em}</div>
+            </button>
+          ))
         )}
       </div>
 
-      {/* PAINEL LATERAL */}
-      <div
-        className={`${styles.contactPanel} ${aberto ? styles.panelOpen : ""}`}
-      >
-        <div className={styles.cpHead}>
-          <h3>Detalhes do contato</h3>
-          <button className={styles.closeBtn} onClick={() => setAberto(null)}>
-            ✕
-          </button>
-        </div>
-        {aberto && (
-          <>
-            <div className={styles.cpBody}>
-              <div
-                className={styles.cpAv}
-                style={{
-                  background: `${STATUS_MAP[aberto.status].cor}22`,
-                  color: STATUS_MAP[aberto.status].cor,
-                }}
-              >
-                {iniciais(aberto.nome)}
-              </div>
-              <div className={styles.cpName}>{aberto.nome}</div>
-              <div className={styles.cpPhone}>{aberto.telefone}</div>
-              <div className={styles.cpBadges}>
-                <span
-                  className={`${styles.badge} ${
-                    styles[STATUS_MAP[aberto.status].cls]
-                  }`}
-                >
-                  {STATUS_MAP[aberto.status].label}
-                </span>
-              </div>
-              <div className={styles.cpSection}>
-                <h4>Informações</h4>
-                <div className={styles.cpRow}>
-                  <span className={styles.lbl}>Primeiro contato</span>
-                  <span>{aberto.primeiro_contato}</span>
-                </div>
-                <div className={styles.cpRow}>
-                  <span className={styles.lbl}>Interações</span>
-                  <span>{aberto.interacoes} mensagens</span>
-                </div>
-                <div className={styles.cpRow}>
-                  <span className={styles.lbl}>Última mensagem</span>
-                  <span>{aberto.ultima_em}</span>
-                </div>
-              </div>
-            </div>
-            <div className={styles.cpFoot}>
-              <button
-                className={`${painel.btn} ${painel.btnGhost}`}
-                onClick={() => alternarTakeover(aberto)}
-                disabled={takeoverLoading}
-              >
-                {aberto.controleHumano
-                  ? "🤖 Devolver p/ IA"
-                  : "🙋 Assumir conversa"}
-              </button>
-              <button
-                className={`${painel.btn} ${painel.btnPrimary}`}
-                onClick={() => setChat(aberto)}
-              >
-                💬 Abrir chat
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* CHAT */}
-      {chat && (
+      {aberto && (
         <ChatDrawer
-          conversationId={chat.id}
-          nome={chat.nome}
-          telefone={chat.telefone}
-          controleHumano={!!chat.controleHumano}
-          onClose={() => setChat(null)}
-          onTakeover={(humano) => aoAlternarNoChat(chat.id, humano)}
+          conversationId={aberto.id}
+          nome={aberto.nome}
+          telefone={aberto.telefone}
+          controleHumano={aberto.controleHumano}
+          onClose={() => setAberto(null)}
+          onTakeover={(humano) => {
+            setLista((prev) =>
+              prev.map((x) => (x.id === aberto.id ? { ...x, controleHumano: humano } : x))
+            );
+            setAberto((a) => (a ? { ...a, controleHumano: humano } : a));
+          }}
         />
       )}
     </>
