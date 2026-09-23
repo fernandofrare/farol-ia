@@ -76,3 +76,31 @@
 .btnGhostSm:hover{border-color:var(--amber);color:var(--amber)}
 
 @media(max-width:768px){.contactPanel{width:100%}}
+
+
+/* ===== ATENDIMENTO estilo WhatsApp (grupos Leads/Clientes x IA/Humano/Frios) ===== */
+.groupTabs{display:flex;gap:8px;padding:14px 20px 0}
+.groupTab{
+  flex:1;max-width:220px;padding:11px 16px;border-radius:12px 12px 0 0;
+  font-family:'Montserrat',sans-serif;font-weight:700;font-size:15px;cursor:pointer;
+  background:transparent;border:1px solid var(--line);border-bottom:none;color:var(--muted);
+}
+.groupTabActive{background:rgba(255,138,61,.1);color:var(--amber);border-color:rgba(255,138,61,.3)}
+.convList{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.convRow{
+  display:flex;align-items:center;gap:12px;padding:12px 20px;width:100%;text-align:left;
+  background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;
+  transition:background .12s;font-family:inherit;
+}
+.convRow:hover{background:#1c1c24}
+.convAv{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--amber),var(--amber-deep));
+  color:#1a0e04;display:flex;align-items:center;justify-content:center;
+  font-family:'Montserrat',sans-serif;font-weight:800;font-size:15px;overflow:hidden;
+}
+.convAv img{width:100%;height:100%;object-fit:cover}
+.convMid{flex:1;min-width:0}
+.convName{font-weight:600;font-size:15px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.convPreview{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.convTime{font-size:12px;color:var(--muted2);flex-shrink:0;align-self:flex-start;margin-top:4px}
