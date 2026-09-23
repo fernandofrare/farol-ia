@@ -34,6 +34,7 @@ export function Sidebar({ usuario }: { usuario: Usuario }) {
   const pathname = usePathname();
 
   return (
+    <>
     <aside className={styles.sidebar}>
       <div className={styles.sidebarLogo}>
         <LogoFarol width={140} height={40} />
@@ -77,5 +78,24 @@ export function Sidebar({ usuario }: { usuario: Usuario }) {
         </form>
       </div>
     </aside>
+
+    <nav className={styles.mobileNav}>
+      {[
+        { href: "/dashboard", ico: "📊", label: "Painel" },
+        { href: "/minha-ia", ico: "🤖", label: "IA" },
+        { href: "/crm", ico: "👥", label: "CRM" },
+        { href: "/configuracoes", ico: "⚙️", label: "Config" },
+      ].map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          className={`${styles.mobileItem} ${pathname.startsWith(item.href) ? styles.mobileItemActive : ""}`}
+        >
+          <span className={styles.mobileIco}>{item.ico}</span>
+          {item.label}
+        </Link>
+      ))}
+    </nav>
+    </>
   );
 }
