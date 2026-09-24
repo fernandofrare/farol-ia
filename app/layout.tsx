@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { PWARegister } from "@/components/PWARegister";
 
 export const metadata: Metadata = {
   title: "Farol IA — Atendimento por WhatsApp com Inteligência Artificial",
   description:
     "A mesma IA das grandes, sem a complexidade, sem o preço absurdo. Atendimento automático no seu WhatsApp por R$147/mês.",
   metadataBase: new URL("https://farolia.store"),
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "Farol IA" },
   icons: {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",
@@ -37,7 +39,10 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <PWARegister />
+        {children}
+      </body>
     </html>
   );
 }
