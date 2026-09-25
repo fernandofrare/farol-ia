@@ -1,17 +1,13 @@
 import Link from "next/link";
 import { LogoFarol } from "@/components/LogoFarol";
 import "./landing.css";
+import { wa } from "@/lib/whats";
 
 export const metadata = {
   title: "Farol IA — Pare de perder cliente no WhatsApp enquanto você dorme",
   description:
     "Uma IA treinada no seu negócio responde, qualifica e agenda 24h por dia. Sem você precisar entender de tecnologia.",
 };
-
-// Número dedicado da Farol IA (apenas dígitos, com DDI 55). Uso: contato/atendimento.
-const WHATS = "5554994009947";
-const wa = (texto: string) =>
-  `https://wa.me/${WHATS}?text=${encodeURIComponent(texto)}`;
 
 export default function LandingPage() {
   return (
@@ -36,8 +32,8 @@ export default function LandingPage() {
 
       <section className="hero">
         <div className="wrap">
-          <span className="eyebrow" style={{ color: "#39ff14", textShadow: "0 0 10px rgba(57,255,20,.55)", fontWeight: 700, borderColor: "rgba(57,255,20,.4)" }}>A mesma IA das grandes · sem a complexidade · sem o preço absurdo</span>
-          <div className="wa-chip"><svg className="wa-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6 2 11c0 1.77.62 3.4 1.67 4.74L2.5 21.5l5-1.3A10.7 10.7 0 0 0 12 21c5.5 0 10-4 10-9S17.5 2 12 2z"/></svg>Conecta direto no seu WhatsApp — sem instalar nada novo</div>
+          <span className="eyebrow" style={{ color: "#25d366", textShadow: "0 0 10px rgba(37,211,102,.55)", fontWeight: 700, borderColor: "rgba(37,211,102,.4)" }}>A mesma IA das grandes · sem a complexidade · sem o preço absurdo</span>
+          <div className="wa-chip"><svg className="wa-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6 2 11c0 1.77.62 3.4 1.67 4.74L2.5 21.5l5-1.3A10.7 10.7 0 0 0 12 21c5.5 0 10-4 10-9S17.5 2 12 2z"/></svg>Sua IA atendendo no WhatsApp, 24 horas por dia</div>
         <h1>Pare de perder cliente no <span className="wa-word">WhatsApp</span> <em>enquanto você dorme.</em></h1>
           <p className="lead">Uma IA treinada no seu negócio responde, qualifica e agenda 24 horas por dia. Sem você precisar entender de tecnologia.</p>
           <p className="sub">Pronto em menos de 24 horas. Cancele quando quiser.</p>
@@ -139,7 +135,7 @@ export default function LandingPage() {
 
       <section id="parceiro" style={{ background: "var(--bg-soft)", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)" }}>
         <div className="wrap">
-          <p className="sec-eyebrow" style={{ color: "#39ff14", textShadow: "0 0 10px rgba(57,255,20,.55)" }}>Programa Parceiro</p>
+          <p className="sec-eyebrow" style={{ color: "#25d366", textShadow: "0 0 10px rgba(37,211,102,.55)" }}>Programa Parceiro</p>
           <h2 className="sec-title">Indique e ganhe <em>mensalidades grátis.</em></h2>
           <p className="sec-sub">Cada negócio que entra pelo seu convite e paga a primeira mensalidade vale <b>1 mês grátis</b> pra você. Indicou 3 que assinaram? 3 meses sem pagar. Vire parceiro da Farol IA.</p>
           <div className="grid grid-3" style={{ marginTop: 40 }}>
