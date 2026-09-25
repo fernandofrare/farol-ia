@@ -60,11 +60,22 @@ export default async function DashboardPage() {
         .gte("last_message_at", hojeInicio.toISOString())
     : { count: 0 };
 
+  const { count: usoTotal } = clientId
+    ? await supabase
+        .from("conversations")
+        .select("id", { count: "exact", head: true })
+        .eq("client_id", clientId)
+    : { count: 0 };
+
+  const mesInicio = new Date();
+  mesInicio.setDate(1);
+  mesInicio.setHours(0, 0, 0, 0);
   const { count: usoMes } = clientId
     ? await supabase
         .from("conversations")
         .select("id", { count: "exact", head: true })
         .eq("client_id", clientId)
+        .gte("last_message_at", mesInicio.toISOString())
     : { count: 0 };
 
   // Normaliza para o formato que o componente já espera.
@@ -157,7 +168,7 @@ export default async function DashboardPage() {
                   🎯
                 </div>
               </div>
-              <div className={styles.metricVal}>{usoMes ?? 0}</div>
+              <div className={styles.metricVal}>{usoTotal ?? 0}</div>
               <div className={styles.metricDeltaMuted}>contatos atendidos</div>
             </div>
 
