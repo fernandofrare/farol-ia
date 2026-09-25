@@ -1,11 +1,9 @@
 import { createClient } from "@/lib/supabase-server";
 import { Sidebar } from "@/components/Sidebar";
 import painel from "@/components/painel.module.css";
+import { wa } from "@/lib/whats";
 
 export const metadata = { title: "Suporte — Farol IA" };
-
-const WHATS = "5554994009947";
-const wa = (t: string) => `https://wa.me/${WHATS}?text=${encodeURIComponent(t)}`;
 
 export default async function SuportePage() {
   const supabase = createClient();
@@ -36,7 +34,7 @@ export default async function SuportePage() {
 
   return (
     <div className={painel.shell}>
-      <Sidebar usuario={{ nome: nomeUsuario, plano: "" }} />
+      <Sidebar usuario={{ nome: nomeUsuario, plano: "Beta Fundador · Gratuito" }} />
       <main className={painel.main}>
         <div className={painel.topbar}>
           <h1>Suporte</h1>
