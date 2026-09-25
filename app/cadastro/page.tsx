@@ -117,8 +117,8 @@ export default function CadastroPage() {
 
         <div
           style={{
-            border: "1px solid rgba(57,255,20,.4)",
-            background: "rgba(57,255,20,.08)",
+            border: "1px solid rgba(37,211,102,.4)",
+            background: "rgba(37,211,102,.08)",
             borderRadius: 12,
             padding: "12px 14px",
             marginBottom: 20,
