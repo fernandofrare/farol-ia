@@ -35,7 +35,7 @@ export default async function ConfiguracoesPage() {
 
   return (
     <div className={painel.shell}>
-      <Sidebar usuario={{ nome: nomeUsuario, plano: "" }} />
+      <Sidebar usuario={{ nome: nomeUsuario, plano: "Beta Fundador · Gratuito" }} />
       <main className={painel.main}>
         <div className={painel.topbar}>
           <h1>Configurações</h1>
