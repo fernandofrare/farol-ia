@@ -1,0 +1,20 @@
+# Mantem o projeto Supabase (free tier) ativo — evita pausa por inatividade.
+# A anon key e publica por design (protegida por RLS); pode ficar no workflow.
+name: Supabase keep-alive
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # a cada 6 horas
+  workflow_dispatch:        # permite rodar manualmente
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST (gera atividade no banco)
+        run: |
+          code=$(curl -sS -o /dev/null -w "%{http_code}" \
+            "https://wvpponovopsgpepdxpty.supabase.co/rest/v1/clients?select=id&limit=1" \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2cHBvbm92b3BzZ3BlcGR4cHR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzNTU2MTUsImV4cCI6MjA5NTkzMTYxNX0.fAF7WmGsmam58-P1LEHqRp0q3Bo7q0yuVuu9B7etHAY" \
+            -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2cHBvbm92b3BzZ3BlcGR4cHR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzNTU2MTUsImV4cCI6MjA5NTkzMTYxNX0.fAF7WmGsmam58-P1LEHqRp0q3Bo7q0yuVuu9B7etHAY")
+          echo "Supabase respondeu HTTP $code"
