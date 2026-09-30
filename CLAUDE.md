@@ -7,7 +7,7 @@ SaaS de atendimento por WhatsApp com IA para micro e pequenos negócios brasilei
 
 ## Arquitetura (híbrida — NÃO mexer sem motivo forte)
 - **App Next.js 14 (App Router)** no **Vercel** — este repositório (`fernandofrare/farol-ia`). Landing, login, dashboard, minha-ia, crm, assinatura, configurações, suporte, indicação, páginas legais.
-- **Motor** Node/Express no **VPS Hostinger** (`/opt/farol`, PM2 `farol-motor`, porta 3000). Recebe webhook do WhatsApp, faz debounce, checa takeover humano, gera resposta com Claude, envia e grava. Vive FORA do repo (é editado no VPS).
+- **Motor** Node/Express no **VPS Hostinger** (`/opt/farol-motor`, PM2 `farol-motor`, porta 3000). Recebe webhook do WhatsApp, faz debounce, checa takeover humano, gera resposta com Claude, envia e grava. Vive FORA do repo (é editado no VPS).
 - **Supabase** (projeto `wvpponovopsgpepdxpty`, sa-east-1): Auth + Postgres + RLS. Plano free pausa por inatividade — keep-alive via GitHub Actions (`.github/workflows/keepalive.yml`).
 - **WhatsApp**: hoje Evolution API (não-oficial, Docker no VPS). **EM MIGRAÇÃO para a API Oficial da Meta antes do lançamento** (ver seção abaixo).
 
@@ -21,7 +21,7 @@ Tabelas: `clients`, `conversations`, `messages`. NÃO inventar tabelas em portug
 
 ## Migração Meta oficial (em andamento)
 Motivo: Evolution num único VPS/IP é ponto único de falha sistêmico (um cliente derruba todos). Meta dá conta isolada por cliente. Docs: `FAROL-IA-MIGRACAO-META-OFICIAL.md`, `META-INTEGRACAO-MOTOR.md`, `FAROL-IA-ONBOARDING-API-OFICIAL.md`.
-Código já escrito (colar em `/opt/farol/src/` quando a conta estiver no ar): `meta.js` (envio Graph API), `meta-webhook.js` (recebimento + validação de assinatura). Ainda NÃO testado ponta-a-ponta.
+Código já escrito (colar em `/opt/farol-motor/src/` quando a conta estiver no ar): `meta.js` (envio Graph API), `transporte.js` (dispatch por provider), `meta-webhook.js` (recebimento + validação de assinatura). Ainda NÃO testado ponta-a-ponta.
 Bloqueadores (dependem do Fernando): CNPJ (MEI→ME, em andamento), conta Meta Business + App, IDs não-secretos (App ID, WABA ID, Phone Number ID) e segredos (App Secret, Access Token) que vão só no `.env` do VPS.
 
 ## Regras de segurança (ABSOLUTAS)
