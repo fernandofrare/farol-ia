@@ -1,19 +1,18 @@
-// src/meta.js — camada de transporte WhatsApp via API Oficial da Meta (Cloud API)
+// src/meta.js — transporte WhatsApp via API Oficial da Meta (Cloud API)
 //
-// Espelha a interface de src/evolution.js para o cutover por provider.
-// NÃO contém segredos. Lê tudo de:
-//   - process.env.META_GRAPH_VERSION   (opcional, default "v21.0")
-//   - por cliente (linha da tabela clients): meta_phone_number_id, meta_token
-//     (ou, no beta com um número só, do .env: META_PHONE_NUMBER_ID / META_TOKEN)
+// Interface ALINHADA ao uso real do motor (ver server.js -> responder):
+//   enviarTexto(client, number, text)
+//   mostrarDigitando(client, number, ms)   // best-effort; no-op seguro na Cloud API
+//   enviarTemplate(client, to, nomeTemplate, variaveis, idioma)
+//   marcarLida(client, messageId)
 //
+// O dispatch por provider fica em transporte.js. Aqui é só a camada Meta.
+// NÃO contém segredos. Credenciais por cliente: client.meta_phone_number_id / client.meta_token
+// (fallback .env no beta de número único: META_PHONE_NUMBER_ID / META_TOKEN).
 // Os segredos (Access Token / App Secret) vivem SÓ no .env do VPS.
 
 const GRAPH = `https://graph.facebook.com/${process.env.META_GRAPH_VERSION || "v21.0"}`;
 
-/**
- * Resolve as credenciais de envio para um cliente.
- * Prioriza o que está na linha do cliente; cai pro .env no beta de número único.
- */
 function credenciais(client = {}) {
   const phoneId = client.meta_phone_number_id || process.env.META_PHONE_NUMBER_ID;
   const token = client.meta_token || process.env.META_TOKEN;
@@ -40,28 +39,21 @@ async function graphPost(phoneId, token, payload) {
   return data; // { messaging_product, contacts:[...], messages:[{id}] }
 }
 
-/**
- * Envia texto livre. Só funciona DENTRO da janela de 24h
- * (cliente iniciou a conversa). É o que a IA usa no dia a dia.
- * @param {string} to    número E.164 sem "+", ex "5554999999999"
- */
-async function enviarTexto(to, texto, client = {}) {
+// Texto livre — só funciona DENTRO da janela de 24h (cliente iniciou). É o que a IA usa.
+// number: E.164 sem "+", ex "5554999999999" (o mesmo contactPhone que o motor já extrai).
+async function enviarTexto(client, number, text) {
   const { phoneId, token } = credenciais(client);
   return graphPost(phoneId, token, {
     messaging_product: "whatsapp",
     recipient_type: "individual",
-    to,
+    to: number,
     type: "text",
-    text: { preview_url: false, body: texto },
+    text: { preview_url: false, body: text },
   });
 }
 
-/**
- * Envia template pré-aprovado. Necessário FORA da janela de 24h
- * (ex: retomada de lead frio, lembrete de agendamento).
- * @param {string[]} variaveis  valores para {{1}}, {{2}}, ... na ordem
- */
-async function enviarTemplate(to, nomeTemplate, variaveis = [], idioma = "pt_BR", client = {}) {
+// Template pré-aprovado — necessário FORA da janela de 24h (retomada de lead, lembrete).
+async function enviarTemplate(client, to, nomeTemplate, variaveis = [], idioma = "pt_BR") {
   const { phoneId, token } = credenciais(client);
   const components = variaveis.length
     ? [{ type: "body", parameters: variaveis.map((v) => ({ type: "text", text: String(v) })) }]
@@ -74,10 +66,8 @@ async function enviarTemplate(to, nomeTemplate, variaveis = [], idioma = "pt_BR"
   });
 }
 
-/**
- * Marca uma mensagem recebida como lida (opcional, melhora UX no WhatsApp do cliente).
- */
-async function marcarLida(messageId, client = {}) {
+// Marca como lida (opcional). messageId vem do webhook (m.messageId).
+async function marcarLida(client, messageId) {
   const { phoneId, token } = credenciais(client);
   return graphPost(phoneId, token, {
     messaging_product: "whatsapp",
@@ -86,4 +76,10 @@ async function marcarLida(messageId, client = {}) {
   });
 }
 
-module.exports = { enviarTexto, enviarTemplate, marcarLida };
+// A Cloud API não tem "digitando" para texto livre do jeito da Evolution.
+// Mantemos a assinatura para o transporte.js poder chamar sem ramificar. No-op seguro.
+async function mostrarDigitando(_client, _number, _ms) {
+  return null;
+}
+
+module.exports = { enviarTexto, enviarTemplate, marcarLida, mostrarDigitando };
