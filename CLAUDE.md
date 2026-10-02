@@ -50,3 +50,15 @@ Bloqueadores (dependem do Fernando): CNPJ (MEI→ME, em andamento), conta Meta B
 3. Mercado lotado — preço/simplicidade validam os primeiros, não são fosso.
 4. Beta gratuito = custo de API sai do bolso do Fernando. Manter teto de gasto configurado.
 5. Supabase free pausa por inatividade — keep-alive por GitHub Actions.
+
+## Meta oficial — estado atual (02/10/2026)
+App criado no Meta for Developers (portfólio empresarial "Farol IA", com CNPJ/MEI). IDs não-secretos:
+- App ID: 1825340775266895
+- WABA ID: 1371566068085782
+- Phone Number ID (número de TESTE da Meta, +1 555 630-0508): 1333360969866822
+- META_VERIFY_TOKEN (webhook): farol_1b98850a2ac4b884131e8b114d1c9c0a
+Segredos (App Secret, Access Token) NÃO ficam aqui — só no .env do VPS.
+Número de teste manda p/ até 5 telefones verificados → dá p/ testar o motor sem tocar na Evolution.
+BLOQUEADOR atual: o VPS não tem endpoint público HTTPS (DNS não aponta pro IP 179.197.226.145).
+A Meta exige webhook https. Plano: subdomínio webhook.farolia.store → VPS → Caddy → localhost:3000
+(ver docs/VPS-WEBHOOK-ENDPOINT-SETUP.md). Depois: ligar server.js/db.js + segredos no .env + configurar webhook no painel da Meta.
