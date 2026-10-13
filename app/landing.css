@@ -135,24 +135,45 @@
 .landing-root .wa-chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--wa);background:rgba(37,211,102,.10);border:1px solid rgba(37,211,102,.35);padding:6px 14px;border-radius:999px;margin:0 auto 16px}
 
 /* =====================================================
-   MODERNIZACAO (aditivo — nao altera nada acima)
-   Interacoes e elevacao; laranjas alinhados a marca nova
+   MODERNIZACAO v2 (aditivo — nao altera nada acima)
+   Mudancas VISIVEIS de imediato (estaticas), nao so hover
    ===================================================== */
-.landing-root .card, .landing-root .step{transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease}
-.landing-root .card:hover, .landing-root .step:hover{transform:translateY(-4px);border-color:rgba(251,122,42,.38);box-shadow:0 16px 42px rgba(0,0,0,.38)}
-.landing-root .step .num{color:rgba(251,122,42,.28)}
+/* Cards e passos: leve gradiente, cantos maiores, sombra persistente */
+.landing-root .card, .landing-root .step{
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0)), var(--card);
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.28);
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+.landing-root .card:hover, .landing-root .step:hover{
+  transform:translateY(-4px);
+  border-color:rgba(251,122,42,.42);
+  box-shadow:0 18px 48px rgba(0,0,0,.44);
+}
+/* Icones em badge arredondado com leve halo laranja (toque moderno visivel) */
+.landing-root .card .ico{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:54px;height:54px;border-radius:15px;margin-bottom:16px;font-size:25px;
+  background:linear-gradient(135deg,rgba(251,122,42,.20),rgba(251,122,42,.05));
+  border:1px solid rgba(251,122,42,.28);
+}
+.landing-root .step .num{color:rgba(251,122,42,.30)}
+/* Nav: sublinhado animado */
 .landing-root .nav-links a{position:relative}
 .landing-root .nav-links a::after{content:"";position:absolute;left:0;right:0;bottom:-7px;height:2px;background:var(--amber);border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform .2s ease}
 .landing-root .nav-links a:hover::after{transform:scaleX(1)}
+/* Tabela: cabecalho em caixa-alta + hover de linha */
+.landing-root .cmp th{letter-spacing:.04em;text-transform:uppercase}
 .landing-root .cmp tbody tr{transition:background .15s ease}
-.landing-root .cmp tbody tr:hover td{background:rgba(255,255,255,.025)}
-.landing-root .cmp tbody tr:hover td.col-us{background:rgba(251,122,42,.12)}
+.landing-root .cmp tbody tr:hover td{background:rgba(255,255,255,.03)}
+.landing-root .cmp tbody tr:hover td.col-us{background:rgba(251,122,42,.13)}
+/* FAQ: borda acende ao abrir + hover */
 .landing-root .faq summary{transition:color .15s ease}
 .landing-root .faq summary:hover{color:var(--amber)}
 .landing-root .faq details{transition:border-color .18s ease}
-.landing-root .faq details[open]{border-color:rgba(251,122,42,.32)}
+.landing-root .faq details[open]{border-color:rgba(251,122,42,.34)}
+/* Blocos de destaque com elevacao */
 .landing-root .demo, .landing-root .fp{box-shadow:0 22px 60px rgba(0,0,0,.35)}
-.landing-root .eyebrow, .landing-root .wa-chip{backdrop-filter:blur(4px)}
 @media(prefers-reduced-motion:reduce){
 .landing-root .card:hover, .landing-root .step:hover{transform:none}
 }
