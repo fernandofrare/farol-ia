@@ -9,6 +9,49 @@ export const metadata = {
     "Uma IA treinada no seu negócio responde, qualifica e agenda 24h por dia. Sem você precisar entender de tecnologia.",
 };
 
+// Icones monolinha (stroke herda a cor do badge .ico)
+const I = {
+  lock: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+  ),
+  moon: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4 6.3 6.3 0 0 0 20 14.5z" /></svg>
+  ),
+  repeat: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><path d="M7 22l-4-4 4-4" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
+  ),
+  trendDown: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 7l6 6 4-4 8 8" /><path d="M21 13v4h-4" /></svg>
+  ),
+  chip: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" /><rect x="10" y="10" width="4" height="4" /><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2" /></svg>
+  ),
+  clock: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+  ),
+  target: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1.3" /></svg>
+  ),
+  chart: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="4" y1="20" x2="4" y2="12" /><line x1="10" y1="20" x2="10" y2="5" /><line x1="16" y1="20" x2="16" y2="9" /><line x1="21" y1="20" x2="3" y2="20" /></svg>
+  ),
+  sliders: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6" /><circle cx="9" cy="6" r="2.2" /><line x1="4" y1="12" x2="20" y2="12" /><circle cx="15" cy="12" r="2.2" /><line x1="4" y1="18" x2="20" y2="18" /><circle cx="8" cy="18" r="2.2" /></svg>
+  ),
+  phone: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2.5" /><line x1="11" y1="18.5" x2="13" y2="18.5" /></svg>
+  ),
+  link: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9.5 14.5l5-5" /><path d="M10.5 6l1-1a4 4 0 0 1 6 6l-1 1" /><path d="M13.5 18l-1 1a4 4 0 0 1-6-6l1-1" /></svg>
+  ),
+  check: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M8 12l3 3 5-6" /></svg>
+  ),
+  gift: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1" /><path d="M5 12v9h14v-9" /><line x1="12" y1="8" x2="12" y2="21" /><path d="M12 8C11 5 9 4 7.8 4.6 6.4 5.3 7.3 8 10 8z" /><path d="M12 8c1-3 3-4 4.2-3.4C17.6 5.3 16.7 8 14 8z" /></svg>
+  ),
+};
+
 export default function LandingPage() {
   return (
     <div className="landing-root">
@@ -33,8 +76,8 @@ export default function LandingPage() {
       <section className="hero">
         <div className="wrap">
           <span className="eyebrow" style={{ color: "#25d366", textShadow: "0 0 10px rgba(37,211,102,.55)", fontWeight: 700, borderColor: "rgba(37,211,102,.4)" }}>A mesma IA das grandes · sem a complexidade · sem o preço absurdo</span>
-          <div className="wa-chip"><svg className="wa-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6 2 11c0 1.77.62 3.4 1.67 4.74L2.5 21.5l5-1.3A10.7 10.7 0 0 0 12 21c5.5 0 10-4 10-9S17.5 2 12 2z"/></svg>Sua IA atendendo no WhatsApp, 24 horas por dia</div>
-        <h1>Pare de perder cliente no <span className="wa-word">WhatsApp</span> <em>enquanto você dorme.</em></h1>
+          <div className="wa-chip"><svg className="wa-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6 2 11c0 1.77.62 3.4 1.67 4.74L2.5 21.5l5-1.3A10.7 10.7 0 0 0 12 21c5.5 0 10-4 10-9S17.5 2 12 2z" /></svg>Sua IA atendendo no WhatsApp, 24 horas por dia</div>
+          <h1>Pare de perder cliente no <span className="wa-word">WhatsApp</span> <em>enquanto você dorme.</em></h1>
           <p className="lead">Uma IA treinada no seu negócio responde, qualifica e agenda 24 horas por dia. Sem você precisar entender de tecnologia.</p>
           <p className="sub">Pronto em menos de 24 horas. Cancele quando quiser.</p>
           <div className="hero-cta">
@@ -60,10 +103,10 @@ export default function LandingPage() {
           <h2 className="sec-title">Tecnologia de ponta sempre pareceu <em>coisa de empresa grande.</em></h2>
           <p className="sec-sub">Atendimento automatizado, dados em tempo real, IA treinada no seu negócio. Você via isso e pensava: &quot;não é para mim&quot;. Era caro. Era complicado. Acabou.</p>
           <div className="grid grid-4">
-            <div className="card"><span className="ico">📵</span><h3>Parecia inacessível</h3><p>IA, automação, atendimento inteligente. Você ouvia falar, mas era caro e feito para empresa grande. Não para a sua realidade.</p></div>
-            <div className="card"><span className="ico">🌙</span><h3>Cliente sem resposta de madrugada</h3><p>Mensagem às 22h. Você vê de manhã. Ele já fechou com quem respondeu primeiro. Toda noite. E você nem sabe quantas vezes.</p></div>
-            <div className="card"><span className="ico">🔁</span><h3>As mesmas perguntas todo dia</h3><p>&quot;Qual o horário?&quot; &quot;Tem entrega?&quot; &quot;Aceita cartão?&quot; Dezenas de vezes por dia, enquanto você deveria estar cuidando do negócio.</p></div>
-            <div className="card"><span className="ico">📉</span><h3>Sem visibilidade do que acontece</h3><p>Quantos clientes você perdeu essa semana? Quais perguntas mais aparecem? Quem são seus melhores leads? Sem ferramenta, você não sabe.</p></div>
+            <div className="card"><span className="ico">{I.lock}</span><h3>Parecia inacessível</h3><p>IA, automação, atendimento inteligente. Você ouvia falar, mas era caro e feito para empresa grande. Não para a sua realidade.</p></div>
+            <div className="card"><span className="ico">{I.moon}</span><h3>Cliente sem resposta de madrugada</h3><p>Mensagem às 22h. Você vê de manhã. Ele já fechou com quem respondeu primeiro. Toda noite. E você nem sabe quantas vezes.</p></div>
+            <div className="card"><span className="ico">{I.repeat}</span><h3>As mesmas perguntas todo dia</h3><p>&quot;Qual o horário?&quot; &quot;Tem entrega?&quot; &quot;Aceita cartão?&quot; Dezenas de vezes por dia, enquanto você deveria estar cuidando do negócio.</p></div>
+            <div className="card"><span className="ico">{I.trendDown}</span><h3>Sem visibilidade do que acontece</h3><p>Quantos clientes você perdeu essa semana? Quais perguntas mais aparecem? Quem são seus melhores leads? Sem ferramenta, você não sabe.</p></div>
           </div>
         </div>
       </section>
@@ -73,12 +116,12 @@ export default function LandingPage() {
           <p className="sec-eyebrow">O que muda no seu negócio</p>
           <h2 className="sec-title">Presença, atendimento e dados <em>de empresa de elite.</em> No seu controle.</h2>
           <div className="grid grid-3" style={{ marginTop: 40 }}>
-            <div className="card"><span className="ico">🧠</span><h3>IA treinada na linguagem do seu negócio</h3><p>Você responde um questionário simples — horários, serviços, preços, tom de voz. A IA aprende e passa a responder como se fosse você. Sem código, sem técnico.</p></div>
-            <div className="card"><span className="ico">⏰</span><h3>Atendimento automático 24 horas</h3><p>Enquanto você dorme, a IA trabalha. Fora do horário, ela avisa o cliente e retoma quando você abre. Nenhuma mensagem perdida.</p></div>
-            <div className="card"><span className="ico">🎯</span><h3>Identifica e separa os leads quentes</h3><p>A IA reconhece quem está pronto para comprar, coleta os dados e te avisa. Você entra só na hora de fechar.</p></div>
-            <div className="card"><span className="ico">📊</span><h3>Painel completo nas suas mãos</h3><p>Veja cada conversa em tempo real, acompanhe métricas e saiba o que aconteceu com cada lead. Dados de empresa grande, simples de entender.</p></div>
-            <div className="card"><span className="ico">🎛️</span><h3>Controle total sem complicação</h3><p>Liga e desliga a IA quando quiser. Ajusta uma resposta sem refazer nada. Assume o atendimento manualmente quando precisar.</p></div>
-            <div className="card"><span className="ico">📲</span><h3>Número dedicado, longe do pessoal</h3><p>A IA trabalha em um número novo e exclusivo do seu atendimento. Seu número pessoal fica protegido e o profissional fica organizado — do seu jeito.</p></div>
+            <div className="card"><span className="ico">{I.chip}</span><h3>IA treinada na linguagem do seu negócio</h3><p>Você responde um questionário simples — horários, serviços, preços, tom de voz. A IA aprende e passa a responder como se fosse você. Sem código, sem técnico.</p></div>
+            <div className="card"><span className="ico">{I.clock}</span><h3>Atendimento automático 24 horas</h3><p>Enquanto você dorme, a IA trabalha. Fora do horário, ela avisa o cliente e retoma quando você abre. Nenhuma mensagem perdida.</p></div>
+            <div className="card"><span className="ico">{I.target}</span><h3>Identifica e separa os leads quentes</h3><p>A IA reconhece quem está pronto para comprar, coleta os dados e te avisa. Você entra só na hora de fechar.</p></div>
+            <div className="card"><span className="ico">{I.chart}</span><h3>Painel completo nas suas mãos</h3><p>Veja cada conversa em tempo real, acompanhe métricas e saiba o que aconteceu com cada lead. Dados de empresa grande, simples de entender.</p></div>
+            <div className="card"><span className="ico">{I.sliders}</span><h3>Controle total sem complicação</h3><p>Liga e desliga a IA quando quiser. Ajusta uma resposta sem refazer nada. Assume o atendimento manualmente quando precisar.</p></div>
+            <div className="card"><span className="ico">{I.phone}</span><h3>Número dedicado, longe do pessoal</h3><p>A IA trabalha em um número novo e exclusivo do seu atendimento. Seu número pessoal fica protegido e o profissional fica organizado — do seu jeito.</p></div>
           </div>
         </div>
       </section>
@@ -132,16 +175,15 @@ export default function LandingPage() {
         </div>
       </section>
 
-
       <section id="parceiro" style={{ background: "var(--bg-soft)", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)" }}>
         <div className="wrap">
           <p className="sec-eyebrow" style={{ color: "#25d366", textShadow: "0 0 10px rgba(37,211,102,.55)" }}>Programa Parceiro</p>
           <h2 className="sec-title">Indique e ganhe <em>mensalidades grátis.</em></h2>
           <p className="sec-sub">Cada negócio que entra pelo seu convite e paga a primeira mensalidade vale <b>1 mês grátis</b> pra você. Indicou 3 que assinaram? 3 meses sem pagar. Vire parceiro da Farol IA.</p>
           <div className="grid grid-3" style={{ marginTop: 40 }}>
-            <div className="card"><span className="ico">🔗</span><h3>Seu link exclusivo</h3><p>No painel você gera um link só seu e manda para donos de negócio que conhece. Quanto mais gente atendendo bem, melhor para todos.</p></div>
-            <div className="card"><span className="ico">✅</span><h3>Ele assina, você ganha</h3><p>Quando o indicado entra pelo seu link e paga a primeira mensalidade, o desconto cai automaticamente na sua próxima fatura.</p></div>
-            <div className="card"><span className="ico">🎁</span><h3>1 indicação = 1 mês grátis</h3><p>Cada cliente que você trouxer e que assinar zera uma mensalidade sua. Sem limite: indicou vários, ficou vários meses sem pagar.</p></div>
+            <div className="card"><span className="ico">{I.link}</span><h3>Seu link exclusivo</h3><p>No painel você gera um link só seu e manda para donos de negócio que conhece. Quanto mais gente atendendo bem, melhor para todos.</p></div>
+            <div className="card"><span className="ico">{I.check}</span><h3>Ele assina, você ganha</h3><p>Quando o indicado entra pelo seu link e paga a primeira mensalidade, o desconto cai automaticamente na sua próxima fatura.</p></div>
+            <div className="card"><span className="ico">{I.gift}</span><h3>1 indicação = 1 mês grátis</h3><p>Cada cliente que você trouxer e que assinar zera uma mensalidade sua. Sem limite: indicou vários, ficou vários meses sem pagar.</p></div>
           </div>
         </div>
       </section>
