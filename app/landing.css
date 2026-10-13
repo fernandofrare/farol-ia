@@ -133,3 +133,26 @@
 .landing-root .wa-word{color:var(--wa);white-space:nowrap}
 .landing-root .wa-ico{display:inline-block;width:.9em;height:.9em;vertical-align:-.14em;margin-right:.4em;fill:var(--wa)}
 .landing-root .wa-chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--wa);background:rgba(37,211,102,.10);border:1px solid rgba(37,211,102,.35);padding:6px 14px;border-radius:999px;margin:0 auto 16px}
+
+/* =====================================================
+   MODERNIZACAO (aditivo — nao altera nada acima)
+   Interacoes e elevacao; laranjas alinhados a marca nova
+   ===================================================== */
+.landing-root .card, .landing-root .step{transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease}
+.landing-root .card:hover, .landing-root .step:hover{transform:translateY(-4px);border-color:rgba(251,122,42,.38);box-shadow:0 16px 42px rgba(0,0,0,.38)}
+.landing-root .step .num{color:rgba(251,122,42,.28)}
+.landing-root .nav-links a{position:relative}
+.landing-root .nav-links a::after{content:"";position:absolute;left:0;right:0;bottom:-7px;height:2px;background:var(--amber);border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform .2s ease}
+.landing-root .nav-links a:hover::after{transform:scaleX(1)}
+.landing-root .cmp tbody tr{transition:background .15s ease}
+.landing-root .cmp tbody tr:hover td{background:rgba(255,255,255,.025)}
+.landing-root .cmp tbody tr:hover td.col-us{background:rgba(251,122,42,.12)}
+.landing-root .faq summary{transition:color .15s ease}
+.landing-root .faq summary:hover{color:var(--amber)}
+.landing-root .faq details{transition:border-color .18s ease}
+.landing-root .faq details[open]{border-color:rgba(251,122,42,.32)}
+.landing-root .demo, .landing-root .fp{box-shadow:0 22px 60px rgba(0,0,0,.35)}
+.landing-root .eyebrow, .landing-root .wa-chip{backdrop-filter:blur(4px)}
+@media(prefers-reduced-motion:reduce){
+.landing-root .card:hover, .landing-root .step:hover{transform:none}
+}
