@@ -2,14 +2,14 @@
    FAROL IA — Design tokens (marca aprovada)
    ============================================ */
 :root{
-  --bg:#0a0a0c;
+  --bg:#0a0a0b;
   --bg-soft:#121217;
-  --card:#16161d;
+  --card:#131319;
   --line:rgba(255,255,255,.08);
   --text:#f4f4f6;
   --muted:#9a9aa6;
   --muted2:#5a5a64;
-  --amber:#ff8a3d;
+  --amber:#fb7a2a;
   --amber-deep:#e8590c;
   --gold:#f5b941;
   --wa:#25d366;
@@ -36,13 +36,14 @@ a{color:inherit;text-decoration:none}
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
   font-family:'Inter',sans-serif;font-weight:600;font-size:15px;
-  padding:13px 22px;border-radius:12px;border:none;cursor:pointer;
-  transition:transform .15s ease,opacity .15s ease;
+  padding:13px 24px;border-radius:999px;border:none;cursor:pointer;
+  transition:transform .15s ease,opacity .15s ease,box-shadow .15s ease;
 }
 .btn:active{transform:translateY(1px)}
-.btn-primary{background:linear-gradient(135deg,var(--amber),var(--amber-deep));color:#1a0e04}
-.btn-primary:hover{opacity:.92}
+.btn-primary{background:linear-gradient(135deg,var(--amber),var(--amber-deep));color:#1a0e04;box-shadow:0 8px 28px rgba(251,122,42,.28)}
+.btn-primary:hover{opacity:.95;box-shadow:0 10px 32px rgba(251,122,42,.38)}
 .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:rgba(255,255,255,.22)}
 .btn:disabled{opacity:.6;cursor:not-allowed}
 
 /* Alertas reaproveitados */
