@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CONFIG_PADRAO, DIAS, type ConfigIA } from "@/lib/config-ia";
 import painel from "@/components/painel.module.css";
 import styles from "./minhaia.module.css";
+import { Icon } from "@/components/Icon";
 
 const SEGMENTOS = [
   "Beleza e Estética",
@@ -132,7 +133,7 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
             onClick={salvar}
             disabled={salvando}
           >
-            {salvando ? "Salvando..." : "💾 Salvar"}
+            {salvando ? "Salvando..." : "Salvar"}
           </button>
         </div>
       </div>
@@ -141,7 +142,7 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
         {/* 1. NEGÓCIO + TOM */}
         <section className={styles.card}>
           <div className={styles.cardHead}>
-            <div className={styles.ico}>🏪</div>
+            <div className={styles.ico}><Icon name="store" size={19} /></div>
             <div className={styles.cardHeadText}>
               <h2>Seu negócio</h2>
               <p>Quem você é e como a IA deve se comunicar</p>
@@ -263,7 +264,7 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
         {/* 2. O QUE A IA SABE */}
         <section className={styles.card}>
           <div className={styles.cardHead}>
-            <div className={styles.ico}>🧠</div>
+            <div className={styles.ico}><Icon name="sparkles" size={19} /></div>
             <div className={styles.cardHeadText}>
               <h2>O que a IA sabe sobre você</h2>
               <p>Quanto mais completo, melhor ela atende</p>
@@ -394,7 +395,7 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
           style={{ border: "1px solid #f5b941", boxShadow: "0 0 0 3px rgba(245,185,65,0.12)" }}
         >
           <div className={styles.cardHead}>
-            <div className={styles.ico} style={{ background: "rgba(245,185,65,.15)" }}>⭐</div>
+            <div className={styles.ico} style={{ background: "rgba(245,185,65,.15)", borderColor: "rgba(245,185,65,.3)", color: "var(--gold)" }}><Icon name="star" size={19} /></div>
             <div className={styles.cardHeadText}>
               <h2>Algo mais que a IA deve saber</h2>
               <p>Detalhes, regras e diferenciais que a IA deve priorizar no atendimento</p>
@@ -414,7 +415,7 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
         {/* 3. HORÁRIOS */}
         <section className={styles.card}>
           <div className={styles.cardHead}>
-            <div className={styles.ico}>🕐</div>
+            <div className={styles.ico}><Icon name="clock" size={19} /></div>
             <div className={styles.cardHeadText}>
               <h2>Horários de funcionamento</h2>
               <p>Clique no dia para abrir/fechar. Use &quot;24h&quot; para atender sem parar naquele dia.</p>
@@ -528,7 +529,7 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
         {/* 4. MENSAGENS */}
         <section className={styles.card}>
           <div className={styles.cardHead}>
-            <div className={styles.ico}>💬</div>
+            <div className={styles.ico}><Icon name="chat" size={19} /></div>
             <div className={styles.cardHeadText}>
               <h2>Mensagens principais</h2>
               <p>Use as variáveis em chave para personalizar</p>
@@ -577,7 +578,7 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
         {/* 5. COMPORTAMENTO */}
         <section className={styles.card}>
           <div className={styles.cardHead}>
-            <div className={styles.ico}>🎛️</div>
+            <div className={styles.ico}><Icon name="sliders" size={19} /></div>
             <div className={styles.cardHeadText}>
               <h2>O que a IA pode fazer</h2>
               <p>Ligue ou desligue cada permissão</p>
@@ -615,7 +616,7 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
         {/* PRÉVIA */}
         <section className={styles.card}>
           <div className={styles.cardHead}>
-            <div className={styles.ico}>👁️</div>
+            <div className={styles.ico}><Icon name="eye" size={19} /></div>
             <div className={styles.cardHeadText}>
               <h2>Prévia do atendimento</h2>
               <p>Como seu cliente vê no WhatsApp</p>
@@ -644,7 +645,7 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
       </div>
 
       <div className={styles.saveBar}>
-        <p>{aviso ?? "💡 As alterações entram em vigor imediatamente após salvar"}</p>
+        <p>{aviso ?? "As alterações entram em vigor imediatamente após salvar"}</p>
         <div className={styles.saveActions}>
           <button
             className={`${painel.btn} ${painel.btnGhost} ${styles.btnSm}`}
@@ -658,7 +659,7 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
             onClick={salvar}
             disabled={salvando}
           >
-            {salvando ? "Salvando..." : "💾 Salvar configurações"}
+            {salvando ? "Salvando..." : "Salvar configurações"}
           </button>
         </div>
       </div>
