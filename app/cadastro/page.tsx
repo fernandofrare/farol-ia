@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@/components/Icon";
 import { useState } from "react";
 import Link from "next/link";
 import { LogoFarol } from "@/components/LogoFarol";
@@ -126,7 +127,7 @@ export default function CadastroPage() {
             lineHeight: 1.4,
           }}
         >
-          🎁 <b>Programa Parceiro:</b> depois de assinar, cada negócio que você
+          <Icon name="gift" size={15} style={{ verticalAlign: "-2px", marginRight: 4 }} /> <b>Programa Parceiro:</b> depois de assinar, cada negócio que você
           indicar e que assinar a Farol IA vale <b>1 mensalidade grátis</b> pra
           você. Sem limite.
         </div>
