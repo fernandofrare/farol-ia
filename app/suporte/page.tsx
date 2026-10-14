@@ -1,3 +1,4 @@
+import { Icon } from "@/components/Icon";
 import { createClient } from "@/lib/supabase-server";
 import { Sidebar } from "@/components/Sidebar";
 import painel from "@/components/painel.module.css";
@@ -51,7 +52,7 @@ export default async function SuportePage() {
               href={wa("Olá! Preciso de ajuda com a Farol IA.")}
               className={`${painel.btn} ${painel.btnPrimary}`}
             >
-              💬 Abrir conversa no WhatsApp
+              <Icon name="chat" size={16} /> Abrir conversa no WhatsApp
             </a>
           </div>
 
