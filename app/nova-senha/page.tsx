@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@/components/Icon";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -82,7 +83,7 @@ export default function NovaSenhaPage() {
 
         {linkValido === false ? (
           <div className={styles.boxHeader}>
-            <div className={styles.icon}>⚠️</div>
+            <div className={styles.icon}><Icon name="warning" size={24} /></div>
             <h1>Link inválido ou expirado</h1>
             <p>
               Este link de redefinição não é válido ou já expirou. Solicite um
@@ -99,14 +100,14 @@ export default function NovaSenhaPage() {
         ) : !pronto ? (
           <>
             <div className={styles.boxHeader}>
-              <div className={styles.icon}>🔒</div>
+              <div className={styles.icon}><Icon name="lock" size={24} /></div>
               <h1>Criar nova senha</h1>
               <p>Escolha uma senha com pelo menos 8 caracteres.</p>
             </div>
 
             {erro && (
               <div className={`${styles.alert} ${styles.alertErr}`}>
-                ⚠️ {erro}
+                <Icon name="warning" size={15} style={{ verticalAlign: "-2px", marginRight: 6 }} />{erro}
               </div>
             )}
 
@@ -114,7 +115,7 @@ export default function NovaSenhaPage() {
               <div className={styles.field}>
                 <label htmlFor="senha">Nova senha</label>
                 <div className={styles.inputWrap}>
-                  <span className={styles.ico}>🔒</span>
+                  <span className={styles.ico}><Icon name="lock" size={16} /></span>
                   <input
                     id="senha"
                     type="password"
@@ -131,7 +132,7 @@ export default function NovaSenhaPage() {
               <div className={styles.field}>
                 <label htmlFor="confirma">Confirmar nova senha</label>
                 <div className={styles.inputWrap}>
-                  <span className={styles.ico}>🔒</span>
+                  <span className={styles.ico}><Icon name="lock" size={16} /></span>
                   <input
                     id="confirma"
                     type="password"
@@ -163,7 +164,7 @@ export default function NovaSenhaPage() {
           </>
         ) : (
           <div className={styles.successState}>
-            <div className={styles.check}>✅</div>
+            <div className={styles.check}><Icon name="check" size={28} /></div>
             <h2>Senha alterada!</h2>
             <p>Sua nova senha já está ativa. Você pode entrar normalmente.</p>
             <button
