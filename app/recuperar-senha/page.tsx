@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@/components/Icon";
 import { useState } from "react";
 import Link from "next/link";
 import { LogoFarol } from "@/components/LogoFarol";
@@ -42,7 +43,7 @@ export default function RecuperarSenhaPage() {
         {!enviado ? (
           <>
             <div className={styles.boxHeader}>
-              <div className={styles.icon}>🔑</div>
+              <div className={styles.icon}><Icon name="lock" size={24} /></div>
               <h1>Redefinir senha</h1>
               <p>
                 Digite seu e-mail e enviaremos um link para você criar uma nova
@@ -52,7 +53,7 @@ export default function RecuperarSenhaPage() {
 
             {erro && (
               <div className={`${styles.alert} ${styles.alertErr}`}>
-                ⚠️ {erro}
+                <Icon name="warning" size={15} style={{ verticalAlign: "-2px", marginRight: 6 }} />{erro}
               </div>
             )}
 
@@ -60,7 +61,7 @@ export default function RecuperarSenhaPage() {
               <div className={styles.field}>
                 <label htmlFor="email">E-mail da sua conta</label>
                 <div className={styles.inputWrap}>
-                  <span className={styles.ico}>✉️</span>
+                  <span className={styles.ico}><Icon name="mail" size={16} /></span>
                   <input
                     id="email"
                     type="email"
@@ -98,7 +99,7 @@ export default function RecuperarSenhaPage() {
           </>
         ) : (
           <div className={styles.successState}>
-            <div className={styles.check}>✅</div>
+            <div className={styles.check}><Icon name="check" size={28} /></div>
             <h2>Link enviado!</h2>
             <p>
               Se esse e-mail estiver cadastrado, você receberá um link para
