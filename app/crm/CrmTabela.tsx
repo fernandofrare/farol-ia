@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@/components/Icon";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase-browser";
 import painel from "@/components/painel.module.css";
@@ -157,7 +158,7 @@ export function CrmTabela({
         <h1>Atendimento</h1>
         <div className={painel.topbarRight}>
           <div className={styles.searchWrap}>
-            <span className={styles.searchIco}>🔍</span>
+            <span className={styles.searchIco}><Icon name="search" size={16} /></span>
             <input
               className={styles.search}
               placeholder="Buscar contato..."

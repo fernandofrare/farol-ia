@@ -14,7 +14,7 @@
   transition:all .15s;border:1px solid var(--line);color:var(--muted);background:transparent;
 }
 .filterChip:hover{border-color:var(--amber);color:var(--amber)}
-.filterActive{background:rgba(255,138,61,.1);border-color:var(--amber);color:var(--amber);font-weight:600}
+.filterActive{background:rgba(251,122,42,.1);border-color:var(--amber);color:var(--amber);font-weight:600}
 
 .crmStats{display:flex;gap:0;border-bottom:1px solid var(--line)}
 .crmStat{flex:1;padding:14px 20px;border-right:1px solid var(--line);text-align:center}
@@ -40,7 +40,7 @@
 .bLead{background:rgba(245,185,65,.1);color:var(--gold);border:1px solid rgba(245,185,65,.25)}
 .bCliente{background:rgba(58,210,159,.1);color:var(--good);border:1px solid rgba(58,210,159,.25)}
 .bFrio{background:rgba(154,154,166,.08);color:var(--muted);border:1px solid var(--line)}
-.bNovo{background:rgba(255,138,61,.1);color:var(--amber);border:1px solid rgba(255,138,61,.25)}
+.bNovo{background:rgba(251,122,42,.1);color:var(--amber);border:1px solid rgba(251,122,42,.25)}
 .lastMsg{max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);font-size:13px}
 .tdMuted{color:var(--muted);font-size:13px}
 .tdTime{color:var(--muted2);font-size:12px;white-space:nowrap}
@@ -85,7 +85,7 @@
   font-family:'Montserrat',sans-serif;font-weight:700;font-size:15px;cursor:pointer;
   background:transparent;border:1px solid var(--line);border-bottom:none;color:var(--muted);
 }
-.groupTabActive{background:rgba(255,138,61,.1);color:var(--amber);border-color:rgba(255,138,61,.3)}
+.groupTabActive{background:rgba(251,122,42,.1);color:var(--amber);border-color:rgba(251,122,42,.3)}
 .convList{flex:1;overflow-y:auto;display:flex;flex-direction:column}
 .convRow{
   display:flex;align-items:center;gap:12px;padding:12px 20px;width:100%;text-align:left;
