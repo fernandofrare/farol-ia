@@ -29,6 +29,13 @@ export type IconName =
   | "lock"
   | "doc"
   | "sparkles"
+  | "store"
+  | "star"
+  | "eye"
+  | "sliders"
+  | "refresh"
+  | "wrench"
+  | "search"
   | "arrow";
 
 const P: Record<IconName, React.ReactNode> = {
@@ -187,6 +194,50 @@ const P: Record<IconName, React.ReactNode> = {
     <>
       <line x1="4" y1="12" x2="19" y2="12" />
       <path d="M13 6l6 6-6 6" />
+    </>
+  ),
+  store: (
+    <>
+      <path d="M4 9.5 5.2 4.5h13.6L20 9.5" />
+      <path d="M4 9.5c0 1.5 1 2.5 2.3 2.5S8.7 11 8.7 9.5c0 1.5 1 2.5 2.3 2.5s2.3-1 2.3-2.5c0 1.5 1 2.5 2.3 2.5s2.4-1 2.1-2.5" />
+      <path d="M5.5 12v7.5h13V12" />
+      <path d="M10 19.5v-4h4v4" />
+    </>
+  ),
+  star: (
+    <>
+      <path d="M12 3.5l2.6 5.3 5.9.8-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8-4.3-4.1 5.9-.8z" />
+    </>
+  ),
+  eye: (
+    <>
+      <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" />
+      <circle cx="12" cy="12" r="3" />
+    </>
+  ),
+  sliders: (
+    <>
+      <line x1="4" y1="8" x2="20" y2="8" />
+      <line x1="4" y1="16" x2="20" y2="16" />
+      <circle cx="9" cy="8" r="2.2" />
+      <circle cx="15" cy="16" r="2.2" />
+    </>
+  ),
+  refresh: (
+    <>
+      <path d="M20 11a8 8 0 1 0-.9 4.5" />
+      <path d="M20 5v6h-6" />
+    </>
+  ),
+  wrench: (
+    <>
+      <path d="M15 7a4 4 0 0 1-5.2 5.2L5 17l2 2 4.8-4.8A4 4 0 0 0 17 9l-2.2 2.2-2-2L15 7z" />
+    </>
+  ),
+  search: (
+    <>
+      <circle cx="11" cy="11" r="6.5" />
+      <line x1="16" y1="16" x2="21" y2="21" />
     </>
   ),
 };
