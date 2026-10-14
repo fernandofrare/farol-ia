@@ -1,3 +1,4 @@
+import { Icon } from "@/components/Icon";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-server";
 import { Sidebar } from "@/components/Sidebar";
@@ -83,7 +84,7 @@ export default async function AssinaturaPage() {
               você. Você tem <b>R$ {credito.toFixed(0)}</b> de crédito acumulado.
             </p>
             <Link href="/indicar" className={`${painel.btn} ${painel.btnPrimary}`}>
-              🎁 Indicar e ganhar
+              <Icon name="gift" size={16} /> Indicar e ganhar
             </Link>
           </div>
 
