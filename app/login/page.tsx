@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@/components/Icon";
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -58,14 +59,14 @@ function LoginForm() {
         </div>
         <div className={styles.visualFeatures}>
           <div className={styles.feat}>
-            <div className={styles.featDot}>📊</div>Painel em tempo real
+            <div className={styles.featDot}><Icon name="dashboard" size={16} /></div>Painel em tempo real
           </div>
           <div className={styles.feat}>
-            <div className={styles.featDot}>🤖</div>IA ativa 24 horas no seu
+            <div className={styles.featDot}><Icon name="bot" size={16} /></div>IA ativa 24 horas no seu
             WhatsApp
           </div>
           <div className={styles.feat}>
-            <div className={styles.featDot}>🎯</div>Leads qualificados
+            <div className={styles.featDot}><Icon name="target" size={16} /></div>Leads qualificados
             automaticamente
           </div>
         </div>
@@ -79,13 +80,13 @@ function LoginForm() {
             <p>Acesse o painel da Farol IA</p>
           </div>
 
-          {erro && <div className={styles.alertErr}>⚠️ {erro}</div>}
+          {erro && <div className={styles.alertErr}><Icon name="warning" size={15} style={{ verticalAlign: "-2px", marginRight: 6 }} />{erro}</div>}
 
           <form onSubmit={handleLogin}>
             <div className={styles.field}>
               <label htmlFor="email">E-mail</label>
               <div className={styles.inputWrap}>
-                <span className={styles.ico}>✉️</span>
+                <span className={styles.ico}><Icon name="mail" size={16} /></span>
                 <input
                   id="email"
                   type="email"
@@ -102,7 +103,7 @@ function LoginForm() {
             <div className={styles.field}>
               <label htmlFor="senha">Senha</label>
               <div className={styles.inputWrap}>
-                <span className={styles.ico}>🔒</span>
+                <span className={styles.ico}><Icon name="lock" size={16} /></span>
                 <input
                   id="senha"
                   type={showPw ? "text" : "password"}
@@ -120,7 +121,7 @@ function LoginForm() {
                   title="Mostrar senha"
                   aria-label="Mostrar ou ocultar senha"
                 >
-                  👁
+                  <Icon name="eye" size={18} />
                 </button>
               </div>
             </div>
