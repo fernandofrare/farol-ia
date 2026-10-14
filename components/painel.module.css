@@ -24,10 +24,13 @@
 }
 .navItem:hover{background:#1c1c24;color:var(--text)}
 .navItemActive{
-  background:rgba(255,138,61,.1);color:var(--amber);
-  border:1px solid rgba(255,138,61,.18);
+  background:rgba(251,122,42,.1);color:var(--amber);
+  border:1px solid rgba(251,122,42,.22);
 }
-.navIco{font-size:18px;width:22px;text-align:center;flex-shrink:0}
+.navIco{
+  width:22px;flex-shrink:0;color:inherit;
+  display:flex;align-items:center;justify-content:center;
+}
 .sidebarFooter{padding:16px 12px;border-top:1px solid var(--line)}
 .userRow{
   display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;
@@ -84,5 +87,5 @@
     color:var(--muted);font-size:10px;font-weight:600;text-decoration:none;padding:8px 4px;
   }
   .mobileItemActive{color:var(--amber)}
-  .mobileIco{font-size:20px;line-height:1}
+  .mobileIco{display:flex;align-items:center;justify-content:center;line-height:1}
 }
