@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
 import styles from "./dashboard.module.css";
+import { Icon } from "@/components/Icon";
 
 export function StatusBanner({
   ativaInicial,
@@ -65,7 +66,8 @@ export function StatusBanner({
     // Desconectado (ou nunca conectado): AVISA e oferece reconectar.
     sub = (
       <>
-        ⚠️ Nenhum celular conectado — as mensagens não chegam.{" "}
+        <Icon name="warning" size={15} style={{ verticalAlign: "-2px", marginRight: 4 }} />
+        Nenhum celular conectado — as mensagens não chegam.{" "}
         <Link href="/conectar" style={{ color: "inherit", textDecoration: "underline" }}>
           {numeroWhats ? "Reconectar agora" : "Conectar WhatsApp"}
         </Link>

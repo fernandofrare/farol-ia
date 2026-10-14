@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-server";
 import { Sidebar } from "@/components/Sidebar";
+import { Icon } from "@/components/Icon";
 import { StatusBanner } from "./StatusBanner";
 import painel from "@/components/painel.module.css";
 import styles from "./dashboard.module.css";
@@ -106,13 +107,14 @@ export default async function DashboardPage() {
           <h1>Dashboard</h1>
           <div className={painel.topbarRight}>
             <div className={styles.notifBtn} title="Notificações">
-              🔔<span className={styles.notifDot} />
+              <Icon name="bell" size={18} />
+              <span className={styles.notifDot} />
             </div>
             <Link
               href="/minha-ia"
               className={`${painel.btn} ${painel.btnPrimary}`}
             >
-              ⚙️ Configurar IA
+              <Icon name="gear" size={16} /> Configurar IA
             </Link>
           </div>
         </div>
@@ -138,7 +140,7 @@ export default async function DashboardPage() {
                 textDecoration: "none",
               }}
             >
-              ⏳ <b>Período de teste:</b> faltam {diasTrial} dia{diasTrial === 1 ? "" : "s"} grátis. Ver assinatura →
+              <Icon name="clock" size={15} style={{ verticalAlign: "-2px", marginRight: 4 }} /> <b>Período de teste:</b> faltam {diasTrial} dia{diasTrial === 1 ? "" : "s"} grátis. Ver assinatura →
             </Link>
           )}
 
@@ -149,9 +151,9 @@ export default async function DashboardPage() {
                 <span className={styles.metricLabel}>Conversas hoje</span>
                 <div
                   className={styles.metricIco}
-                  style={{ background: "rgba(255,138,61,.1)" }}
+                  style={{ background: "rgba(251,122,42,.1)", color: "var(--amber)" }}
                 >
-                  💬
+                  <Icon name="chat" size={18} />
                 </div>
               </div>
               <div className={styles.metricVal}>{conversasHoje ?? 0}</div>
@@ -163,9 +165,9 @@ export default async function DashboardPage() {
                 <span className={styles.metricLabel}>Conversas no total</span>
                 <div
                   className={styles.metricIco}
-                  style={{ background: "rgba(58,210,159,.1)" }}
+                  style={{ background: "rgba(58,210,159,.1)", color: "var(--good)" }}
                 >
-                  🎯
+                  <Icon name="target" size={18} />
                 </div>
               </div>
               <div className={styles.metricVal}>{usoTotal ?? 0}</div>
@@ -177,9 +179,9 @@ export default async function DashboardPage() {
                 <span className={styles.metricLabel}>Status da IA</span>
                 <div
                   className={styles.metricIco}
-                  style={{ background: "rgba(245,185,65,.1)" }}
+                  style={{ background: "rgba(245,185,65,.1)", color: "var(--gold)" }}
                 >
-                  ⚡
+                  <Icon name="bolt" size={18} />
                 </div>
               </div>
               <div className={styles.metricVal} style={{ fontSize: 22 }}>
@@ -195,9 +197,9 @@ export default async function DashboardPage() {
                 <span className={styles.metricLabel}>Uso do mês</span>
                 <div
                   className={styles.metricIco}
-                  style={{ background: "rgba(154,154,166,.1)" }}
+                  style={{ background: "rgba(154,154,166,.12)", color: "var(--muted)" }}
                 >
-                  📈
+                  <Icon name="trending" size={18} />
                 </div>
               </div>
               <div className={styles.metricVal}>{usoMes ?? 0}</div>
@@ -223,7 +225,7 @@ export default async function DashboardPage() {
                 ) : (
                   listaConversas.map((c) => (
                     <div key={c.id} className={styles.conv}>
-                      <div className={styles.convAv}>👤</div>
+                      <div className={styles.convAv}><Icon name="user" size={16} /></div>
                       <div className={styles.convInfo}>
                         <div className={styles.convName}>{c.nome_contato}</div>
                         <div className={styles.convMsg}>{c.ultima_mensagem}</div>
@@ -257,7 +259,7 @@ export default async function DashboardPage() {
               </div>
               <div className={styles.actions}>
                 <Link href="/minha-ia" className={styles.actionBtn}>
-                  <span className={styles.actionIco}>🤖</span>
+                  <span className={styles.actionIco}><Icon name="bot" size={20} /></span>
                   <div className={styles.actionInfo}>
                     <div className={styles.actionTitle}>Treinar minha IA</div>
                     <div className={styles.actionSub}>
@@ -267,7 +269,7 @@ export default async function DashboardPage() {
                   <span className={styles.actionArr}>→</span>
                 </Link>
                 <Link href="/crm" className={styles.actionBtn}>
-                  <span className={styles.actionIco}>🎯</span>
+                  <span className={styles.actionIco}><Icon name="target" size={20} /></span>
                   <div className={styles.actionInfo}>
                     <div className={styles.actionTitle}>Ver contatos</div>
                     <div className={styles.actionSub}>
@@ -277,7 +279,7 @@ export default async function DashboardPage() {
                   <span className={styles.actionArr}>→</span>
                 </Link>
                 <Link href="/comecar" className={styles.actionBtn}>
-                  <span className={styles.actionIco}>📱</span>
+                  <span className={styles.actionIco}><Icon name="phone" size={20} /></span>
                   <div className={styles.actionInfo}>
                     <div className={styles.actionTitle}>Conectar WhatsApp</div>
                     <div className={styles.actionSub}>
@@ -287,7 +289,7 @@ export default async function DashboardPage() {
                   <span className={styles.actionArr}>→</span>
                 </Link>
                 <Link href="/assinatura" className={styles.actionBtn}>
-                  <span className={styles.actionIco}>💳</span>
+                  <span className={styles.actionIco}><Icon name="card" size={20} /></span>
                   <div className={styles.actionInfo}>
                     <div className={styles.actionTitle}>Minha assinatura</div>
                     <div className={styles.actionSub}>

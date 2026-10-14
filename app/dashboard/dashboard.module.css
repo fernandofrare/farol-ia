@@ -70,8 +70,8 @@
 /* QUICK ACTIONS */
 .actions{display:flex;flex-direction:column;gap:10px;padding:16px}
 .actionBtn{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:10px;background:#1c1c24;border:1px solid var(--line);cursor:pointer;transition:border-color .15s,background .15s;font-size:14px;font-weight:500;width:100%;text-align:left}
-.actionBtn:hover{border-color:var(--amber);background:rgba(255,138,61,.05)}
-.actionIco{font-size:20px;width:24px;text-align:center}
+.actionBtn:hover{border-color:var(--amber);background:rgba(251,122,42,.06)}
+.actionIco{width:24px;display:flex;align-items:center;justify-content:center;color:var(--amber);flex-shrink:0}
 .actionInfo{flex:1}
 .actionTitle{font-weight:600;font-size:14px}
 .actionSub{font-size:12px;color:var(--muted);margin-top:1px}
