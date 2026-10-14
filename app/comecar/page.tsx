@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@/components/Icon";
 import { useEffect, useRef, useState } from "react";
 import { CONFIG_PADRAO } from "@/lib/config-ia";
 import { LogoFarol } from "@/components/LogoFarol";
@@ -280,7 +281,7 @@ export default function ComecarPage() {
             {qrPendente && (
               <div style={{ textAlign: "center", padding: "20px 0" }}>
                 <p style={{ fontSize: 14, marginBottom: 8 }}>
-                  🛠️ A conexão do WhatsApp está sendo finalizada pela nossa equipe.
+                  <Icon name="wrench" size={15} style={{ verticalAlign: "-2px", marginRight: 4 }} /> A conexão do WhatsApp está sendo finalizada pela nossa equipe.
                 </p>
                 <p style={{ color: "var(--muted)", fontSize: 13 }}>
                   Você já pode explorar o painel — assim que liberar, o QR aparece aqui.
@@ -315,7 +316,7 @@ export default function ComecarPage() {
 
         {step === 3 && (
           <div style={card}>
-            <h1 style={{ fontSize: 22, marginBottom: 4 }}>Tudo pronto para testar 🎉</h1>
+            <h1 style={{ fontSize: 22, marginBottom: 4 }}>Tudo pronto para testar</h1>
             <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 18 }}>
               Ligue a IA e mande uma mensagem para o número de atendimento a partir de
               outro celular. Ela deve responder em segundos.
