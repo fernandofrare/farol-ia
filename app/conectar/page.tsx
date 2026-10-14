@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@/components/Icon";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase-browser";
 import { LogoFarol } from "@/components/LogoFarol";
@@ -161,8 +162,8 @@ export default function ConectarPage() {
               {carregando
                 ? "Verificando conexão…"
                 : conectado
-                ? "✅ WhatsApp conectado e atendendo."
-                : "⚠️ Nenhum celular conectado. Escaneie o QR abaixo para conectar."}
+                ? (<span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}><Icon name="check" size={16} style={{ color: "var(--good)" }} /> WhatsApp conectado e atendendo.</span>)
+                : (<span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}><Icon name="warning" size={16} style={{ color: "var(--amber)" }} /> Nenhum celular conectado. Escaneie o QR abaixo para conectar.</span>)}
             </div>
           </div>
 
@@ -195,7 +196,7 @@ export default function ConectarPage() {
           }}
               style={{ width: "100%", padding: 12, borderRadius: 10, cursor: "pointer" }}
             >
-              🔄 Trocar de número
+              <Icon name="refresh" size={16} /> Trocar de número
             </button>
           )}
 
@@ -229,7 +230,7 @@ export default function ConectarPage() {
               {qrPendente && (
                 <div style={{ textAlign: "center", padding: "20px 0" }}>
                   <p style={{ fontSize: 14, marginBottom: 8 }}>
-                    🛠️ A conexão está sendo finalizada pela nossa equipe.
+                    <Icon name="wrench" size={15} style={{ verticalAlign: "-2px", marginRight: 4 }} /> A conexão está sendo finalizada pela nossa equipe.
                   </p>
                   <p style={{ color: "var(--muted)", fontSize: 13 }}>
                     Assim que liberar, o QR aparece aqui.
