@@ -161,6 +161,23 @@ export default function TermosPage() {
             caracterizem abuso, automação de disparo em massa ou tentativa de
             burlar as proteções do serviço.
           </p>
+          <p>
+            É <strong>expressamente proibido</strong> usar a plataforma para: envio de
+            mensagens em massa ou não solicitadas (spam/disparo); golpes, fraudes,
+            phishing, falsas cobranças ou falsos prêmios; se passar por outra pessoa,
+            empresa, instituição financeira ou órgão público; oferta de produtos ou
+            serviços ilícitos; ou qualquer conduta que viole a lei ou as políticas do
+            WhatsApp e da Meta. A Farol IA não oferece disparo em massa — o atendimento
+            é sempre em resposta a quem inicia o contato.
+          </p>
+          <p>
+            Havendo indício de uso ilícito ou fraudulento, poderemos{" "}
+            <strong>suspender o atendimento imediatamente</strong>, sem aviso prévio, para
+            proteger os usuários finais e a conformidade com a Meta; a confirmação do uso
+            indevido enseja o encerramento definitivo. Quando o volume ultrapassar o plano
+            de forma legítima, poderemos propor uma assinatura mais robusta compatível com
+            o uso.
+          </p>
         </section>
 
         <section className="legal-sec">
