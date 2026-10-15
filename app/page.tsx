@@ -195,6 +195,7 @@ export default function LandingPage() {
           </div>
           <div className="foot-bottom">
             <span>© 2026 Farol IA · Automações Inteligentes</span>
+            <span>FERNANDO CLAUS FRARE DESENVOLVIMENTO DE PROGRAMAS LTDA · CNPJ 69.420.755/0001-41</span>
           </div>
         </div>
       </footer>
