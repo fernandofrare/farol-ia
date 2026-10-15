@@ -5,122 +5,92 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase-browser";
 import { LogoFarol } from "@/components/LogoFarol";
 
-// Página de (re)conexão do WhatsApp.
-// NÃO mexe na configuração da empresa (nome, segmento, serviços) — só troca/reconecta
-// o número. Reaproveita a instância existente da Evolution (via /api/whatsapp/qr).
+// Conexão do WhatsApp — CASO 2 (número do cliente numa WABA da empresa).
+// O cliente NÃO cria conta Meta nem cadastra cartão: informa o número + nome,
+// confirma o código que chega no celular, e espera a liberação do nome (1-2 dias).
+
+type Estado = "carregando" | "novo" | "verificando" | "aguardando_nome" | "ativo" | "erro";
 
 export default function ConectarPage() {
   const supabase = createClient();
-  const [carregando, setCarregando] = useState(true);
-  const [state, setState] = useState<string>("desconhecido");
-  const [qr, setQr] = useState<string | null>(null);
-  const [qrPendente, setQrPendente] = useState(false);
-  const [gerando, setGerando] = useState(false);
+  const [estado, setEstado] = useState<Estado>("carregando");
+  const [numero, setNumero] = useState("");
+  const [nomeNegocio, setNomeNegocio] = useState("");
+  const [aceite, setAceite] = useState(false);
+  const [codigo, setCodigo] = useState("");
+  const [numeroSalvo, setNumeroSalvo] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
-  const [modoTroca, setModoTroca] = useState(false);
+  const [enviando, setEnviando] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const conectado = state === "open";
-
-  const checarStatus = useCallback(async () => {
+  const carregarStatus = useCallback(async () => {
     try {
-      const r = await fetch("/api/whatsapp/status");
-      if (r.status === 401) {
-        window.location.href = "/login";
-        return;
-      }
+      const r = await fetch("/api/whatsapp/meta/status");
+      if (r.status === 401) { window.location.href = "/login"; return; }
       const d = await r.json();
-      setState(d.state || "desconhecido");
+      setNumeroSalvo(d.whatsapp_e164 || null);
+      setEstado((d.onboarding_status as Estado) || "novo");
     } catch {
-      setState("desconhecido");
-    } finally {
-      setCarregando(false);
+      setEstado("novo");
     }
   }, []);
 
-  // Ao abrir: confirma sessão e checa o estado real da conexão.
   useEffect(() => {
     (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        window.location.href = "/login";
-        return;
-      }
-      await checarStatus();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { window.location.href = "/login"; return; }
+      await carregarStatus();
     })();
-  }, [supabase, checarStatus]);
+  }, [supabase, carregarStatus]);
 
-  async function pedirQr() {
+  // Enquanto aguarda a liberação do nome, consulta de tempos em tempos.
+  useEffect(() => {
+    if (estado !== "aguardando_nome") return;
+    pollRef.current = setInterval(carregarStatus, 20000);
+    return () => { if (pollRef.current) clearInterval(pollRef.current); };
+  }, [estado, carregarStatus]);
+
+  async function adicionarNumero() {
     setErro(null);
-    setQr(null);
-    setQrPendente(false);
-    setGerando(true);
+    if (!numero.trim() || !nomeNegocio.trim()) { setErro("Preencha o número e o nome do negócio."); return; }
+    if (!aceite) { setErro("Confirme que entende que o número será exclusivo da IA."); return; }
+    setEnviando(true);
     try {
-      const resp = await fetch("/api/whatsapp/qr", { method: "POST" });
-      const data = await resp.json();
-      if (data.pendente) {
-        setQrPendente(true);
-        return;
-      }
-      if (data.qr) setQr(data.qr);
-      else setErro("Não foi possível gerar o QR agora. Tente de novo em instantes.");
-    } catch {
-      setErro("Não foi possível gerar o QR agora. Tente de novo em instantes.");
-    } finally {
-      setGerando(false);
-    }
+      const r = await fetch("/api/whatsapp/meta/add-number", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ e164: numero.trim(), displayName: nomeNegocio.trim() }),
+      });
+      const d = await r.json();
+      if (d.pendente) { setErro("A conexão ainda está sendo liberada pela nossa equipe. Tente em instantes."); return; }
+      if (!r.ok) { setErro(d.erro || "Não foi possível adicionar o número."); return; }
+      setNumeroSalvo(numero.trim());
+      setEstado("verificando");
+    } catch { setErro("Não foi possível adicionar o número agora."); }
+    finally { setEnviando(false); }
   }
 
-  async function resetar() {
-    if (!confirm("Isto apaga a conexão atual e recria do zero. Seus dados de empresa e da IA continuam salvos. Continuar?")) return;
+  async function confirmarCodigo() {
     setErro(null);
+    if (!codigo.trim()) { setErro("Digite o código recebido."); return; }
+    setEnviando(true);
     try {
-      await fetch("/api/whatsapp/reset", { method: "POST" });
-      await new Promise((r) => setTimeout(r, 800));
-    } catch {}
-    pedirQr();
+      const r = await fetch("/api/whatsapp/meta/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: codigo.trim() }),
+      });
+      const d = await r.json();
+      if (!r.ok) { setErro(d.erro || "Código inválido ou expirado."); return; }
+      setEstado("aguardando_nome");
+    } catch { setErro("Não foi possível verificar o código agora."); }
+    finally { setEnviando(false); }
   }
-
-  // Enquanto há QR na tela, fica checando o status até conectar.
-  useEffect(() => {
-    if (!qr && !qrPendente) return;
-    pollRef.current = setInterval(async () => {
-      try {
-        const r = await fetch("/api/whatsapp/status");
-        const d = await r.json();
-        setState(d.state || "desconhecido");
-        if (d.state === "open") {
-          if (pollRef.current) clearInterval(pollRef.current);
-          setQr(null);
-          setModoTroca(false);
-        }
-      } catch {}
-    }, 4000);
-    return () => {
-      if (pollRef.current) clearInterval(pollRef.current);
-    };
-  }, [qr, qrPendente]);
-
-  // Se estiver desconectado ao abrir, já puxa o QR automaticamente.
-  useEffect(() => {
-    if (!carregando && !conectado && !qr && !qrPendente && !gerando) {
-      pedirQr();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [carregando, conectado]);
 
   const wrap: React.CSSProperties = { maxWidth: 560, margin: "0 auto", padding: "32px 18px" };
-  const card: React.CSSProperties = {
-    border: "1px solid var(--line)",
-    borderRadius: 16,
-    padding: 28,
-    background: "var(--bg-soft)",
-  };
-
-  const statusCor = conectado ? "#3ad29f" : "#f5b941";
-  const statusBg = conectado ? "rgba(58,210,159,.12)" : "rgba(245,185,65,.12)";
+  const card: React.CSSProperties = { border: "1px solid var(--line)", borderRadius: 16, padding: 28, background: "var(--bg-soft)" };
+  const input: React.CSSProperties = { width: "100%", padding: "12px 14px", borderRadius: 10, border: "1px solid var(--line)", background: "#1c1c24", color: "var(--text)", fontSize: 15, marginBottom: 12 };
+  const label: React.CSSProperties = { fontSize: 13, fontWeight: 600, color: "var(--muted)", marginBottom: 6, display: "block" };
 
   return (
     <main style={{ minHeight: "100vh" }}>
@@ -132,141 +102,87 @@ export default function ConectarPage() {
         <div style={card}>
           <h1 style={{ fontSize: 22, marginBottom: 4 }}>Conexão do WhatsApp</h1>
           <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 18 }}>
-            Reconecte o número de atendimento ou troque por outro. Seus dados de
-            empresa e da IA continuam salvos — isto só cuida do número.
+            Conecte o número do seu negócio para a IA começar a atender. Você faz tudo por aqui.
           </p>
 
-          {/* STATUS ATUAL */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              background: statusBg,
-              border: `1px solid ${statusCor}55`,
-              borderRadius: 12,
-              padding: "12px 14px",
-              marginBottom: 18,
-            }}
-          >
-            <div
-              style={{
-                width: 10,
-                height: 10,
-                borderRadius: "50%",
-                background: statusCor,
-                flexShrink: 0,
-              }}
-            />
-            <div style={{ fontSize: 14 }}>
-              {carregando
-                ? "Verificando conexão…"
-                : conectado
-                ? (<span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}><Icon name="check" size={16} style={{ color: "var(--good)" }} /> WhatsApp conectado e atendendo.</span>)
-                : (<span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}><Icon name="warning" size={16} style={{ color: "var(--amber)" }} /> Nenhum celular conectado. Escaneie o QR abaixo para conectar.</span>)}
-            </div>
-          </div>
-
           {erro && (
-            <div
-              style={{
-                background: "rgba(255,80,80,.12)",
-                border: "1px solid rgba(255,80,80,.3)",
-                color: "#ff8a8a",
-                padding: "10px 12px",
-                borderRadius: 10,
-                fontSize: 13,
-                marginBottom: 16,
-              }}
-            >
+            <div style={{ background: "rgba(255,80,80,.12)", border: "1px solid rgba(255,80,80,.3)", color: "#ff8a8a", padding: "10px 12px", borderRadius: 10, fontSize: 13, marginBottom: 16 }}>
               {erro}
             </div>
           )}
 
-          {/* CONECTADO: opção de trocar número */}
-          {!carregando && conectado && !modoTroca && (
-            <button
-              className="btn btn-ghost"
-              onClick={async () => {
-            setModoTroca(true);
-            try {
-              await fetch("/api/whatsapp/logout", { method: "POST" });
-            } catch {}
-            pedirQr();
-          }}
-              style={{ width: "100%", padding: 12, borderRadius: 10, cursor: "pointer" }}
-            >
-              <Icon name="refresh" size={16} /> Trocar de número
-            </button>
+          {estado === "carregando" && (
+            <p style={{ color: "var(--muted)", fontSize: 14 }}>Verificando o estado da conexão…</p>
           )}
 
-          {conectado && modoTroca && (
-            <p style={{ color: "var(--muted)", fontSize: 13, marginBottom: 14 }}>
-              Desconectando o número atual e gerando um novo QR. Escaneie abaixo com o novo número para vincular — os dados da empresa continuam salvos.
-            </p>
+          {/* ATIVO */}
+          {estado === "ativo" && (
+            <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(58,210,159,.12)", border: "1px solid rgba(58,210,159,.33)", borderRadius: 12, padding: "14px 16px" }}>
+              <Icon name="check" size={18} style={{ color: "var(--good)" }} />
+              <div style={{ fontSize: 14 }}>
+                <b>WhatsApp conectado e atendendo.</b>
+                {numeroSalvo ? <div style={{ color: "var(--muted)", marginTop: 2 }}>{numeroSalvo}</div> : null}
+              </div>
+            </div>
           )}
 
-          {/* QR (quando desconectado, ou trocando número) */}
-          {(!conectado || modoTroca) && (
+          {/* AGUARDANDO APROVAÇÃO DO NOME */}
+          {estado === "aguardando_nome" && (
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 10, background: "rgba(245,185,65,.1)", border: "1px solid rgba(245,185,65,.3)", borderRadius: 12, padding: "14px 16px" }}>
+              <Icon name="clock" size={18} style={{ color: "var(--gold)", flexShrink: 0, marginTop: 1 }} />
+              <div style={{ fontSize: 14 }}>
+                <b>Quase lá — aprovando o nome do seu negócio.</b>
+                <div style={{ color: "var(--muted)", marginTop: 4 }}>
+                  Essa etapa leva de 1 a 2 dias e é com a gente e o WhatsApp — você não precisa fazer nada. Avisamos por e-mail assim que a IA começar a atender.
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* DIGITAR CÓDIGO */}
+          {estado === "verificando" && (
             <>
-              <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 14 }}>
-                No celular: WhatsApp → Aparelhos conectados → Conectar aparelho →
-                escaneie o código.
+              <p style={{ fontSize: 14, marginBottom: 14 }}>
+                Enviamos um código {numeroSalvo ? <>para <b>{numeroSalvo}</b></> : "para o seu número"}. Digite ele abaixo para confirmar.
               </p>
-
-              {qr && (
-                <div style={{ textAlign: "center", marginBottom: 16 }}>
-                  <img
-                    src={qr.startsWith("data:") ? qr : `data:image/png;base64,${qr}`}
-                    alt="QR Code"
-                    style={{ width: 240, height: 240, borderRadius: 12, background: "#fff", padding: 8 }}
-                  />
-                  <p style={{ color: "var(--muted)", fontSize: 13, marginTop: 10 }}>
-                    Aguardando a conexão… {state === "connecting" ? "(conectando)" : ""}
-                  </p>
-                </div>
-              )}
-
-              {qrPendente && (
-                <div style={{ textAlign: "center", padding: "20px 0" }}>
-                  <p style={{ fontSize: 14, marginBottom: 8 }}>
-                    <Icon name="wrench" size={15} style={{ verticalAlign: "-2px", marginRight: 4 }} /> A conexão está sendo finalizada pela nossa equipe.
-                  </p>
-                  <p style={{ color: "var(--muted)", fontSize: 13 }}>
-                    Assim que liberar, o QR aparece aqui.
-                  </p>
-                </div>
-              )}
-
-              {!qr && !qrPendente && (
-                <div style={{ textAlign: "center", padding: "20px 0", color: "var(--muted)" }}>
-                  {gerando ? "Gerando o QR…" : ""}
-                </div>
-              )}
-
-              <button
-                className="btn btn-ghost"
-                onClick={pedirQr}
-                disabled={gerando}
-                style={{ width: "100%", padding: 12, borderRadius: 10, cursor: "pointer", marginTop: 4 }}
-              >
-                {gerando ? "Gerando…" : "Gerar novo QR"}
+              <label style={label}>Código de verificação</label>
+              <input style={input} value={codigo} onChange={(e) => setCodigo(e.target.value)} placeholder="Ex: 123456" inputMode="numeric" />
+              <button className="btn btn-primary" onClick={confirmarCodigo} disabled={enviando} style={{ width: "100%" }}>
+                {enviando ? "Confirmando…" : "Confirmar código"}
               </button>
+              <button onClick={() => setEstado("novo")} disabled={enviando} style={{ width: "100%", marginTop: 10, background: "transparent", border: "none", color: "var(--muted)", fontSize: 13, cursor: "pointer", textDecoration: "underline" }}>
+                Usar outro número
+              </button>
+            </>
+          )}
 
-              <button
-                onClick={resetar}
-                disabled={gerando}
-                style={{ width: "100%", padding: 10, marginTop: 10, background: "transparent", border: "none", color: "var(--muted)", fontSize: 13, cursor: "pointer", textDecoration: "underline" }}
-              >
-                Problemas para conectar? Resetar conexão
+          {/* FORM INICIAL */}
+          {(estado === "novo" || estado === "erro") && (
+            <>
+              <div style={{ background: "rgba(251,122,42,.08)", border: "1px solid rgba(251,122,42,.2)", borderRadius: 12, padding: "12px 14px", marginBottom: 18, fontSize: 13, color: "#f0cdb4", display: "flex", gap: 9 }}>
+                <Icon name="warning" size={16} style={{ color: "var(--amber)", flexShrink: 0, marginTop: 1 }} />
+                <span>O número conectado vira <b>exclusivo da IA</b> e sai do app normal do WhatsApp. Use um número dedicado ao atendimento. Se ele já tiver WhatsApp, apague a conta dele antes.</span>
+              </div>
+
+              <label style={label}>Número do WhatsApp (com DDD)</label>
+              <input style={input} value={numero} onChange={(e) => setNumero(e.target.value)} placeholder="Ex: +55 54 99999-8888" inputMode="tel" />
+
+              <label style={label}>Nome do seu negócio (como vai aparecer)</label>
+              <input style={input} value={nomeNegocio} onChange={(e) => setNomeNegocio(e.target.value)} placeholder="Ex: Padaria do Zé" />
+
+              <label style={{ display: "flex", alignItems: "flex-start", gap: 9, fontSize: 13, color: "var(--muted)", margin: "4px 0 16px", cursor: "pointer" }}>
+                <input type="checkbox" checked={aceite} onChange={(e) => setAceite(e.target.checked)} style={{ marginTop: 2 }} />
+                <span>Entendo que este número passa a ser exclusivo da IA e sai do app normal do WhatsApp.</span>
+              </label>
+
+              <button className="btn btn-primary" onClick={adicionarNumero} disabled={enviando} style={{ width: "100%" }}>
+                {enviando ? "Enviando…" : "Enviar código e conectar"}
               </button>
             </>
           )}
 
           <div style={{ marginTop: 18, textAlign: "center" }}>
-            <a href="/dashboard" style={{ color: "var(--muted)", fontSize: 13 }}>
-              ← Voltar para o painel
-            </a>
+            <a href="/dashboard" style={{ color: "var(--muted)", fontSize: 13 }}>← Voltar para o painel</a>
           </div>
         </div>
       </div>
