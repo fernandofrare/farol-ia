@@ -29,6 +29,10 @@ export default function PrivacidadePage() {
             nossos clientes contratantes quanto aos dados das pessoas que entram
             em contato com eles pelo WhatsApp.
           </p>
+          <p>
+            A Farol IA é operada por FERNANDO CLAUS FRARE DESENVOLVIMENTO DE
+            PROGRAMAS LTDA, inscrita no CNPJ sob o nº 69.420.755/0001-41.
+          </p>
         </div>
 
         <section className="legal-sec">
