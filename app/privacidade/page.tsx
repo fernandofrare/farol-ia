@@ -87,6 +87,15 @@ export default function PrivacidadePage() {
             <li>prestar suporte e comunicar avisos importantes do serviço;</li>
             <li>garantir a segurança, prevenir fraudes e cumprir obrigações legais.</li>
           </ul>
+          <p>
+            Para a prevenção de abuso e fraude, o conteúdo das conversas pode ser
+            analisado de forma <strong>automatizada</strong> (sem intervenção humana
+            rotineira), a fim de identificar tentativas de golpe ou uso ilícito, com base
+            no legítimo interesse de segurança do serviço e no cumprimento das políticas da
+            Meta. Alertas internos podem ser revisados pela nossa equipe exclusivamente
+            para fins de segurança e de aplicação dos Termos. Não usamos o conteúdo das
+            conversas para outras finalidades.
+          </p>
         </section>
 
         <section className="legal-sec">
