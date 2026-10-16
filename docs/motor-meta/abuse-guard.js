@@ -12,15 +12,10 @@
 //   ABUSE_MODEL (default abaixo; ajuste p/ o mesmo modelo que o motor já usa),
 //   ABUSE_SCORE_MIN (default 0.75), ABUSE_AUTOSUSPEND ("1" liga auto-suspensão em ilegal).
 
-const { createClient } = require("@supabase/supabase-js");
+// Reaproveita o client Supabase (service role) que o motor já cria em db.js.
+const { supabase: db } = require("./db");
 
-const db = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-  { auth: { persistSession: false } }
-);
-
-const MODEL = process.env.ABUSE_MODEL || "claude-haiku-5-5";
+const MODEL = process.env.ABUSE_MODEL || process.env.ANTHROPIC_MODEL || "claude-haiku-5-5";
 const SCORE_MIN = Number(process.env.ABUSE_SCORE_MIN || 0.75);
 const AUTOSUSPEND = process.env.ABUSE_AUTOSUSPEND === "1";
 

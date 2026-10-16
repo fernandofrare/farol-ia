@@ -17,16 +17,10 @@
 // Monte no server.js:  app.use("/meta/onboard", require("./meta-onboard").router);
 
 const express = require("express");
-const { createClient } = require("@supabase/supabase-js");
+// Reaproveita o client Supabase (service role) que o motor já cria em db.js.
+const { supabase: db } = require("./db");
 
 const GRAPH = `https://graph.facebook.com/${process.env.META_GRAPH_VERSION || "v21.0"}`;
-
-// Cliente Supabase com service_role (bypassa RLS — roda só no servidor).
-const db = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-  { auth: { persistSession: false } }
-);
 
 function tokenEmpresa() {
   const token = process.env.META_TOKEN;
