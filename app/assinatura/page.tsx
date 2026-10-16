@@ -42,7 +42,7 @@ export default async function AssinaturaPage() {
 
   return (
     <div className={painel.shell}>
-      <Sidebar usuario={{ nome: nomeUsuario, plano: "Beta Fundador · Gratuito" }} />
+      <Sidebar usuario={{ nome: nomeUsuario, plano: "Plano Farol IA" }} />
       <main className={painel.main}>
         <div className={painel.topbar}>
           <h1>Assinatura</h1>
