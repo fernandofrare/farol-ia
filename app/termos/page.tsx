@@ -184,13 +184,10 @@ export default function TermosPage() {
           <h2>8. Planos, pagamento e cancelamento</h2>
           <p>
             O serviço é oferecido por assinatura mensal, sem fidelidade e sem
-            taxa de instalação. Durante o período beta, o acesso poderá ser
-            concedido de forma gratuita aos participantes convidados, sem que
-            isso gere qualquer obrigação de continuidade gratuita após o
-            encerramento do beta. Os valores e condições vigentes são os
-            informados no site no momento da contratação. Você pode cancelar a
-            qualquer momento; o cancelamento encerra a renovação seguinte e não
-            gera multa.
+            taxa de instalação, com um período de teste gratuito de 7 dias. Os
+            valores e condições vigentes são os informados no site no momento da
+            contratação. Você pode cancelar a qualquer momento; o cancelamento
+            encerra a renovação seguinte e não gera multa.
           </p>
         </section>
 
