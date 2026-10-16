@@ -1,6 +1,6 @@
 // ============================================================
 // Rate limiting simples em memória (janela deslizante por chave).
-// Suficiente para o beta (1 instância). Para escala horizontal,
+// Suficiente para a escala inicial (1 instância). Para escala horizontal,
 // migrar para Upstash Redis — ver nota no fim do arquivo.
 // ============================================================
 
