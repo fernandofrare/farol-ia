@@ -68,7 +68,7 @@ export default async function CrmPage() {
   return (
     <div className={painel.shell}>
       <Sidebar
-        usuario={{ nome: nomeUsuario, plano: "Beta Fundador · Gratuito" }}
+        usuario={{ nome: nomeUsuario, plano: "Plano Farol IA" }}
       />
       <main className={painel.main}>
         <CrmTabela contatos={contatos} clientId={clientId} />
