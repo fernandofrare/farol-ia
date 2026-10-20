@@ -152,7 +152,7 @@ export default function TermosPage() {
             O plano inclui um limite de uso justo de{" "}
             <strong>2.000 conversas por mês</strong>. Uma conversa corresponde a
             uma interação contínua com um mesmo contato. Esse limite é mais do
-            que suficiente para a ampla maioria dos micro e pequenos negócios.
+            que suficiente para a ampla maioria das empresas e profissionais autônomos.
           </p>
           <p>
             Caso o uso ultrapasse esse volume de forma recorrente, entraremos em
