@@ -3,7 +3,7 @@
 Contexto para o Claude (Cowork ou Claude Code) trabalhar neste projeto. Leia antes de mexer em arquitetura, banco ou motor. Fonte de verdade detalhada: `FAROL-IA-KNOWLEDGE.md` (no knowledge do projeto) + os docs de migração Meta.
 
 ## O que é
-SaaS de atendimento por WhatsApp com IA para micro e pequenos negócios brasileiros. Uma IA treinada no negócio do cliente responde/qualifica/agenda 24h no WhatsApp dele. Preço pós-beta: R$147/mês fixo. Domínio: farolia.store · app: app.farolia.store. Fundador: Fernando Frare (Guaporé/RS).
+SaaS de atendimento por WhatsApp com IA para empresas e profissionais autônomos brasileiros. Uma IA treinada no negócio do cliente responde/qualifica/agenda 24h no WhatsApp dele. Preço pós-beta: R$147/mês fixo. Domínio: farolia.store · app: app.farolia.store. Fundador: Fernando Frare (Guaporé/RS).
 
 ## Arquitetura (híbrida — NÃO mexer sem motivo forte)
 - **App Next.js 14 (App Router)** no **Vercel** — este repositório (`fernandofrare/farol-ia`). Landing, login, dashboard, minha-ia, crm, assinatura, configurações, suporte, indicação, páginas legais.
