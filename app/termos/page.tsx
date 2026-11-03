@@ -6,7 +6,7 @@ export const metadata = {
 };
 
 export default function TermosPage() {
-  const atualizacao = "17 de junho de 2026";
+  const atualizacao = "3 de novembro de 2026";
 
   return (
     <main className="legal">
@@ -56,26 +56,30 @@ export default function TermosPage() {
         </section>
 
         <section className="legal-sec legal-highlight">
-          <h2>3. Uso de tecnologia não oficial do WhatsApp</h2>
+          <h2>3. Integração oficial com o WhatsApp Business (Meta)</h2>
           <p>
             <strong>
               Leia este item com especial atenção antes de contratar.
             </strong>
           </p>
           <p>
-            A Farol IA conecta-se ao WhatsApp por meio de uma integração não
-            oficial (baseada na tecnologia Evolution API), e não por meio da API
-            oficial do WhatsApp Business fornecida pela Meta Platforms, Inc. O
-            WhatsApp é uma marca da Meta, que não possui qualquer relação,
-            patrocínio ou endosso com a Farol IA.
+            A Farol IA conecta-se ao WhatsApp por meio da{" "}
+            <strong>API oficial do WhatsApp Business (WhatsApp Business
+            Platform)</strong>, fornecida pela Meta Platforms, Inc. A Farol IA
+            atua como provedor de tecnologia (<em>Tech Provider</em>): a conta do
+            WhatsApp Business e o número utilizados no atendimento são criados e
+            mantidos no <strong>seu próprio portfólio empresarial na Meta</strong>,
+            sob a sua titularidade. O WhatsApp é uma marca da Meta, que não possui
+            qualquer relação, patrocínio ou endosso com a Farol IA.
           </p>
           <p>
-            O uso de integrações não oficiais pode, em tese, contrariar os
-            termos de serviço do WhatsApp e resultar em medidas por parte da
-            Meta, incluindo o bloqueio temporário ou permanente do número
-            conectado. Ao contratar, você declara estar ciente dessa natureza e
-            dos riscos envolvidos, e opta livremente por utilizar o serviço
-            nessas condições.
+            O uso do serviço está sujeito aos Termos do WhatsApp Business, à
+            Política de Uso Aceitável e às demais políticas da Meta. O
+            descumprimento dessas políticas — por exemplo, o envio de mensagens
+            não solicitadas, spam ou conteúdo ilícito — pode resultar em medidas
+            por parte da Meta, incluindo a restrição ou o bloqueio do número ou
+            da conta. Ao contratar, você declara estar ciente dessas políticas e
+            se compromete a cumpri-las.
           </p>
         </section>
 
