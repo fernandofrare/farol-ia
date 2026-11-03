@@ -5,7 +5,7 @@ import { PWARegister } from "@/components/PWARegister";
 export const metadata: Metadata = {
   title: "Farol IA — Atendimento por WhatsApp com Inteligência Artificial",
   description:
-    "A mesma IA das grandes, sem a complexidade, sem o preço absurdo. Atendimento automático no seu WhatsApp por R$147/mês.",
+    "A mesma IA das grandes, sem a complexidade e sem o preço absurdo. Atendimento automático no seu WhatsApp, pronto em menos de 24 horas.",
   metadataBase: new URL("https://farolia.store"),
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Farol IA" },
   icons: {

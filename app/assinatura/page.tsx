@@ -54,7 +54,7 @@ export default async function AssinaturaPage() {
               Plano
             </div>
             <div style={{ fontSize: 26, fontWeight: 700, marginBottom: 4 }}>
-              Farol IA — R$147/mês
+              Plano Farol IA
             </div>
             <div style={{ fontSize: 14, color: "var(--muted)" }}>
               {emTrial &&
