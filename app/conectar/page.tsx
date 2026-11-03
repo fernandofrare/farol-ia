@@ -5,22 +5,36 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase-browser";
 import { LogoFarol } from "@/components/LogoFarol";
 
-// Conexão do WhatsApp — CASO 2 (número do cliente numa WABA da empresa).
-// O cliente NÃO cria conta Meta nem cadastra cartão: informa o número + nome,
-// confirma o código que chega no celular, e espera a liberação do nome (1-2 dias).
+// Conexão do WhatsApp — CASO 1 (Tech Provider / Embedded Signup).
+// O cliente cria a PRÓPRIA conta Meta + WABA pelo popup oficial da Meta; o número
+// vive no portfólio DELE. A Farol opera como Tech Provider via API. O popup
+// devolve um `code` (TTL ~30s) + waba_id + phone_number_id, que mandamos ao
+// backend para a troca server-side por token.
 
-type Estado = "carregando" | "novo" | "verificando" | "aguardando_nome" | "ativo" | "erro";
+type Estado = "carregando" | "novo" | "conectando" | "aguardando_nome" | "ativo" | "erro";
+
+// Config do app Meta — valores PÚBLICOS (App ID e config_id do Facebook Login
+// for Business são expostos no browser por design). Segredos (App Secret/token)
+// NUNCA entram aqui — vivem só no .env do motor (VPS).
+const META_APP_ID = process.env.NEXT_PUBLIC_META_APP_ID || "";
+const META_CONFIG_ID = process.env.NEXT_PUBLIC_META_CONFIG_ID || "";
+const GRAPH_VERSION = process.env.NEXT_PUBLIC_META_GRAPH_VERSION || "v23.0";
+
+declare global {
+  interface Window {
+    FB?: any;
+    fbAsyncInit?: () => void;
+  }
+}
 
 export default function ConectarPage() {
   const supabase = createClient();
   const [estado, setEstado] = useState<Estado>("carregando");
-  const [numero, setNumero] = useState("");
-  const [nomeNegocio, setNomeNegocio] = useState("");
-  const [aceite, setAceite] = useState(false);
-  const [codigo, setCodigo] = useState("");
   const [numeroSalvo, setNumeroSalvo] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
+  const [sdkPronto, setSdkPronto] = useState(false);
+  const sessionInfo = useRef<{ waba_id?: string; phone_number_id?: string }>({});
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const carregarStatus = useCallback(async () => {
@@ -43,54 +57,111 @@ export default function ConectarPage() {
     })();
   }, [supabase, carregarStatus]);
 
-  // Enquanto aguarda a liberação do nome, consulta de tempos em tempos.
+  // Enquanto aguarda a liberação do nome de exibição, consulta de tempos em tempos.
   useEffect(() => {
     if (estado !== "aguardando_nome") return;
     pollRef.current = setInterval(carregarStatus, 20000);
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
   }, [estado, carregarStatus]);
 
-  async function adicionarNumero() {
-    setErro(null);
-    if (!numero.trim() || !nomeNegocio.trim()) { setErro("Preencha o número e o nome do negócio."); return; }
-    if (!aceite) { setErro("Confirme que entende que o número será exclusivo da IA."); return; }
+  // Carrega o SDK do Facebook e escuta a mensagem do popup do Embedded Signup.
+  useEffect(() => {
+    function onMessage(event: MessageEvent) {
+      if (!event.origin.endsWith("facebook.com")) return;
+      try {
+        const data = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
+        if (data?.type === "WA_EMBEDDED_SIGNUP") {
+          // data.data: { phone_number_id, waba_id } no evento FINISH
+          if (data.data?.waba_id) sessionInfo.current.waba_id = data.data.waba_id;
+          if (data.data?.phone_number_id) sessionInfo.current.phone_number_id = data.data.phone_number_id;
+        }
+      } catch {
+        /* mensagens não-JSON do SDK são ignoradas */
+      }
+    }
+    window.addEventListener("message", onMessage);
+
+    window.fbAsyncInit = function () {
+      if (!window.FB || !META_APP_ID) return;
+      window.FB.init({ appId: META_APP_ID, autoLogAppEvents: true, xfbml: true, version: GRAPH_VERSION });
+      setSdkPronto(true);
+    };
+
+    if (!document.getElementById("facebook-jssdk")) {
+      const js = document.createElement("script");
+      js.id = "facebook-jssdk";
+      js.src = "https://connect.facebook.net/pt_BR/sdk.js";
+      js.async = true;
+      js.defer = true;
+      js.crossOrigin = "anonymous";
+      document.body.appendChild(js);
+    } else if (window.FB && META_APP_ID) {
+      window.fbAsyncInit();
+    }
+
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
+
+  async function enviarCode(code: string) {
     setEnviando(true);
+    setEstado("conectando");
     try {
-      const r = await fetch("/api/whatsapp/meta/add-number", {
+      const r = await fetch("/api/whatsapp/meta/embedded-signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ e164: numero.trim(), displayName: nomeNegocio.trim() }),
+        body: JSON.stringify({
+          code,
+          waba_id: sessionInfo.current.waba_id || null,
+          phone_number_id: sessionInfo.current.phone_number_id || null,
+        }),
       });
       const d = await r.json();
-      if (d.pendente) { setErro("A conexão ainda está sendo liberada pela nossa equipe. Tente em instantes."); return; }
-      if (!r.ok) { setErro(d.erro || "Não foi possível adicionar o número."); return; }
-      setNumeroSalvo(numero.trim());
-      setEstado("verificando");
-    } catch { setErro("Não foi possível adicionar o número agora."); }
-    finally { setEnviando(false); }
+      if (d.pendente) {
+        setErro("A conexão oficial ainda está sendo liberada pela nossa equipe. Avisamos você em instantes.");
+        setEstado("erro");
+        return;
+      }
+      if (!r.ok) { setErro(d.erro || "Não foi possível concluir a conexão."); setEstado("erro"); return; }
+      // O backend diz se já ficou ativo ou se o nome ainda está em aprovação.
+      await carregarStatus();
+      if (d.onboarding_status) setEstado(d.onboarding_status as Estado);
+    } catch {
+      setErro("Não foi possível concluir a conexão agora.");
+      setEstado("erro");
+    } finally {
+      setEnviando(false);
+    }
   }
 
-  async function confirmarCodigo() {
+  function conectar() {
     setErro(null);
-    if (!codigo.trim()) { setErro("Digite o código recebido."); return; }
-    setEnviando(true);
-    try {
-      const r = await fetch("/api/whatsapp/meta/verify-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: codigo.trim() }),
-      });
-      const d = await r.json();
-      if (!r.ok) { setErro(d.erro || "Código inválido ou expirado."); return; }
-      setEstado("aguardando_nome");
-    } catch { setErro("Não foi possível verificar o código agora."); }
-    finally { setEnviando(false); }
+    if (!META_CONFIG_ID || !META_APP_ID) {
+      setErro("A conexão com o WhatsApp ainda está sendo liberada. Tente novamente em breve.");
+      return;
+    }
+    if (!window.FB) { setErro("Aguarde um instante e tente de novo (carregando)."); return; }
+    sessionInfo.current = {};
+    window.FB.login(
+      (response: any) => {
+        const code = response?.authResponse?.code;
+        if (code) {
+          enviarCode(code);
+        } else {
+          // Cliente fechou o popup ou não concedeu acesso.
+          setErro("Conexão não concluída. Você pode tentar novamente quando quiser.");
+        }
+      },
+      {
+        config_id: META_CONFIG_ID,
+        response_type: "code",
+        override_default_response_type: true,
+        extras: { setup: {}, featureType: "", sessionInfoVersion: "3" },
+      }
+    );
   }
 
   const wrap: React.CSSProperties = { maxWidth: 560, margin: "0 auto", padding: "32px 18px" };
   const card: React.CSSProperties = { border: "1px solid var(--line)", borderRadius: 16, padding: 28, background: "var(--bg-soft)" };
-  const input: React.CSSProperties = { width: "100%", padding: "12px 14px", borderRadius: 10, border: "1px solid var(--line)", background: "#1c1c24", color: "var(--text)", fontSize: 15, marginBottom: 12 };
-  const label: React.CSSProperties = { fontSize: 13, fontWeight: 600, color: "var(--muted)", marginBottom: 6, display: "block" };
 
   return (
     <main style={{ minHeight: "100vh" }}>
@@ -102,7 +173,7 @@ export default function ConectarPage() {
         <div style={card}>
           <h1 style={{ fontSize: 22, marginBottom: 4 }}>Conexão do WhatsApp</h1>
           <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 18 }}>
-            Conecte o número do seu negócio para a IA começar a atender. Você faz tudo por aqui.
+            Conecte o número do seu negócio pela conexão oficial da Meta. É rápido e você faz tudo por aqui.
           </p>
 
           {erro && (
@@ -113,6 +184,14 @@ export default function ConectarPage() {
 
           {estado === "carregando" && (
             <p style={{ color: "var(--muted)", fontSize: 14 }}>Verificando o estado da conexão…</p>
+          )}
+
+          {/* CONECTANDO */}
+          {estado === "conectando" && (
+            <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(251,122,42,.08)", border: "1px solid rgba(251,122,42,.2)", borderRadius: 12, padding: "14px 16px" }}>
+              <Icon name="refresh" size={18} style={{ color: "var(--amber)" }} />
+              <div style={{ fontSize: 14 }}>Concluindo a conexão com a Meta…</div>
+            </div>
           )}
 
           {/* ATIVO */}
@@ -133,51 +212,27 @@ export default function ConectarPage() {
               <div style={{ fontSize: 14 }}>
                 <b>Quase lá — aprovando o nome do seu negócio.</b>
                 <div style={{ color: "var(--muted)", marginTop: 4 }}>
-                  Essa etapa leva de 1 a 2 dias e é com a gente e o WhatsApp — você não precisa fazer nada. Avisamos por e-mail assim que a IA começar a atender.
+                  Essa etapa leva de 1 a 2 dias e é entre a Meta e o seu negócio — você não precisa fazer nada. Avisamos por e-mail assim que a IA começar a atender.
                 </div>
               </div>
             </div>
           )}
 
-          {/* DIGITAR CÓDIGO */}
-          {estado === "verificando" && (
-            <>
-              <p style={{ fontSize: 14, marginBottom: 14 }}>
-                Enviamos um código {numeroSalvo ? <>para <b>{numeroSalvo}</b></> : "para o seu número"}. Digite ele abaixo para confirmar.
-              </p>
-              <label style={label}>Código de verificação</label>
-              <input style={input} value={codigo} onChange={(e) => setCodigo(e.target.value)} placeholder="Ex: 123456" inputMode="numeric" />
-              <button className="btn btn-primary" onClick={confirmarCodigo} disabled={enviando} style={{ width: "100%" }}>
-                {enviando ? "Confirmando…" : "Confirmar código"}
-              </button>
-              <button onClick={() => setEstado("novo")} disabled={enviando} style={{ width: "100%", marginTop: 10, background: "transparent", border: "none", color: "var(--muted)", fontSize: 13, cursor: "pointer", textDecoration: "underline" }}>
-                Usar outro número
-              </button>
-            </>
-          )}
-
-          {/* FORM INICIAL */}
+          {/* INÍCIO — BOTÃO EMBEDDED SIGNUP */}
           {(estado === "novo" || estado === "erro") && (
             <>
               <div style={{ background: "rgba(251,122,42,.08)", border: "1px solid rgba(251,122,42,.2)", borderRadius: 12, padding: "12px 14px", marginBottom: 18, fontSize: 13, color: "#f0cdb4", display: "flex", gap: 9 }}>
                 <Icon name="warning" size={16} style={{ color: "var(--amber)", flexShrink: 0, marginTop: 1 }} />
-                <span>O número conectado vira <b>exclusivo da IA</b> e sai do app normal do WhatsApp. Use um número dedicado ao atendimento. Se ele já tiver WhatsApp, apague a conta dele antes.</span>
+                <span>Você vai conectar pela <b>Meta</b>, usando a sua própria conta. Use um número <b>dedicado</b> ao atendimento: o número conectado vira exclusivo da IA e sai do app normal do WhatsApp. Se ele já tiver WhatsApp, apague a conta dele antes.</span>
               </div>
 
-              <label style={label}>Número do WhatsApp (com DDD)</label>
-              <input style={input} value={numero} onChange={(e) => setNumero(e.target.value)} placeholder="Ex: +55 54 99999-8888" inputMode="tel" />
-
-              <label style={label}>Nome do seu negócio (como vai aparecer)</label>
-              <input style={input} value={nomeNegocio} onChange={(e) => setNomeNegocio(e.target.value)} placeholder="Ex: Padaria do Zé" />
-
-              <label style={{ display: "flex", alignItems: "flex-start", gap: 9, fontSize: 13, color: "var(--muted)", margin: "4px 0 16px", cursor: "pointer" }}>
-                <input type="checkbox" checked={aceite} onChange={(e) => setAceite(e.target.checked)} style={{ marginTop: 2 }} />
-                <span>Entendo que este número passa a ser exclusivo da IA e sai do app normal do WhatsApp.</span>
-              </label>
-
-              <button className="btn btn-primary" onClick={adicionarNumero} disabled={enviando} style={{ width: "100%" }}>
-                {enviando ? "Enviando…" : "Enviar código e conectar"}
+              <button className="btn btn-primary" onClick={conectar} disabled={enviando || !sdkPronto} style={{ width: "100%" }}>
+                {!sdkPronto ? "Carregando…" : enviando ? "Conectando…" : "Conectar com o WhatsApp"}
               </button>
+
+              <p style={{ color: "var(--muted)", fontSize: 12, marginTop: 12, textAlign: "center" }}>
+                Ao continuar, você cria (ou usa) a sua conta no WhatsApp Business pela Meta. A Farol opera o atendimento em seu nome, pela API oficial.
+              </p>
             </>
           )}
 
