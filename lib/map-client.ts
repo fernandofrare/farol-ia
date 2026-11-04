@@ -19,6 +19,10 @@ export type ClientRow = {
   assistant_name?: string | null;
   services?: unknown; // jsonb
   catalogo?: string | null;
+  catalogo_midia_url?: string | null;
+  catalogo_midia_tipo?: string | null;
+  catalogo_midia_nome?: string | null;
+  catalogo_midia_mime?: string | null;
   schedule?: unknown; // jsonb
   payment?: string[] | null; // array
   scheduling_info?: string | null;
@@ -113,6 +117,9 @@ export function clientParaConfig(row: ClientRow | null): ConfigIA {
     receber_reclamacoes: row.receber_reclamacoes ?? CONFIG_PADRAO.receber_reclamacoes,
     ativa: row.ia_active ?? false,
     numero_whatsapp: row.evolution_instance ?? null,
+    catalogo_midia_nome: row.catalogo_midia_nome ?? null,
+    catalogo_midia_tipo: row.catalogo_midia_tipo ?? null,
+    catalogo_midia_url: row.catalogo_midia_url ?? null,
   };
 }
 
