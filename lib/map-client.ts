@@ -23,6 +23,7 @@ export type ClientRow = {
   catalogo_midia_tipo?: string | null;
   catalogo_midia_nome?: string | null;
   catalogo_midia_mime?: string | null;
+  catalogo_modo_arquivo?: boolean | null;
   schedule?: unknown; // jsonb
   payment?: string[] | null; // array
   scheduling_info?: string | null;
@@ -120,6 +121,7 @@ export function clientParaConfig(row: ClientRow | null): ConfigIA {
     catalogo_midia_nome: row.catalogo_midia_nome ?? null,
     catalogo_midia_tipo: row.catalogo_midia_tipo ?? null,
     catalogo_midia_url: row.catalogo_midia_url ?? null,
+    catalogo_modo_arquivo: row.catalogo_modo_arquivo ?? false,
   };
 }
 
@@ -152,6 +154,7 @@ export function configParaClient(cfg: ConfigIA): ClientRow {
     collect_data: cfg.perguntar_nome,
     transferir_humano: cfg.transferir_humano,
     receber_reclamacoes: cfg.receber_reclamacoes,
+    catalogo_modo_arquivo: cfg.catalogo_modo_arquivo,
     ia_active: cfg.ativa,
     updated_at: new Date().toISOString(),
   };

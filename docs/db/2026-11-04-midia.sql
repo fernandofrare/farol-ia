@@ -14,7 +14,8 @@ alter table public.clients
   add column if not exists catalogo_midia_url text,     -- caminho no bucket catalogos
   add column if not exists catalogo_midia_tipo text,    -- image | document
   add column if not exists catalogo_midia_nome text,    -- nome do arquivo
-  add column if not exists catalogo_midia_mime text;    -- mime do arquivo
+  add column if not exists catalogo_midia_mime text,    -- mime do arquivo
+  add column if not exists catalogo_modo_arquivo boolean not null default false; -- toggle: IA envia o arquivo em vez da lista
 
 -- 3) Buckets privados
 insert into storage.buckets (id, name, public)

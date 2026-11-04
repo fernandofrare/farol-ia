@@ -64,6 +64,47 @@ router.post("/send-media", async (req, res) => {
   }
 });
 
+// POST /whatsapp/send  (TEXTO — atendimento humano)
+// Body: { clientId, phone, text }
+// Substitui o envio por Evolution: resolve o número Meta do cliente e envia texto.
+// Reusa o envio de texto da Meta já existente no motor (meta.js). Se o seu meta.js
+// expõe outra função, troque enviarTextoMeta pela equivalente.
+router.post("/send", async (req, res) => {
+  const { clientId, phone, text } = req.body || {};
+  if (!clientId || !phone || !text) {
+    return res.status(400).json({ erro: "clientId, phone e text obrigatórios" });
+  }
+  try {
+    const { data: cli, error } = await supabase
+      .from("clients")
+      .select("meta_phone_number_id, meta_token")
+      .eq("id", clientId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!cli || !cli.meta_phone_number_id || !cli.meta_token) {
+      return res.status(409).json({ erro: "cliente sem número Meta conectado" });
+    }
+    const GRAPH = `https://graph.facebook.com/${process.env.META_GRAPH_VERSION || "v23.0"}`;
+    const r = await fetch(`${GRAPH}/${cli.meta_phone_number_id}/messages`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${cli.meta_token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        to: phone,
+        type: "text",
+        text: { body: text },
+      }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d?.error?.message || "falha ao enviar texto");
+    return res.json({ ok: true, messageId: d?.messages?.[0]?.id || null });
+  } catch (e) {
+    console.error("[send-text]", e.message);
+    return res.status(502).json({ erro: e.message });
+  }
+});
+
 module.exports = { router };
 
 /* ============================================================
@@ -95,10 +136,13 @@ module.exports = { router };
        // se r.enviouCatalogo = true, o arquivo já foi enviado (com a legenda = r.texto).
 
    (C) PROMPT da IA — adicionar uma instrução no system prompt do cliente:
-       "Se o cliente pedir o catálogo/cardápio/tabela de preços e existir um
-        catálogo em arquivo, responda com uma frase curta de apresentação e
-        inclua o marcador [[ENVIAR_CATALOGO]] ao final. Não descreva o arquivo."
-       (Só incluir essa instrução quando client.catalogo_midia_url existir.)
+       "Se o cliente pedir o catálogo/cardápio/tabela de preços, responda com uma
+        frase curta de apresentação e inclua o marcador [[ENVIAR_CATALOGO]] ao
+        final. Não descreva o arquivo."
+       SÓ incluir essa instrução quando o cliente LIGOU o modo arquivo E tem arquivo:
+         client.catalogo_modo_arquivo === true && client.catalogo_midia_url
+       Quando o modo arquivo está DESLIGADO, não incluir a instrução — a IA
+       responde com a lista de produtos/serviços em texto (client.catalogo), como hoje.
 
    NOTA (IA "ver" imagens): para a IA interpretar imagens recebidas (não só texto),
    passar a imagem ao Claude como input multimodal no pipeline — melhoria separada,

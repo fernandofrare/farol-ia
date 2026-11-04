@@ -118,6 +118,7 @@ export function validarConfig(entrada: unknown): ResultadoValidacao {
     catalogo_midia_nome: null,
     catalogo_midia_tipo: null,
     catalogo_midia_url: null,
+    catalogo_modo_arquivo: bool(e.catalogo_modo_arquivo, false),
   };
 
   // 4) Link de agendamento: se informado, precisa ser http(s) válido.

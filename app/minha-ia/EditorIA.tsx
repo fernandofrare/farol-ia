@@ -370,6 +370,37 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
                     arquivo direto no WhatsApp. (Máx. 20 MB.)
                   </p>
 
+                  {/* Toggle: enviar o ARQUIVO em vez da lista de texto */}
+                  <label
+                    style={{
+                      display: "flex", alignItems: "center", gap: 10,
+                      margin: "4px 0 14px", cursor: "pointer", fontSize: 14,
+                    }}
+                  >
+                    <span
+                      onClick={() => set("catalogo_modo_arquivo", !cfg.catalogo_modo_arquivo)}
+                      style={{
+                        position: "relative", width: 42, height: 24, flexShrink: 0,
+                        borderRadius: 999, transition: "background .15s",
+                        background: cfg.catalogo_modo_arquivo ? "var(--brand, #fb7a2a)" : "var(--line)",
+                      }}
+                    >
+                      <span
+                        style={{
+                          position: "absolute", top: 2, left: cfg.catalogo_modo_arquivo ? 20 : 2,
+                          width: 20, height: 20, borderRadius: "50%", background: "#fff",
+                          transition: "left .15s",
+                        }}
+                      />
+                    </span>
+                    <span>
+                      Enviar o <b>arquivo</b> de catálogo quando pedirem
+                      <span className={styles.hint} style={{ display: "block", margin: 0 }}>
+                        Ligado: a IA manda o PDF/imagem. Desligado: a IA responde com a lista de produtos/serviços em texto.
+                      </span>
+                    </span>
+                  </label>
+
                   {catNome ? (
                     <div
                       style={{

@@ -144,8 +144,9 @@ async function tratarCatalogoNaResposta({ textoIa, client, phoneNumberId, token,
   const limpo = tem ? textoIa.split(MARCADOR_CATALOGO).join("").trim() : textoIa;
   if (!tem) return { enviouCatalogo: false, texto: limpo };
 
-  if (!client.catalogo_midia_url) {
-    // IA pediu catálogo mas não há arquivo — cai no catálogo em texto, se houver.
+  // Só envia o arquivo se o cliente LIGOU o modo arquivo e há arquivo.
+  if (!client.catalogo_modo_arquivo || !client.catalogo_midia_url) {
+    // Cai no catálogo em texto, se houver.
     return { enviouCatalogo: false, texto: limpo || (client.catalogo || "") };
   }
   const tipo = client.catalogo_midia_tipo === "image" ? "image" : "document";
