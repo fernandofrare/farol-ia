@@ -31,7 +31,8 @@ export type ClientRow = {
   off_hours_message?: string | null;
   welcome_message?: string | null;
   contexto_extra?: string | null;
-  evolution_instance?: string | null;
+  evolution_instance?: string | null; // legado (Caso 2) — não usar no Caso 1
+  whatsapp_e164?: string | null; // número conectado pela Meta (Caso 1)
   // Localização
   uf?: string | null;
   cidade?: string | null;
@@ -117,7 +118,7 @@ export function clientParaConfig(row: ClientRow | null): ConfigIA {
     transferir_humano: row.transferir_humano ?? CONFIG_PADRAO.transferir_humano,
     receber_reclamacoes: row.receber_reclamacoes ?? CONFIG_PADRAO.receber_reclamacoes,
     ativa: row.ia_active ?? false,
-    numero_whatsapp: row.evolution_instance ?? null,
+    numero_whatsapp: row.whatsapp_e164 ?? null,
     catalogo_midia_nome: row.catalogo_midia_nome ?? null,
     catalogo_midia_tipo: row.catalogo_midia_tipo ?? null,
     catalogo_midia_url: row.catalogo_midia_url ?? null,
