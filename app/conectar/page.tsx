@@ -1,53 +1,18 @@
 "use client";
 
 import { Icon } from "@/components/Icon";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect } from "react";
 import { createClient } from "@/lib/supabase-browser";
 import { LogoFarol } from "@/components/LogoFarol";
+import { useEmbeddedSignup } from "@/lib/useEmbeddedSignup";
 
 // Conexão do WhatsApp — CASO 1 (Tech Provider / Embedded Signup).
-// O cliente cria a PRÓPRIA conta Meta + WABA pelo popup oficial da Meta; o número
-// vive no portfólio DELE. A Farol opera como Tech Provider via API. O popup
-// devolve um `code` (TTL ~30s) + waba_id + phone_number_id, que mandamos ao
-// backend para a troca server-side por token.
-
-type Estado = "carregando" | "novo" | "conectando" | "aguardando_nome" | "ativo" | "erro";
-
-// Config do app Meta — valores PÚBLICOS (App ID e config_id do Facebook Login
-// for Business são expostos no browser por design). Segredos (App Secret/token)
-// NUNCA entram aqui — vivem só no .env do motor (VPS).
-const META_APP_ID = process.env.NEXT_PUBLIC_META_APP_ID || "";
-const META_CONFIG_ID = process.env.NEXT_PUBLIC_META_CONFIG_ID || "";
-const GRAPH_VERSION = process.env.NEXT_PUBLIC_META_GRAPH_VERSION || "v23.0";
-
-declare global {
-  interface Window {
-    FB?: any;
-    fbAsyncInit?: () => void;
-  }
-}
+// Lógica compartilhada com o wizard /comecar via useEmbeddedSignup.
 
 export default function ConectarPage() {
   const supabase = createClient();
-  const [estado, setEstado] = useState<Estado>("carregando");
-  const [numeroSalvo, setNumeroSalvo] = useState<string | null>(null);
-  const [erro, setErro] = useState<string | null>(null);
-  const [enviando, setEnviando] = useState(false);
-  const [sdkPronto, setSdkPronto] = useState(false);
-  const sessionInfo = useRef<{ waba_id?: string; phone_number_id?: string }>({});
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const carregarStatus = useCallback(async () => {
-    try {
-      const r = await fetch("/api/whatsapp/meta/status");
-      if (r.status === 401) { window.location.href = "/login"; return; }
-      const d = await r.json();
-      setNumeroSalvo(d.whatsapp_e164 || null);
-      setEstado((d.onboarding_status as Estado) || "novo");
-    } catch {
-      setEstado("novo");
-    }
-  }, []);
+  const { estado, numeroSalvo, erro, enviando, sdkPronto, conectar, carregarStatus } =
+    useEmbeddedSignup();
 
   useEffect(() => {
     (async () => {
@@ -56,109 +21,6 @@ export default function ConectarPage() {
       await carregarStatus();
     })();
   }, [supabase, carregarStatus]);
-
-  // Enquanto aguarda a liberação do nome de exibição, consulta de tempos em tempos.
-  useEffect(() => {
-    if (estado !== "aguardando_nome") return;
-    pollRef.current = setInterval(carregarStatus, 20000);
-    return () => { if (pollRef.current) clearInterval(pollRef.current); };
-  }, [estado, carregarStatus]);
-
-  // Carrega o SDK do Facebook e escuta a mensagem do popup do Embedded Signup.
-  useEffect(() => {
-    function onMessage(event: MessageEvent) {
-      if (!event.origin.endsWith("facebook.com")) return;
-      try {
-        const data = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
-        if (data?.type === "WA_EMBEDDED_SIGNUP") {
-          // data.data: { phone_number_id, waba_id } no evento FINISH
-          if (data.data?.waba_id) sessionInfo.current.waba_id = data.data.waba_id;
-          if (data.data?.phone_number_id) sessionInfo.current.phone_number_id = data.data.phone_number_id;
-        }
-      } catch {
-        /* mensagens não-JSON do SDK são ignoradas */
-      }
-    }
-    window.addEventListener("message", onMessage);
-
-    window.fbAsyncInit = function () {
-      if (!window.FB || !META_APP_ID) return;
-      window.FB.init({ appId: META_APP_ID, autoLogAppEvents: true, xfbml: true, version: GRAPH_VERSION });
-      setSdkPronto(true);
-    };
-
-    if (!document.getElementById("facebook-jssdk")) {
-      const js = document.createElement("script");
-      js.id = "facebook-jssdk";
-      js.src = "https://connect.facebook.net/pt_BR/sdk.js";
-      js.async = true;
-      js.defer = true;
-      js.crossOrigin = "anonymous";
-      document.body.appendChild(js);
-    } else if (window.FB && META_APP_ID) {
-      window.fbAsyncInit();
-    }
-
-    return () => window.removeEventListener("message", onMessage);
-  }, []);
-
-  async function enviarCode(code: string) {
-    setEnviando(true);
-    setEstado("conectando");
-    try {
-      const r = await fetch("/api/whatsapp/meta/embedded-signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          code,
-          waba_id: sessionInfo.current.waba_id || null,
-          phone_number_id: sessionInfo.current.phone_number_id || null,
-        }),
-      });
-      const d = await r.json();
-      if (d.pendente) {
-        setErro("A conexão oficial ainda está sendo liberada pela nossa equipe. Avisamos você em instantes.");
-        setEstado("erro");
-        return;
-      }
-      if (!r.ok) { setErro(d.erro || "Não foi possível concluir a conexão."); setEstado("erro"); return; }
-      // O backend diz se já ficou ativo ou se o nome ainda está em aprovação.
-      await carregarStatus();
-      if (d.onboarding_status) setEstado(d.onboarding_status as Estado);
-    } catch {
-      setErro("Não foi possível concluir a conexão agora.");
-      setEstado("erro");
-    } finally {
-      setEnviando(false);
-    }
-  }
-
-  function conectar() {
-    setErro(null);
-    if (!META_CONFIG_ID || !META_APP_ID) {
-      setErro("A conexão com o WhatsApp ainda está sendo liberada. Tente novamente em breve.");
-      return;
-    }
-    if (!window.FB) { setErro("Aguarde um instante e tente de novo (carregando)."); return; }
-    sessionInfo.current = {};
-    window.FB.login(
-      (response: any) => {
-        const code = response?.authResponse?.code;
-        if (code) {
-          enviarCode(code);
-        } else {
-          // Cliente fechou o popup ou não concedeu acesso.
-          setErro("Conexão não concluída. Você pode tentar novamente quando quiser.");
-        }
-      },
-      {
-        config_id: META_CONFIG_ID,
-        response_type: "code",
-        override_default_response_type: true,
-        extras: { setup: {}, featureType: "", sessionInfoVersion: "3" },
-      }
-    );
-  }
 
   const wrap: React.CSSProperties = { maxWidth: 560, margin: "0 auto", padding: "32px 18px" };
   const card: React.CSSProperties = { border: "1px solid var(--line)", borderRadius: 16, padding: 28, background: "var(--bg-soft)" };
@@ -186,7 +48,6 @@ export default function ConectarPage() {
             <p style={{ color: "var(--muted)", fontSize: 14 }}>Verificando o estado da conexão…</p>
           )}
 
-          {/* CONECTANDO */}
           {estado === "conectando" && (
             <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(251,122,42,.08)", border: "1px solid rgba(251,122,42,.2)", borderRadius: 12, padding: "14px 16px" }}>
               <Icon name="refresh" size={18} style={{ color: "var(--amber)" }} />
@@ -194,7 +55,6 @@ export default function ConectarPage() {
             </div>
           )}
 
-          {/* ATIVO */}
           {estado === "ativo" && (
             <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(58,210,159,.12)", border: "1px solid rgba(58,210,159,.33)", borderRadius: 12, padding: "14px 16px" }}>
               <Icon name="check" size={18} style={{ color: "var(--good)" }} />
@@ -205,7 +65,6 @@ export default function ConectarPage() {
             </div>
           )}
 
-          {/* AGUARDANDO APROVAÇÃO DO NOME */}
           {estado === "aguardando_nome" && (
             <div style={{ display: "flex", alignItems: "flex-start", gap: 10, background: "rgba(245,185,65,.1)", border: "1px solid rgba(245,185,65,.3)", borderRadius: 12, padding: "14px 16px" }}>
               <Icon name="clock" size={18} style={{ color: "var(--gold)", flexShrink: 0, marginTop: 1 }} />
@@ -218,7 +77,6 @@ export default function ConectarPage() {
             </div>
           )}
 
-          {/* INÍCIO — BOTÃO EMBEDDED SIGNUP */}
           {(estado === "novo" || estado === "erro") && (
             <>
               <div style={{ background: "rgba(251,122,42,.08)", border: "1px solid rgba(251,122,42,.2)", borderRadius: 12, padding: "12px 14px", marginBottom: 18, fontSize: 13, color: "#f0cdb4", display: "flex", gap: 9 }}>
