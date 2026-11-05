@@ -90,6 +90,45 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
     }
   }
 
+  // ----- Catálogo em arquivo (PDF/imagem) -----
+  const [catNome, setCatNome] = useState<string | null>(inicial.catalogo_midia_nome);
+  const [catTipo, setCatTipo] = useState<string | null>(inicial.catalogo_midia_tipo);
+  const [catBusy, setCatBusy] = useState(false);
+  const [catErro, setCatErro] = useState<string | null>(null);
+
+  async function subirCatalogo(file: File) {
+    setCatErro(null);
+    setCatBusy(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const r = await fetch("/api/minha-ia/catalogo", { method: "POST", body: fd });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok || !d.ok) throw new Error(d?.erro || "Falha ao enviar o arquivo.");
+      setCatNome(d.catalogo_midia_nome);
+      setCatTipo(d.catalogo_midia_tipo);
+    } catch (e) {
+      setCatErro(e instanceof Error ? e.message : "Falha ao enviar o arquivo.");
+    } finally {
+      setCatBusy(false);
+    }
+  }
+
+  async function removerCatalogo() {
+    setCatErro(null);
+    setCatBusy(true);
+    try {
+      const r = await fetch("/api/minha-ia/catalogo", { method: "DELETE" });
+      if (!r.ok) throw new Error();
+      setCatNome(null);
+      setCatTipo(null);
+    } catch {
+      setCatErro("Não foi possível remover.");
+    } finally {
+      setCatBusy(false);
+    }
+  }
+
   async function salvar() {
     setSalvando(true);
     setAviso(null);
@@ -320,6 +359,98 @@ export function EditorIA({ inicial }: { inicial: ConfigIA }) {
                     placeholder={"Ex:\nCorte masculino — R$ 40\nCorte + barba — R$ 65\nBarba — R$ 30\nHidratação — R$ 50"}
                     onChange={(e) => set("catalogo", e.target.value)}
                   />
+                </div>
+
+                {/* Catálogo em ARQUIVO (PDF/imagem) — a IA envia quando pedirem */}
+                <div style={{ marginTop: 16 }}>
+                  <label>Catálogo em arquivo (PDF ou imagem)</label>
+                  <p className={styles.hint}>
+                    Prefere mandar um catálogo pronto em vez de digitar a lista? Suba
+                    um PDF ou imagem. Quando o cliente pedir o catálogo, a IA envia o
+                    arquivo direto no WhatsApp. (Máx. 20 MB.)
+                  </p>
+
+                  {/* Toggle: enviar o ARQUIVO em vez da lista de texto */}
+                  <label
+                    style={{
+                      display: "flex", alignItems: "center", gap: 10,
+                      margin: "4px 0 14px", cursor: "pointer", fontSize: 14,
+                    }}
+                  >
+                    <span
+                      onClick={() => set("catalogo_modo_arquivo", !cfg.catalogo_modo_arquivo)}
+                      style={{
+                        position: "relative", width: 42, height: 24, flexShrink: 0,
+                        borderRadius: 999, transition: "background .15s",
+                        background: cfg.catalogo_modo_arquivo ? "var(--brand, #fb7a2a)" : "var(--line)",
+                      }}
+                    >
+                      <span
+                        style={{
+                          position: "absolute", top: 2, left: cfg.catalogo_modo_arquivo ? 20 : 2,
+                          width: 20, height: 20, borderRadius: "50%", background: "#fff",
+                          transition: "left .15s",
+                        }}
+                      />
+                    </span>
+                    <span>
+                      Enviar o <b>arquivo</b> de catálogo quando pedirem
+                      <span className={styles.hint} style={{ display: "block", margin: 0 }}>
+                        Ligado: a IA manda o PDF/imagem. Desligado: a IA responde com a lista de produtos/serviços em texto.
+                      </span>
+                    </span>
+                  </label>
+
+                  {catNome ? (
+                    <div
+                      style={{
+                        display: "flex", alignItems: "center", gap: 10,
+                        border: "1px solid var(--line)", borderRadius: 10,
+                        padding: "10px 12px", background: "var(--bg-soft)",
+                      }}
+                    >
+                      <Icon name={catTipo === "image" ? "eye" : "help"} size={18} />
+                      <span style={{ flex: 1, fontSize: 14, wordBreak: "break-all" }}>{catNome}</span>
+                      <button
+                        type="button"
+                        onClick={removerCatalogo}
+                        disabled={catBusy}
+                        style={{
+                          background: "transparent", border: "1px solid var(--line)",
+                          color: "var(--muted)", borderRadius: 8, padding: "5px 10px",
+                          fontSize: 13, cursor: catBusy ? "default" : "pointer",
+                        }}
+                      >
+                        Remover
+                      </button>
+                    </div>
+                  ) : (
+                    <label
+                      style={{
+                        display: "inline-flex", alignItems: "center", gap: 8,
+                        border: "1px dashed var(--line)", borderRadius: 10,
+                        padding: "10px 14px", cursor: catBusy ? "default" : "pointer",
+                        fontSize: 14, color: "var(--muted)",
+                      }}
+                    >
+                      <Icon name="bolt" size={16} />
+                      {catBusy ? "Enviando…" : "Escolher arquivo (PDF, JPG, PNG)"}
+                      <input
+                        type="file"
+                        accept="application/pdf,image/jpeg,image/png,image/webp"
+                        style={{ display: "none" }}
+                        disabled={catBusy}
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f) subirCatalogo(f);
+                          e.target.value = "";
+                        }}
+                      />
+                    </label>
+                  )}
+                  {catErro && (
+                    <p style={{ color: "#ff6b6b", fontSize: 13, marginTop: 8 }}>{catErro}</p>
+                  )}
                 </div>
               </div>
             </div>

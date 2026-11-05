@@ -2,9 +2,9 @@ import { createClient } from "@/lib/supabase-server";
 import { NextResponse } from "next/server";
 
 // POST /api/crm/send
-// Envia uma mensagem MANUAL (humana) para o contato via MOTOR -> Evolution,
+// Envia uma mensagem MANUAL (humana) para o contato via MOTOR -> Meta Cloud API,
 // grava no histórico e coloca a conversa em modo humano (a IA fica muda nela).
-// A chave da Evolution NUNCA fica no Next — só o MOTOR fala com a Evolution.
+// O token/phone_number_id da Meta NUNCA ficam no Next — o MOTOR resolve pelo clientId.
 export async function POST(request: Request) {
   const supabase = createClient();
   const {
@@ -32,10 +32,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ erro: "mensagem muito longa" }, { status: 400 });
   }
 
-  // Cliente do usuário (para pegar a instância da Evolution).
+  // Cliente do usuário (para verificar a conexão Meta).
   const { data: cliente } = await supabase
     .from("clients")
-    .select("id, evolution_instance")
+    .select("id, meta_phone_number_id")
     .eq("user_id", user.id)
     .maybeSingle();
   if (!cliente)
@@ -51,8 +51,7 @@ export async function POST(request: Request) {
   if (!conversa)
     return NextResponse.json({ erro: "Conversa não encontrada." }, { status: 404 });
 
-  const instance = cliente.evolution_instance;
-  if (!instance)
+  if (!cliente.meta_phone_number_id)
     return NextResponse.json({ erro: "WhatsApp não conectado." }, { status: 409 });
 
   const MOTOR_URL = process.env.MOTOR_URL;
@@ -64,12 +63,12 @@ export async function POST(request: Request) {
     );
   }
 
-  // 1) Envia pelo motor (que fala com a Evolution).
+  // 1) Envia pelo motor (que fala com a Meta Cloud API; resolve token pelo clientId).
   try {
     const r = await fetch(`${MOTOR_URL}/whatsapp/send`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-motor-token": MOTOR_TOKEN },
-      body: JSON.stringify({ instance, phone: conversa.contact_phone, text }),
+      body: JSON.stringify({ clientId: cliente.id, phone: conversa.contact_phone, text }),
     });
     const data = await r.json().catch(() => ({}));
     if (!r.ok || !data?.ok) throw new Error(data?.erro || "motor send");

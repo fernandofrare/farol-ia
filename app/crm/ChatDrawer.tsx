@@ -9,6 +9,10 @@ type Msg = {
   content: string;
   is_ai: boolean | null;
   created_at: string | null;
+  media_url?: string | null;
+  media_type?: string | null;
+  media_mime?: string | null;
+  media_filename?: string | null;
 };
 
 function hora(iso: string | null) {
@@ -41,17 +45,60 @@ export function ChatDrawer({
   const [enviando, setEnviando] = useState(false);
   const [humano, setHumano] = useState(controleHumano);
   const [erro, setErro] = useState("");
+  const [enviandoMidia, setEnviandoMidia] = useState(false);
+  const [urls, setUrls] = useState<Record<string, string>>({});
+  const urlsRef = useRef<Record<string, string>>({});
   const fimRef = useRef<HTMLDivElement>(null);
 
   const carregar = useCallback(async () => {
     const { data } = await supabase
       .from("messages")
-      .select("id, role, content, is_ai, created_at")
+      .select("id, role, content, is_ai, created_at, media_url, media_type, media_mime, media_filename")
       .eq("conversation_id", conversationId)
       .order("created_at", { ascending: true });
     setMsgs(data ?? []);
     setCarregando(false);
+
+    // Resolve URLs assinadas para as mídias ainda não resolvidas.
+    const pendentes = (data ?? []).filter(
+      (m) => m.media_url && !urlsRef.current[m.media_url]
+    );
+    if (pendentes.length) {
+      const novos: Record<string, string> = {};
+      await Promise.all(
+        pendentes.map(async (m) => {
+          const { data: s } = await supabase.storage
+            .from("conversas")
+            .createSignedUrl(m.media_url as string, 3600);
+          if (s?.signedUrl) novos[m.media_url as string] = s.signedUrl;
+        })
+      );
+      if (Object.keys(novos).length) {
+        urlsRef.current = { ...urlsRef.current, ...novos };
+        setUrls((u) => ({ ...u, ...novos }));
+      }
+    }
   }, [conversationId, supabase]);
+
+  async function enviarMidia(file: File) {
+    if (enviandoMidia) return;
+    setEnviandoMidia(true);
+    setErro("");
+    try {
+      const fd = new FormData();
+      fd.append("conversationId", conversationId);
+      fd.append("file", file);
+      const r = await fetch("/api/crm/send-media", { method: "POST", body: fd });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok || !data?.ok) throw new Error(data?.erro || "Falha ao enviar o arquivo.");
+      if (!humano) { setHumano(true); onTakeover(true); }
+      await carregar();
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Não foi possível enviar o arquivo.");
+    } finally {
+      setEnviandoMidia(false);
+    }
+  }
 
   useEffect(() => {
     carregar();
@@ -185,9 +232,42 @@ export function ChatDrawer({
       marginTop: 3,
       textAlign: saida ? "right" : "left",
     };
+    const temMidia = Boolean(m.media_url);
+    const url = m.media_url ? urls[m.media_url] : undefined;
     return (
       <div key={m.id} style={wrap}>
-        <div style={bal}>{m.content}</div>
+        <div style={bal}>
+          {temMidia && (
+            <div style={{ marginBottom: m.content ? 6 : 0 }}>
+              {m.media_type === "image" ? (
+                url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={url}
+                    alt={m.media_filename || "imagem"}
+                    style={{ maxWidth: "100%", borderRadius: 10, display: "block" }}
+                  />
+                ) : (
+                  <div style={{ fontSize: 13, opacity: 0.7 }}>🖼️ carregando imagem…</div>
+                )
+              ) : (
+                <a
+                  href={url || "#"}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    display: "flex", alignItems: "center", gap: 8,
+                    color: saida ? "#06231a" : "#e8e8ee", textDecoration: "none",
+                    border: "1px solid rgba(0,0,0,0.12)", borderRadius: 8, padding: "8px 10px",
+                  }}
+                >
+                  📄 <span style={{ wordBreak: "break-all" }}>{m.media_filename || "documento"}</span>
+                </a>
+              )}
+            </div>
+          )}
+          {m.content}
+        </div>
         <div style={meta}>
           {saida ? (daIa ? "🤖 IA" : "🙋 Você") : "Cliente"} · {hora(m.created_at)}
         </div>
@@ -288,6 +368,29 @@ export function ChatDrawer({
           )}
 
           <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
+            <label
+              title="Anexar imagem ou PDF"
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center",
+                width: 40, height: 40, borderRadius: 10, flexShrink: 0,
+                background: "#1c1c26", border: "1px solid rgba(255,255,255,0.12)",
+                color: enviandoMidia ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.8)",
+                cursor: enviandoMidia ? "default" : "pointer", fontSize: 18,
+              }}
+            >
+              {enviandoMidia ? "…" : "📎"}
+              <input
+                type="file"
+                accept="application/pdf,image/jpeg,image/png,image/webp"
+                style={{ display: "none" }}
+                disabled={enviandoMidia}
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) enviarMidia(f);
+                  e.target.value = "";
+                }}
+              />
+            </label>
             <textarea
               value={texto}
               onChange={(e) => setTexto(e.target.value)}
