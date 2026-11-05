@@ -148,3 +148,15 @@ module.exports = { router };
    passar a imagem ao Claude como input multimodal no pipeline — melhoria separada,
    não incluída aqui.
    ============================================================ */
+
+/* ============================================================
+   IDIOMA AUTOMÁTICO DA IA (registrado 05/11/2026)
+   No system prompt do cliente (prompt.js/claude.js do motor), adicionar SEMPRE:
+     "Responda SEMPRE no mesmo idioma em que o cliente final escreveu.
+      Se ele escrever em espanhol, responda em espanhol; em inglês, responda em
+      inglês; e assim por diante. Não troque de idioma no meio da conversa a não
+      ser que o cliente troque."
+   Claude é nativamente multilíngue — custo ~zero, sem config por cliente.
+   (Tradução do APP em si — páginas que o cliente usa — é projeto i18n separado,
+   NÃO incluído aqui.)
+   ============================================================ */
