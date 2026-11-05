@@ -1,9 +1,10 @@
 "use client";
 
 import { Icon } from "@/components/Icon";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { CONFIG_PADRAO } from "@/lib/config-ia";
 import { LogoFarol } from "@/components/LogoFarol";
+import { useEmbeddedSignup } from "@/lib/useEmbeddedSignup";
 
 const SEGMENTOS = [
   "Beleza e Estética",
@@ -35,10 +36,22 @@ export default function ComecarPage() {
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
-  const [qr, setQr] = useState<string | null>(null);
-  const [qrPendente, setQrPendente] = useState(false);
-  const [conn, setConn] = useState("desconhecido");
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Conexão do WhatsApp pela Meta (Embedded Signup), compartilhada com /conectar.
+  const {
+    estado: estadoConn,
+    erro: erroConn,
+    enviando: conectando,
+    sdkPronto,
+    conectar,
+    carregarStatus,
+  } = useEmbeddedSignup();
+
+  // Quando a conexão conclui (ativo) ou entra em aprovação do nome, avança.
+  useEffect(() => {
+    if (step === 2 && (estadoConn === "ativo" || estadoConn === "aguardando_nome")) {
+      setStep(3);
+    }
+  }, [step, estadoConn]);
 
   function addServico(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter" || e.key === ",") {
@@ -69,50 +82,13 @@ export default function ComecarPage() {
     try {
       await salvarConfig(false);
       setStep(2);
-      pedirQr();
+      carregarStatus();
     } catch (e) {
       setErro(e instanceof Error ? e.message : "Erro ao salvar.");
     } finally {
       setSalvando(false);
     }
   }
-
-  async function pedirQr() {
-    setErro(null);
-    setQr(null);
-    setQrPendente(false);
-    try {
-      const resp = await fetch("/api/whatsapp/qr", { method: "POST" });
-      const data = await resp.json();
-      if (data.pendente) {
-        setQrPendente(true);
-        return;
-      }
-      if (data.qr) setQr(data.qr);
-      else setErro("Não foi possível gerar o QR agora.");
-    } catch {
-      setErro("Não foi possível gerar o QR agora.");
-    }
-  }
-
-  // Polling do status enquanto está no passo 2 com QR na tela.
-  useEffect(() => {
-    if (step !== 2 || (!qr && !qrPendente)) return;
-    pollRef.current = setInterval(async () => {
-      try {
-        const r = await fetch("/api/whatsapp/status");
-        const d = await r.json();
-        setConn(d.state || "desconhecido");
-        if (d.state === "open") {
-          if (pollRef.current) clearInterval(pollRef.current);
-          setStep(3);
-        }
-      } catch {}
-    }, 4000);
-    return () => {
-      if (pollRef.current) clearInterval(pollRef.current);
-    };
-  }, [step, qr, qrPendente]);
 
   async function ligarIA() {
     setSalvando(true);
@@ -261,56 +237,48 @@ export default function ComecarPage() {
           <div style={card}>
             <h1 style={{ fontSize: 22, marginBottom: 4 }}>Conecte seu WhatsApp</h1>
             <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 18 }}>
-              No celular do número de atendimento:
-              WhatsApp → Aparelhos conectados → Conectar aparelho → escaneie o código.
+              A conexão é oficial, pela Meta (dona do WhatsApp). Você faz tudo por aqui,
+              em poucos cliques.
             </p>
 
-            {qr && (
-              <div style={{ textAlign: "center", marginBottom: 16 }}>
-                <img
-                  src={qr.startsWith("data:") ? qr : `data:image/png;base64,${qr}`}
-                  alt="QR Code"
-                  style={{ width: 240, height: 240, borderRadius: 12, background: "#fff", padding: 8 }}
-                />
-                <p style={{ color: "var(--muted)", fontSize: 13, marginTop: 10 }}>
-                  Aguardando a conexão… {conn === "connecting" ? "(conectando)" : ""}
-                </p>
+            {erroConn && (
+              <div style={{ background: "rgba(255,80,80,.12)", border: "1px solid rgba(255,80,80,.3)", color: "#ff8a8a", padding: "10px 12px", borderRadius: 10, fontSize: 13, marginBottom: 16 }}>
+                {erroConn}
               </div>
             )}
 
-            {qrPendente && (
-              <div style={{ textAlign: "center", padding: "20px 0" }}>
-                <p style={{ fontSize: 14, marginBottom: 8 }}>
-                  <Icon name="wrench" size={15} style={{ verticalAlign: "-2px", marginRight: 4 }} /> A conexão do WhatsApp está sendo finalizada pela nossa equipe.
-                </p>
-                <p style={{ color: "var(--muted)", fontSize: 13 }}>
-                  Você já pode explorar o painel — assim que liberar, o QR aparece aqui.
-                </p>
+            {estadoConn === "conectando" ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(251,122,42,.08)", border: "1px solid rgba(251,122,42,.2)", borderRadius: 12, padding: "14px 16px" }}>
+                <Icon name="refresh" size={18} style={{ color: "var(--amber)" }} />
+                <div style={{ fontSize: 14 }}>Concluindo a conexão com a Meta…</div>
               </div>
-            )}
+            ) : (
+              <>
+                <div style={{ background: "rgba(251,122,42,.08)", border: "1px solid rgba(251,122,42,.2)", borderRadius: 12, padding: "12px 14px", marginBottom: 18, fontSize: 13, color: "#f0cdb4", display: "flex", gap: 9 }}>
+                  <Icon name="warning" size={16} style={{ color: "var(--amber)", flexShrink: 0, marginTop: 1 }} />
+                  <span>Use um número <b>dedicado</b> ao atendimento. Ele vira exclusivo da IA e sai do app normal do WhatsApp. Se já tiver WhatsApp, apague a conta dele antes.</span>
+                </div>
 
-            {!qr && !qrPendente && (
-              <div style={{ textAlign: "center", padding: "20px 0", color: "var(--muted)" }}>
-                Gerando o QR…
-              </div>
-            )}
+                <button
+                  className="btn btn-primary"
+                  onClick={conectar}
+                  disabled={conectando || !sdkPronto}
+                  style={{ width: "100%", padding: 13, borderRadius: 10, fontSize: 15, cursor: "pointer" }}
+                >
+                  {!sdkPronto ? "Carregando…" : conectando ? "Conectando…" : "Conectar com o WhatsApp"}
+                </button>
 
-            <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-              <button
-                className="btn btn-ghost"
-                onClick={pedirQr}
-                style={{ flex: 1, padding: 12, borderRadius: 10, cursor: "pointer" }}
-              >
-                Gerar novo QR
-              </button>
-              <button
-                className="btn btn-primary"
-                onClick={() => setStep(3)}
-                style={{ flex: 1, padding: 12, borderRadius: 10, cursor: "pointer" }}
-              >
-                Pular por agora →
-              </button>
-            </div>
+                <div style={{ textAlign: "center", marginTop: 12 }}>
+                  <button
+                    type="button"
+                    onClick={() => setStep(3)}
+                    style={{ background: "none", border: "none", color: "var(--muted)", fontSize: 13, cursor: "pointer", textDecoration: "underline" }}
+                  >
+                    Pular por agora →
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
 
@@ -322,9 +290,9 @@ export default function ComecarPage() {
               outro celular. Ela deve responder em segundos.
             </p>
             <ol style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.8, paddingLeft: 18, marginBottom: 20 }}>
-              <li>Mantenha o celular do número ligado e com internet.</li>
-              <li>Envie um "oi" de outro número.</li>
+              <li>Envie um "oi" para o número de atendimento a partir de outro celular.</li>
               <li>Veja a resposta chegar — e acompanhe tudo no painel.</li>
+              <li>O número fica hospedado na Meta: não precisa manter o celular dele ligado.</li>
             </ol>
             <button
               className="btn btn-primary"

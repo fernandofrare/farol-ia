@@ -40,6 +40,14 @@ export type ConfigIA = {
   // Estado
   ativa: boolean;
   numero_whatsapp: string | null;
+  // Catálogo em arquivo (PDF/imagem) — somente leitura aqui; upload/remoção
+  // são feitos por rota própria, não pelo salvar do config de texto.
+  catalogo_midia_nome: string | null;
+  catalogo_midia_tipo: string | null; // image | document
+  catalogo_midia_url: string | null;  // caminho no bucket catalogos
+  // Toggle: quando ligado (e há arquivo), a IA envia o ARQUIVO de catálogo em
+  // vez de listar os produtos/serviços em texto.
+  catalogo_modo_arquivo: boolean;
 };
 
 export const DIAS = [
@@ -92,4 +100,8 @@ export const CONFIG_PADRAO: ConfigIA = {
   receber_reclamacoes: false,
   ativa: false,
   numero_whatsapp: null,
+  catalogo_midia_nome: null,
+  catalogo_midia_tipo: null,
+  catalogo_midia_url: null,
+  catalogo_modo_arquivo: false,
 };

@@ -16,17 +16,16 @@ export function StatusBanner({
   const supabase = createClient();
   const [ativa, setAtiva] = useState(ativaInicial);
   const [salvando, setSalvando] = useState(false);
-  // Estado REAL da conexão (não basta ter um nome de instância salvo).
+  // Estado REAL da conexão, pela Meta (onboarding_status do número).
   const [conn, setConn] = useState<string>("verificando");
 
-  // Checa a conexão de verdade na Evolution (via motor), ao montar.
   useEffect(() => {
     let vivo = true;
     (async () => {
       try {
-        const r = await fetch("/api/whatsapp/status");
+        const r = await fetch("/api/whatsapp/meta/status");
         const d = await r.json();
-        if (vivo) setConn(d.state || "desconhecido");
+        if (vivo) setConn(d.onboarding_status || "novo");
       } catch {
         if (vivo) setConn("desconhecido");
       }
@@ -36,7 +35,8 @@ export function StatusBanner({
     };
   }, []);
 
-  const conectado = conn === "open";
+  const conectado = conn === "ativo";
+  const emAprovacao = conn === "aguardando_nome";
 
   async function toggle() {
     const novo = !ativa;
@@ -62,6 +62,13 @@ export function StatusBanner({
     sub = ativa
       ? `Conectada ao WhatsApp${numeroWhats ? ` · ${numeroWhats}` : ""}`
       : "As mensagens não estão sendo respondidas automaticamente";
+  } else if (emAprovacao) {
+    sub = (
+      <>
+        <Icon name="clock" size={15} style={{ verticalAlign: "-2px", marginRight: 4 }} />
+        Número em aprovação pela Meta (1 a 2 dias). Avisamos quando ficar pronto.
+      </>
+    );
   } else {
     // Desconectado (ou nunca conectado): AVISA e oferece reconectar.
     sub = (
@@ -92,7 +99,9 @@ export function StatusBanner({
         />
         <div>
           <div className={styles.statusLabel}>
-            {!conectado
+            {emAprovacao
+              ? "Número em aprovação"
+              : !conectado
               ? "WhatsApp desconectado"
               : ativa
               ? "IA Ativa — Atendendo agora"

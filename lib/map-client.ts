@@ -19,6 +19,11 @@ export type ClientRow = {
   assistant_name?: string | null;
   services?: unknown; // jsonb
   catalogo?: string | null;
+  catalogo_midia_url?: string | null;
+  catalogo_midia_tipo?: string | null;
+  catalogo_midia_nome?: string | null;
+  catalogo_midia_mime?: string | null;
+  catalogo_modo_arquivo?: boolean | null;
   schedule?: unknown; // jsonb
   payment?: string[] | null; // array
   scheduling_info?: string | null;
@@ -26,7 +31,8 @@ export type ClientRow = {
   off_hours_message?: string | null;
   welcome_message?: string | null;
   contexto_extra?: string | null;
-  evolution_instance?: string | null;
+  evolution_instance?: string | null; // legado (Caso 2) — não usar no Caso 1
+  whatsapp_e164?: string | null; // número conectado pela Meta (Caso 1)
   // Localização
   uf?: string | null;
   cidade?: string | null;
@@ -112,7 +118,11 @@ export function clientParaConfig(row: ClientRow | null): ConfigIA {
     transferir_humano: row.transferir_humano ?? CONFIG_PADRAO.transferir_humano,
     receber_reclamacoes: row.receber_reclamacoes ?? CONFIG_PADRAO.receber_reclamacoes,
     ativa: row.ia_active ?? false,
-    numero_whatsapp: row.evolution_instance ?? null,
+    numero_whatsapp: row.whatsapp_e164 ?? null,
+    catalogo_midia_nome: row.catalogo_midia_nome ?? null,
+    catalogo_midia_tipo: row.catalogo_midia_tipo ?? null,
+    catalogo_midia_url: row.catalogo_midia_url ?? null,
+    catalogo_modo_arquivo: row.catalogo_modo_arquivo ?? false,
   };
 }
 
@@ -145,6 +155,7 @@ export function configParaClient(cfg: ConfigIA): ClientRow {
     collect_data: cfg.perguntar_nome,
     transferir_humano: cfg.transferir_humano,
     receber_reclamacoes: cfg.receber_reclamacoes,
+    catalogo_modo_arquivo: cfg.catalogo_modo_arquivo,
     ia_active: cfg.ativa,
     updated_at: new Date().toISOString(),
   };

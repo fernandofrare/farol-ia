@@ -111,9 +111,9 @@ export async function POST(request: Request) {
             '<div style="font-family:sans-serif;line-height:1.6;color:#111">' +
             '<h2>Bem-vindo a Farol IA</h2>' +
             '<p>Sua conta esta criada e seus <b>7 dias gratis</b> comecaram, sem cartao e sem compromisso.</p>' +
-            '<p>Proximo passo: configure sua IA e conecte o WhatsApp pelo QR. Leva poucos minutos.</p>' +
+            '<p>Proximo passo: configure sua IA e conecte o WhatsApp pela conexao oficial da Meta, direto no painel. Leva poucos minutos.</p>' +
             '<p><a href="https://farolia.store/comecar" style="background:#ff8a3d;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none">Configurar minha IA</a></p>' +
-            '<p style="color:#666;font-size:13px">Dica: use um numero de WhatsApp novo e dedicado, e mantenha o celular ligado.</p></div>',
+            '<p style="color:#666;font-size:13px">Dica: use um numero de WhatsApp novo e dedicado so para o atendimento. A conexao e oficial pela Meta — depois de conectar, nao precisa manter o celular ligado.</p></div>',
         }),
       });
     } catch (e) {

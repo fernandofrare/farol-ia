@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 export default function PrivacidadePage() {
-  const atualizacao = "17 de junho de 2026";
+  const atualizacao = "3 de novembro de 2026";
 
   return (
     <main className="legal">
@@ -55,6 +55,14 @@ export default function PrivacidadePage() {
               somos controladores.
             </li>
           </ul>
+          <p>
+            A Farol IA opera sobre a <strong>Plataforma do WhatsApp Business
+            (Meta)</strong>, atuando como provedor de tecnologia (<em>Tech
+            Provider</em>). A conta do WhatsApp Business e o número utilizados no
+            atendimento pertencem a você, cliente contratante, e ficam no seu
+            próprio portfólio empresarial na Meta; a Farol IA os acessa por meio
+            da API oficial para operar o atendimento em seu nome.
+          </p>
         </section>
 
         <section className="legal-sec">
@@ -133,8 +141,15 @@ export default function PrivacidadePage() {
               comunicações de conta, como recuperação de senha;
             </li>
             <li>
-              <strong>provedor de infraestrutura (VPS)</strong> — operação da
-              conexão com o WhatsApp.
+              <strong>Meta Platforms (WhatsApp Business Platform)</strong> —
+              plataforma oficial por onde as mensagens do WhatsApp são enviadas
+              e recebidas, conforme os Termos do WhatsApp Business e as políticas
+              da Meta;
+            </li>
+            <li>
+              <strong>provedor de infraestrutura (VPS)</strong> — operação do
+              servidor que processa o recebimento e o envio das mensagens pela
+              API oficial.
             </li>
           </ul>
           <p>

@@ -27,10 +27,10 @@ export default async function SuportePage() {
   };
 
   const dicas: [string, string][] = [
-    ["A IA parou de responder?", "Confira se o celular do número de atendimento está ligado, com internet, e se a IA está ligada no painel."],
-    ["Número dedicado", "Use um chip novo e exclusivo para o atendimento — nunca o seu WhatsApp pessoal."],
+    ["A IA parou de responder?", "Confira no painel se o WhatsApp está conectado e se a IA está ligada. A conexão é oficial pela Meta e não depende do seu celular ficar ligado."],
+    ["Número dedicado", "Use um chip novo e exclusivo para o atendimento — nunca o seu WhatsApp pessoal. Ao conectar, o número passa a ser operado pela Meta e sai do app comum do WhatsApp."],
     ["Nada de disparo em massa", "A Farol IA responde quem te procura. Não use o número para enviar promoções em massa — é o caminho mais rápido para bloqueio."],
-    ["Mantenha o celular ligado", "O vínculo é como o WhatsApp Web: se o celular ficar muito tempo desligado, a conexão cai e é preciso reconectar o QR."],
+    ["Não precisa manter o celular ligado", "Diferente do WhatsApp Web, o número fica hospedado na Meta (API oficial). Depois de conectado, o atendimento funciona mesmo com o celular desligado."],
   ];
 
   return (

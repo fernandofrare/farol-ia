@@ -113,6 +113,12 @@ export function validarConfig(entrada: unknown): ResultadoValidacao {
       typeof e.numero_whatsapp === "string"
         ? (e.numero_whatsapp.replace(/\D/g, "").slice(0, 15) || null)
         : null,
+    // Catálogo-arquivo é gerenciado por rota própria (upload/remoção), não pelo
+    // save de texto. Mantemos null aqui; o configParaClient não toca nessas colunas.
+    catalogo_midia_nome: null,
+    catalogo_midia_tipo: null,
+    catalogo_midia_url: null,
+    catalogo_modo_arquivo: bool(e.catalogo_modo_arquivo, false),
   };
 
   // 4) Link de agendamento: se informado, precisa ser http(s) válido.

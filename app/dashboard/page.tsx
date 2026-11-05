@@ -28,7 +28,7 @@ export default async function DashboardPage() {
   // Client do usuário (nome do negócio, instância, IA ativa).
   const { data: cliente } = await supabase
     .from("clients")
-    .select("id, nome, ia_active, evolution_instance, status, trial_ate")
+    .select("id, nome, ia_active, whatsapp_e164, status, trial_ate")
     .eq("user_id", user?.id)
     .maybeSingle();
 
@@ -82,7 +82,7 @@ export default async function DashboardPage() {
   // Normaliza para o formato que o componente já espera.
   const config = {
     ativa: cliente?.ia_active ?? false,
-    numero_whatsapp: cliente?.evolution_instance ?? null,
+    numero_whatsapp: cliente?.whatsapp_e164 ?? null,
     nome_negocio: cliente?.nome ?? null,
   };
   const listaConversas = (conversas ?? []).map((c) => ({
@@ -283,7 +283,7 @@ export default async function DashboardPage() {
                   <div className={styles.actionInfo}>
                     <div className={styles.actionTitle}>Conectar WhatsApp</div>
                     <div className={styles.actionSub}>
-                      Escaneie o QR e ative em minutos
+                      Conexão oficial pela Meta, em minutos
                     </div>
                   </div>
                   <span className={styles.actionArr}>→</span>
