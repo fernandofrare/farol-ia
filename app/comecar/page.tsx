@@ -290,9 +290,9 @@ export default function ComecarPage() {
               outro celular. Ela deve responder em segundos.
             </p>
             <ol style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.8, paddingLeft: 18, marginBottom: 20 }}>
-              <li>Mantenha o celular do número ligado e com internet.</li>
-              <li>Envie um "oi" de outro número.</li>
+              <li>Envie um "oi" para o número de atendimento a partir de outro celular.</li>
               <li>Veja a resposta chegar — e acompanhe tudo no painel.</li>
+              <li>O número fica hospedado na Meta: não precisa manter o celular dele ligado.</li>
             </ol>
             <button
               className="btn btn-primary"

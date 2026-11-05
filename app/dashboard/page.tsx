@@ -283,7 +283,7 @@ export default async function DashboardPage() {
                   <div className={styles.actionInfo}>
                     <div className={styles.actionTitle}>Conectar WhatsApp</div>
                     <div className={styles.actionSub}>
-                      Escaneie o QR e ative em minutos
+                      Conexão oficial pela Meta, em minutos
                     </div>
                   </div>
                   <span className={styles.actionArr}>→</span>
