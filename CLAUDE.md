@@ -2,7 +2,7 @@
 
 Contexto para o Claude (Cowork ou Claude Code) trabalhar neste projeto. Leia antes de mexer em arquitetura, banco ou motor. Fonte de verdade detalhada: `FAROL-IA-KNOWLEDGE.md` (no knowledge do projeto).
 
-> Última revisão: 03/11/2026.
+> Última revisão: 12/11/2026.
 
 ## O que é
 SaaS de atendimento por WhatsApp com IA para empresas e profissionais autônomos brasileiros. Uma IA treinada no negócio do cliente responde/qualifica/agenda 24h no WhatsApp dele. Domínio: farolia.store · app: app.farolia.store. Fundador: Fernando Frare (Guaporé/RS). Razão social: FERNANDO CLAUS FRARE DESENVOLVIMENTO DE PROGRAMAS LTDA, CNPJ 69.420.755/0001-41.
@@ -53,6 +53,8 @@ Tabelas: `clients`, `conversations`, `messages`. NÃO inventar tabelas em portug
 - Preço a RECALCULAR (precificação única, a definir) — NÃO cravar preço nem mexer em cobrança (Asaas value 147, consentimento) sem o Fernando bater o martelo.
 - Landing: sem preço/promocional na vitrine (opção b). Cor: laranja é a marca; verde só tático p/ WhatsApp.
 - Copy: público é "empresas e profissionais autônomos" — NUNCA "pequenos negócios".
+- Checkout (12/11): DOIS checkouts roteados por país — Asaas p/ BR (R$, recorrência cartão), Lemon Squeezy (MoR) p/ internacional. Não vender a brasileiro via LS (vira exportação de serviço + IOF). Preço único ainda a definir.
+- Funil / fricção Meta (12/11, DEFINIDO): separar "ver valor" de "conectar". DEMO "teste sua IA" — chat com a própria IA já treinada no negócio, reusando o motor (zero Meta), fixo na aba "Minha IA" + também como página de teste na landing/pós-cadastro (local exato a definir); rate-limit por custo de token. Venda foca em preço acessível + adaptação ao negócio + testar na prática + 1 semana grátis; conta Meta só é pedida DEPOIS do teste, na hora de conectar. Landing/redes: destacar "parceira oficial Meta". Trial começa no go-live (recomendado, a confirmar).
 
 ## Riscos no radar
 1. Ban da Meta — existencial; já se materializou. Caso 1 isola por cliente, não elimina.
