@@ -2,52 +2,23 @@
 // DEMO "Teste sua IA" — handler do MOTOR no VPS.
 //
 // O cliente conversa com a PRÓPRIA IA treinada no negócio, SEM passar pela Meta.
-// Reusa a MESMA montagem de prompt do atendimento real (src/prompt.js ->
-// buildSystemPrompt), então o teste responde igual ao WhatsApp. Rate-limit por
+// Reusa a MESMA geração do atendimento real: buildSystemPrompt (src/prompt.js) +
+// gerarResposta (src/claude.js) + o client Supabase (src/db.js). Rate-limit por
 // cliente via RPC demo_consume (Supabase), pra conter custo de token.
 //
-// DEPLOY (no VPS /opt/farol-motor/src): copiar este arquivo e montar no server.js:
+// DEPLOY (no VPS /opt/farol-motor/src): copiar este arquivo e montar no server.js,
+// junto das outras rotas (pode ser depois do app.listen, como o /meta/onboard):
 //   app.use("/demo", require("./meta-demo").router);
 //
-// ENV necessárias no .env do motor (já existem hoje):
-//   SUPABASE_URL / SUPABASE_SERVICE_KEY
-//   ANTHROPIC_API_KEY
-//   ANTHROPIC_MODEL        (ex.: claude-haiku-4-5 — o MESMO do atendimento)
-//   MOTOR_TOKEN            (token compartilhado com o Next; header x-motor-token)
-//   DEMO_MSG_LIMIT         (opcional, default 15) — mensagens de teste por cliente
-//
-// IMPORTANTE: importa buildSystemPrompt de ./prompt (o MESMO do atendimento).
-// Se no teu motor o nome/caminho for outro, ajusta SÓ o require abaixo.
+// ENV: nenhuma nova além de MOTOR_TOKEN (já usado pelo /meta/onboard) e, opcional,
+//   DEMO_MSG_LIMIT (default 15). Supabase/Anthropic já vêm de db.js e claude.js.
 
 const express = require("express");
-const { createClient } = require("@supabase/supabase-js");
-
-// Fonte única da verdade do prompt (mesma do atendimento real):
+const { supabase } = require("./db");
 const { buildSystemPrompt } = require("./prompt");
+const { gerarResposta } = require("./claude");
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
-const MODEL = process.env.ANTHROPIC_MODEL || "claude-haiku-4-5";
 const LIMITE = Number(process.env.DEMO_MSG_LIMIT || 15);
-
-async function gerarComClaude(systemPrompt, messages) {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "x-api-key": process.env.ANTHROPIC_API_KEY,
-      "anthropic-version": "2023-06-01",
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 1024,
-      system: systemPrompt,
-      messages: messages.map((m) => ({ role: m.role, content: String(m.content) })),
-    }),
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data?.error?.message || `anthropic ${res.status}`);
-  return (data.content || []).map((c) => c.text || "").join("").trim();
-}
 
 const router = express.Router();
 
@@ -87,9 +58,12 @@ router.post("/gerar", express.json({ limit: "64kb" }), async (req, res) => {
       return res.status(429).json({ erro: "Limite de mensagens de teste atingido.", remaining: 0 });
     }
 
-    // MESMO prompt do atendimento real (await é seguro mesmo se for síncrono).
-    const systemPrompt = await buildSystemPrompt(client);
-    const reply = await gerarComClaude(systemPrompt, messages);
+    // MESMA geração do atendimento real (prompt + claude do motor).
+    const historico = messages.map((m) => ({ role: m.role, content: String(m.content) }));
+    const reply = await gerarResposta(buildSystemPrompt(client), historico);
+    if (!reply) {
+      return res.status(502).json({ erro: "Não consegui responder agora. Tente de novo." });
+    }
 
     return res.json({ reply, remaining });
   } catch (e) {
