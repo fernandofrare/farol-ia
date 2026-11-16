@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase-server";
 import { Sidebar } from "@/components/Sidebar";
 import { EditorIA } from "./EditorIA";
+import { TesteIA } from "./TesteIA";
 import { type ConfigIA } from "@/lib/config-ia";
 import { clientParaConfig, type ClientRow } from "@/lib/map-client";
 import painel from "@/components/painel.module.css";
@@ -29,6 +30,7 @@ export default async function MinhaIAPage() {
     <div className={painel.shell}>
       <Sidebar usuario={{ nome: nomeUsuario, plano: "Plano Farol IA" }} />
       <main className={painel.main}>
+        <TesteIA nomeNegocio={inicial.nome_negocio} nomeIa={inicial.nome_ia} />
         <EditorIA inicial={inicial} />
       </main>
     </div>
